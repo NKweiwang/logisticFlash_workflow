@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="wei wang" />
+
+<meta name="date" content="2017-01-16" />
+
+<title>Direct model with Greedy Algorithm</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">logistic flash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/NKweiwang/logisticFlash_workflow">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Direct model with Greedy Algorithm</h1>
+<h4 class="author"><em>wei wang</em></h4>
+<h4 class="date"><em>2017-01-16</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-01-20</p>
+<p><strong>Code version:</strong> 4d398d4</p>
+<div id="abstract" class="section level2">
+<h2>Abstract</h2>
+<p>This report is for the simple implementation of Logistic flash. There are two versions of inference for the model, both of which have advantage and drawbacks. More discussions are needed. We assume that our data matrix is <span class="math inline">\(Y_{N \times P}\)</span> where <span class="math inline">\(Y_{ij} = \pm 1\)</span> (we use <span class="math inline">\(\pm 1\)</span> rather than 0 or 1 here for the Boolean data). We first start from <span class="math inline">\(\mathbf{rank-one}\)</span> and known variance model, which makes the derivation clear and easy to understand.</p>
+</div>
+<div id="model" class="section level2">
+<h2>Model</h2>
+<p>We discuss on the model with known variance and rank one structure. Our model is</p>
+<span class="math display">\[\begin{eqnarray}
+\log\frac{P(Y_{ij} = 1|Z_{ij})}{P(Y_{ij} = -1 | Z_{ij})} = Z_{ij} \\
+Z_{ij} = l_i f_j\\
+f_j \sim  \sum_{m&#39;} \pi_{m&#39;}^f N(f_j; 0, (\sigma_{m&#39;}^f)^2) \\
+l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
+\end{eqnarray}\]</span>
+<p>Here we allow that <span class="math inline">\((\sigma_{1}^f)^2 = 0\)</span> and <span class="math inline">\((\sigma_{1}^l)^2=0\)</span>, which means we include the point mass into the prior for each component for <span class="math inline">\(f\)</span> and <span class="math inline">\(l\)</span>.</p>
+</div>
+<div id="method-variational-bayes-with-adaptive-shrinkage" class="section level2">
+<h2>Method: Variational Bayes with Adaptive Shrinkage}</h2>
+The full likelihood is
+<span class="math display">\[\begin{eqnarray}
+P(Y) = \int \int  P(Y|l,f)P(l)P(f)dfdl
+\end{eqnarray}\]</span>
+<div id="variational-bayes-on-l-and-f" class="section level3">
+<h3>Variational Bayes on <span class="math inline">\(l\)</span> and <span class="math inline">\(f\)</span></h3>
+<span class="math display">\[\begin{eqnarray}
+\log P(Y)  &amp; =&amp;  \log \int \int  P(Y|l,f)P(l)P(f)dfdl  \nonumber \\
+ &amp; \geq &amp; \int \int q_f(f)q_l(l) \log \frac{ P(Y|l,f) P(l)P(f)}{q_l(l)q_f(f)} dfdl \nonumber \\
+ &amp; = &amp; F(q_f,q_l,\Theta)
+\end{eqnarray}\]</span>
+<p>We want to maximize <span class="math inline">\(F(q_f,q_l,q_z,\Theta)\)</span> where <span class="math inline">\(\Theta = (\pi^l,\pi^f,\xi)\)</span>, <span class="math inline">\(\pi^l = (\pi^l_1,\cdots,\pi^l_{m_l})\)</span>, <span class="math inline">\(\pi^f = (\pi^f_1,\cdots,\pi^f_{m&#39;_f})\)</span> and <span class="math inline">\((\xi_{N\times P})_{(ij)} = \xi_{ij}, i = 1,\cdots, N, j = 1,\cdots, P\)</span>. The <span class="math inline">\(\pi^l\)</span> and <span class="math inline">\(\pi^f\)</span> are from the prior of the <span class="math inline">\(l\)</span> and <span class="math inline">\(f\)</span>, and we will talk later about where <span class="math inline">\(\xi\)</span> comes from.</p>
+<p>We assume that the approximation of <span class="math inline">\(q_f(f)q_l(l)q_z(Z)\)</span> is as following:</p>
+<span class="math display">\[\begin{eqnarray}
+q_f(f) = \prod_j q_f(f_j) = \prod_j [\sum_{m&#39;}\alpha^f_{jm&#39;} N(\mu^f_{jm&#39;},s^f_{jm&#39;})]\\
+q_l(l) = \prod_i q_l(l_i) = \prod_i [\sum_{m}\alpha^l_{im} N(\mu^l_{im},s^l_{im})] 
+\end{eqnarray}\]</span>
+<p>we use the lower boud of the this objective function, which is</p>
+<span class="math display">\[\begin{eqnarray}
+F(q_f,q_l,\Theta) &amp; \geq &amp;\int\int q(l)q(f)\log \frac{P(l)P(f)H(l,f,Y,\xi)}{q(l)q(f)}dldf\\
+H(l,f,Y,\xi) &amp;=&amp; exp\{ \sum_{ij}[\frac{Y_{ij}l_if_j -\xi_{ij}}{2} + \log(h(\xi_{ij}))- \tau(\xi_{ij})(l_i^2 f_j^2 - \xi_{ij}^2) ] \} \\
+\tau(\xi) &amp;=&amp; \frac{1}{4 \xi} \tanh(\frac{\xi}{2})
+\end{eqnarray}\]</span>
+<p>Given <span class="math inline">\(\xi\)</span>, we can apply ASH to estimate the <span class="math inline">\(l_k\)</span> and <span class="math inline">\(f_k\)</span></p>
+<div id="atm-on-l-and-f" class="section level4">
+<h4>ATM on <span class="math inline">\(l\)</span> and <span class="math inline">\(f\)</span></h4>
+<p>By plugging in the formula of <span class="math inline">\(H(l,f,\xi)\)</span> into the lowerbound, we can obtain a Ash Type Maximization problem. So the update of <span class="math inline">\(l\)</span> and <span class="math inline">\(f\)</span> are following the ATM solution:</p>
+<span class="math display">\[\begin{eqnarray}
+\mu_{l_i} &amp;=&amp; \frac{\frac{1}{2}\sum_j(Y_{ij}Ef_j)}{2\sum_j(\tau(\xi_{ij})Ef_j^2)}\\
+\sigma^2_{l_i} &amp;=&amp; \frac{1}{2\sum_j(\tau(\xi_{ij})Ef_j^2)}\\
+\mu_{f_j} &amp;=&amp; \frac{\frac{1}{2}\sum_i(Y_{ij}El_i)}{2\sum_j(\tau(\xi_{ij})El_i^2)}\\
+\sigma^2_{f_j} &amp;=&amp; \frac{1}{2\sum_i(\tau(\xi_{ij})El_i^2)}
+\end{eqnarray}\]</span>
+</div>
+<div id="update-for-xi" class="section level4">
+<h4>update for <span class="math inline">\(\xi\)</span></h4>
+<span class="math display">\[\begin{eqnarray}
+\xi_{ij}^2 = l_i^2f_j^2 = Z_{ij}^2
+\end{eqnarray}\]</span>
+</div>
+</div>
+<div id="rank-k-version-greedy-algorithm" class="section level3">
+<h3>Rank K version: Greedy Algorithm</h3>
+<div id="rank-k-model" class="section level4">
+<h4>Rank K model</h4>
+<span class="math display">\[\begin{eqnarray}
+\log\frac{P(Y_{ij} = 1|Z_{ij})}{P(Y_{ij} = -1 | Z_{ij})} = Z_{ij} \\
+Z_{ij} = \sum_k l_{ik} f_{kj}\\
+f_{kj} \sim  \sum_{m&#39;} \pi_{km&#39;}^f N(f_{kj}; 0, (\sigma_{km&#39;}^f)^2) \\
+l_{ik} \sim  \sum_m \pi_{km}^l N(l_{ik}; 0, (\sigma_{km}^l)^2)
+\end{eqnarray}\]</span>
+
+<p>we use the lower boud of the this objective function, which is</p>
+<span class="math display">\[\begin{eqnarray}
+F(q_f,q_l,\Theta) &amp; \geq &amp;\int\int q(l)q(f)\log \frac{P(l)P(f)H(l,f,Y,\xi)}{q(l)q(f)}dldf\\
+H(l,f,Y,\xi) &amp;=&amp; exp\{ \sum_{ij}[\frac{Y_{ij}(\sum_k l_{ik} f_{kj}) -\xi_{ij}}{2} + \log(h(\xi_{ij}))- \tau(\xi_{ij})((\sum_k l_{ik} f_{kj})^2 - \xi_{ij}^2) ] \} \\
+\tau(\xi) &amp;=&amp; \frac{1}{4 \xi} \tanh(\frac{\xi}{2})
+\end{eqnarray}\]</span>
+<p>By plugging in the formula of <span class="math inline">\(H(l,f,\xi)\)</span> into the lowerbound, we can obtain a Ash Type Maximization problem. So the update of <span class="math inline">\(l\)</span> and <span class="math inline">\(f\)</span> are following the ATM solution:</p>
+<span class="math display">\[\begin{eqnarray}
+\mu_{l_{ik}} &amp;=&amp; \frac{\sum_j[\frac{1}{2} Y_{ij} -2 (\tau(\xi_{ij})\sum_{t \neq k} (El_{it}Ef_{tj})) ]Ef_{kj}}{2\sum_j(\tau(\xi_{ij})Ef_{kj}^2)}\\
+\sigma^2_{l_{ik}} &amp;=&amp; \frac{1}{2\sum_j(\tau(\xi_{ij})Ef_{kj}^2)}\\
+\mu_{f_{kj}} &amp;=&amp; \frac{\sum_i[\frac{1}{2} Y_{ij} -2 (\tau(\xi_{ij})\sum_{t \neq k} (El_{it}Ef_{tj})) ]El_{ik}}{2\sum_j(\tau(\xi_{ij})El_{ik}^2)}\\
+\sigma^2_{f_{kj}} &amp;=&amp; \frac{1}{2\sum_i(\tau(\xi_{ij})El_{ik}^2)}
+\end{eqnarray}\]</span>
+<span class="math display">\[\begin{eqnarray}
+\xi_{ij}^2 = (\sum_k l_{ik} f_{kj})^2 = Z_{ij}^2
+\end{eqnarray}\]</span>
+</div>
+<div id="residual-in-greedy-algorithm" class="section level4">
+<h4>Residual in Greedy Algorithm</h4>
+The key of greedy algorithm is how to calculate the residual. Comparing the update in rank one case and rank K case. We decide use
+<span class="math display">\[\begin{eqnarray}
+residual_k &amp;=&amp;  Y_{ij} -4 [\tau(\xi_{ij})\sum_{t \neq k} (El_{it}Ef_{tj})] \\
+\xi_{ij}^2 &amp; = &amp; E_{q_l,q_f}(\sum_{t \neq k} l_{it} f_{tj})^2
+\end{eqnarray}\]</span>
+<p>which works pretty well.</p>
+<p>Why the residual is important? It is because we need initialize the loading and factor for each new adding factor in the greedy algorithm adaptively.</p>
+</div>
+</div>
+</div>
+<div id="future-work-backfitting-algorithm" class="section level2">
+<h2>Future Work: Backfitting Algorithm</h2>
+<p>Since in the last section, the update can also be applied into Backfitting algorithm, we can easily extend the current version to more precise version.</p>
+</div>
+<div id="simulation" class="section level2">
+<h2>Simulation</h2>
+<div id="rank-5-model" class="section level3">
+<h3>rank 5 model</h3>
+</div>
+<div id="big-signal" class="section level3">
+<h3>3.1.1 big signal</h3>
+<span class="math display">\[\begin{eqnarray*}
+N &amp;=&amp; 100 \\
+P &amp;=&amp; 200\\
+(\sigma_{m&#39;}^f) &amp;=&amp; (0.1,0.3,0.6,2)\\
+(\pi_{m&#39;}^f) &amp;=&amp; (0.3,0.2,0.2,0.3) \\
+(\sigma_{m}^l) &amp;=&amp; (0.1,0.5,1,2)\\
+(\pi_{m}^l) &amp;=&amp; (0.3,0.2,0.1,0.4) 
+\end{eqnarray*}\]</span>
+<pre class="r"><code>set.seed(9)
+source(&#39;../code/GD_Rfuncrtions.R&#39;)
+Data = datamaker(100,200,
+                 c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),1,
+                 c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),1,
+                 K = 5)
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+Y_vec_01 = sapply(pY_vec,function(x){rbinom(1,1,x)})
+Y_vec = 2*( Y_vec_01 - 1/2)
+# Y_vec = Y_vec_01
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+gflash = flashr::greedy(Y,K = 8)</code></pre>
+<pre><code>[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] 6</code></pre>
+<pre class="r"><code>Ltest = GL_flash(Y,K = 8)</code></pre>
+<pre><code>[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] &quot;stop here due to no signal&quot;</code></pre>
+<pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
+<pre><code>[1] 0.5497998</code></pre>
+<pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
+<pre><code>[1] 0.8071915</code></pre>
+<pre class="r"><code>par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+plot(svd(Y)$d,main = &quot;eigen values&quot;)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f)),main = &quot;estimated structure Lflash&quot;)
+abline(0,1,col = &quot;red&quot;)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = &quot;estimated structure flash&quot;)
+abline(0,1,col = &quot;red&quot;)</code></pre>
+<p><img src="figure/second-analysis.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="mild-signal" class="section level3">
+<h3>3.1.2 mild signal</h3>
+<span class="math display">\[\begin{eqnarray*}
+N &amp;=&amp; 100 \\
+P &amp;=&amp; 200\\
+(\sigma_{m}^l) &amp;=&amp; (0,0.1,0.5,1,2)\\
+(\pi_{m}^l) &amp;=&amp; (0.4, 0.18, 0.12, 0.06, 0.24) \\
+(\sigma_{m&#39;}^f) &amp;=&amp; (0, 0.1,0.3,0.6,2)\\
+(\pi_{m&#39;}^f) &amp;=&amp; (0.4, 0.18, 0.12, 0.12, 0.18) 
+\end{eqnarray*}\]</span>
+<pre class="r"><code>set.seed(9)
+source(&#39;../code/GD_Rfuncrtions.R&#39;)
+Data = datamaker(100,200,
+                 c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),0.6,
+                 c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),0.6,
+                 K = 5)
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+Y_vec_01 = sapply(pY_vec,function(x){rbinom(1,1,x)})
+Y_vec = 2*( Y_vec_01 - 1/2)
+# Y_vec = Y_vec_01
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+gflash = flashr::greedy(Y,K = 8)</code></pre>
+<pre><code>[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] 6</code></pre>
+<pre class="r"><code>Ltest = GL_flash(Y,K = 8)</code></pre>
+<pre><code>[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] &quot;stop here due to no signal&quot;</code></pre>
+<pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
+<pre><code>[1] 0.6284728</code></pre>
+<pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
+<pre><code>[1] 0.8336038</code></pre>
+<pre class="r"><code>par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+plot(svd(Y)$d,main = &quot;eigen values&quot;)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f)),main = &quot;estimated structure Lflash&quot;)
+abline(0,1,col = &quot;red&quot;)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = &quot;estimated structure flash&quot;)
+abline(0,1,col = &quot;red&quot;)</code></pre>
+<p><img src="figure/second-analysis.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="small-signal-due-to-sparsity" class="section level3">
+<h3>3.1.3 small signal due to sparsity</h3>
+<span class="math display">\[\begin{eqnarray*}
+N &amp;=&amp; 100 \\
+P &amp;=&amp; 200\\
+(\sigma_{m}^l) &amp;=&amp; (0,0.1,0.5,1,2)\\
+(\pi_{m}^l) &amp;=&amp; (0.7, 0.09, 0.06, 0.03, 0.12) \\
+(\sigma_{m&#39;}^f) &amp;=&amp; (0, 0.1,0.3,0.6,2)\\
+(\pi_{m&#39;}^f) &amp;=&amp; (0.7, 0.09, 0.06, 0.06, 0.09) 
+\end{eqnarray*}\]</span>
+<pre class="r"><code>set.seed(9)
+source(&#39;../code/GD_Rfuncrtions.R&#39;)
+Data = datamaker(100,200,
+                 c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),0.3,
+                 c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),0.3,
+                 K = 5)
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+Y_vec_01 = sapply(pY_vec,function(x){rbinom(1,1,x)})
+Y_vec = 2*( Y_vec_01 - 1/2)
+# Y_vec = Y_vec_01
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+gflash = flashr::greedy(Y,K = 8)</code></pre>
+<pre><code>[1] 2</code></pre>
+<pre class="r"><code>Ltest = GL_flash(Y,K = 8)</code></pre>
+<pre><code>[1] &quot;stop here due to no signal&quot;</code></pre>
+<pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
+<pre><code>[1] 0.9726192</code></pre>
+<pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
+<pre><code>[1] 0.9794871</code></pre>
+<pre class="r"><code>par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+plot(svd(Y)$d,main = &quot;eigen values&quot;)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f)),main = &quot;estimated structure Lflash&quot;)
+abline(0,1,col = &quot;red&quot;)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = &quot;estimated structure flash&quot;)
+abline(0,1,col = &quot;red&quot;)</code></pre>
+<p><img src="figure/second-analysis.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.0 (2016-05-03)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.12.2 (unknown)
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] MASS_7.3-45     workflowr_0.3.0 rmarkdown_1.3  
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.8       rstudioapi_0.6    knitr_1.15.1     
+ [4] magrittr_1.5      REBayes_0.63      doParallel_1.0.10
+ [7] pscl_1.4.9        SQUAREM_2016.8-2  lattice_0.20-33  
+[10] foreach_1.4.3     ashr_2.0.4        stringr_1.1.0    
+[13] flashr_0.1.1      tools_3.3.0       parallel_3.3.0   
+[16] grid_3.3.0        irlba_2.1.1       git2r_0.18.0     
+[19] htmltools_0.3.5   iterators_1.0.8   assertthat_0.1   
+[22] yaml_2.1.14       rprojroot_1.2     digest_0.6.11    
+[25] Matrix_1.2-7.1    codetools_0.2-14  evaluate_0.10    
+[28] stringi_1.1.1     Rmosek_7.1.2      backports_1.0.5  
+[31] truncnorm_1.0-7  </code></pre>
+</div>
+
+<hr>
+<p>
+    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
