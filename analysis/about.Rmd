@@ -5,4 +5,4 @@ output:
     toc: false
 ---
 
-Describe your project.
+This report is for the simple implementation of Logistic flash. There are two versions of inference for  the model, both of which have advantage and drawbacks. More discussions are needed. We assume that our data matrix is $Y_{N \times P}$ where $Y_{ij} = \pm 1$ (we use $\pm 1$ rather than 0 or 1 here for the Boolean data). We first start from $\mathbf{rank-one}$ and known variance model, which makes the derivation clear and easy to understand.

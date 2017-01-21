@@ -1,0 +1,425 @@
+---
+title: "First Analysis"
+author: "wei wang"
+date: 2016-12-16
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+
+## Abstract
+This report is for the simple implementation of Logistic flash. There are two versions of inference for  the model, both of which have advantage and drawbacks. More discussions are needed. We assume that our data matrix is $Y_{N \times P}$ where $Y_{ij} = \pm 1$ (we use $\pm 1$ rather than 0 or 1 here for the Boolean data). We first start from $\mathbf{rank-one}$ and known variance model, which makes the derivation clear and easy to understand.
+
+## Model
+
+We discuss on the model with known variance and rank one structure. Our model is
+
+\begin{eqnarray}
+\log\frac{P(Y_{ij} = 1|Z_{ij})}{P(Y_{ij} = -1 | Z_{ij})} = Z_{ij} \\
+Z_{ij} = l_i f_j + E_{ij}\\
+E_{ij} \sim N(0,\sigma_e^2)\\
+f_j \sim  \sum_{m'} \pi_{m'}^f N(f_j; 0, (\sigma_{m'}^f)^2) \\
+l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
+\end{eqnarray}
+Here we allow that $(\sigma_{1}^f)^2 = 0$ and $(\sigma_{1}^l)^2=0$, which means we include the point mass into the prior for each component for $f$ and $l$.
+
+## Method: Variational Bayes with Adaptive Shrinkage
+
+The full likelihood is
+\begin{eqnarray}
+P(Y) = \int \int \int P(Y|Z)P(Z|l,f)P(l)P(f)dZdfdl
+\end{eqnarray}
+We introduce two ways of variational Bayes inference to maximize lower bound for the full likelihood. Both of them have advantages and drawbacks. We call them Type I and Type II.
+
+### Type I: Variational Bayes on $l$ and $f$
+
+\begin{eqnarray}
+\log P(Y)  & =&  \log \int \int \int P(Y|Z)P(Z|l,f)P(l)P(f)dZdfdl  \nonumber \\
+ & \geq & \int \int q_f(f)q_l(l) \log \frac{\int P(Y|Z)P(Z|l,f)dZ P(l)P(f)}{q_l(l)q_f(f)} dfdl \nonumber \\
+ & = & F(q_f,q_l,\Theta)
+\end{eqnarray}
+We want to maximize $F(q_f,q_l,q_z,\Theta)$ where $\Theta = (\pi^l,\pi^f,\xi)$, $\pi^l = (\pi^l_1,\cdots,\pi^l_{m_l})$, $\pi^f = (\pi^f_1,\cdots,\pi^f_{m'_f})$ and $(\xi_{N\times P})_{(ij)} = \xi_{ij}, i = 1,\cdots, N, j = 1,\cdots, P$. The $\pi^l$ and $\pi^f$ are from the prior of the $l$ and $f$, and we will talk later about where $\xi$ comes from.
+
+We assume that the approximation of $q_f(f)q_l(l)q_z(Z)$ is as following:
+
+\begin{eqnarray}
+q_f(f) = \prod_j q_f(f_j) = \prod_j [\sum_{m'}\alpha^f_{jm'} N(\mu^f_{jm'},s^f_{jm'})]\\
+q_l(l) = \prod_i q_l(l_i) = \prod_i [\sum_{m}\alpha^l_{im} N(\mu^l_{im},s^l_{im})] 
+\end{eqnarray}
+
+we use the lower boud of the this objective function, which is
+
+\begin{eqnarray}
+F(q_f,q_l,\Theta) & \geq &\int\int q(l)q(f) \log \frac{P(l)P(f)H(l,f,Y,\xi)}{q(l)q(f)}dldf\\
+H(l,f,Y,\xi) &=& exp\{ \sum_{ij}[\frac{Y_{ij}l_if_j -\xi_{ij}}{2} + \log(h(\xi_{ij}))- \tau(\xi_{ij})(l_i^2 f_j^2 + \sigma_e^2 - \xi_{ij}^2) ] \} \\
+\tau(\xi) &=& \frac{1}{4 \xi} \tanh(\frac{\xi}{2})
+\end{eqnarray}
+
+Given $\sigma_e^2$ and $\xi$, we can apply ASH to estimate the $l$ and $f$
+
+The above result comes from
+\begin{eqnarray}
+& & \int [\log P(Y|Z)] P(Z|lf)dZ \nonumber \\
+&=& \int [ \sum_{ij} \log P(Y_{ij}|Z_{ij})] P(Z|lf)dZ \nonumber \\
+&=& \sum_{ij}E_{p_{z|lf}} \log(Y_{ij}|Z_{ij}) \\
+&\geq& \sum_{ij} E_{p_{z|lf}} [\frac{Y_{ij}Z_{ij} -\xi_{ij}}{2} + \log(h(\xi_{ij}))- \tau(\xi_{ij})(Z_{ij}^2 - \xi_{ij}^2) ] 
+\end{eqnarray}
+
+#### ATM on $l$ and $f$
+
+By plugging in the formula of $H(l,f,\xi)$ into the lowerbound, we can obtain a Ash Type Maximization problem. So the update of $l$ and $f$ are following the ATM solution:
+
+\begin{eqnarray}
+\mu_{l_i} &=& \frac{\frac{1}{2}\sum_j(Y_{ij}Ef_j)}{2\sum_j(\tau(\xi_{ij})Ef_j^2)}\\
+\sigma^2_{l_i} &=& \frac{1}{2\sum_j(\tau(\xi_{ij})Ef_j^2)}\\
+\mu_{f_j} &=& \frac{\frac{1}{2}\sum_i(Y_{ij}El_i)}{2\sum_j(\tau(\xi_{ij})El_i^2)}\\
+\sigma^2_{f_j} &=& \frac{1}{2\sum_i(\tau(\xi_{ij})El_i^2)}
+\end{eqnarray}
+
+#### update for $\xi$
+
+\begin{eqnarray}
+\xi_{ij}^2 = l_i^2f_j^2 + \sigma_e^2
+\end{eqnarray}
+
+Here we don't use the $Z$ as latent variables which makes the estimation of the $sigma_e^2$ hard because there is no realization (estimation) of the latent variable $Z$ for the model $Z = lf^T + E$. 
+
+### Type II: Variational Bayes on $l$, $f$ and $Z$
+
+\begin{eqnarray}
+\log P(Y)  & =&  \log \int \int \int P(Y|Z)P(Z|l,f)P(l)P(f)dZdfdl  \nonumber \\
+ & \geq & \int \int \int q_f(f)q_l(l)q_z(Z) \log \frac{P(Y|Z)P(Z|l,f)P(l)P(f)}{q_l(l)q_f(f)q_z(Z)} dZdfdl \nonumber \\
+ & = & F(q_f,q_l,q_z,\Theta)
+\end{eqnarray}
+We want to maximize $F(q_f,q_l,q_z,\Theta)$ where $\Theta = (\pi^l,\pi^f,\xi)$, $\pi^l = (\pi^l_1,\cdots,\pi^l_{m_l})$, $\pi^f = (\pi^f_1,\cdots,\pi^f_{m'_f})$ and $(\xi_{N\times P})_{(ij)} = \xi_{ij}, i = 1,\cdots, N, j = 1,\cdots, P$. The $\pi^l$ and $\pi^f$ are from the prior of the $l$ and $f$, and we will talk later about where $\xi$ comes from.
+
+We assume that the approximation of $q_f(f)q_l(l)q_z(Z)$ is as following:
+
+\begin{eqnarray}
+q_f(f) = \prod_j q_f(f_j) = \prod_j [\sum_{m'}\alpha^f_{jm'} N(\mu^f_{jm'},s^f_{jm'})]\\
+q_l(l) = \prod_i q_l(l_i) = \prod_i [\sum_{m}\alpha^l_{im} N(\mu^l_{im},s^l_{im})] \\
+q_z(Z) = \prod_{ij} q_z(Z_{ij}) = \prod_{ij} N(\mu^z_{ij},s^z_{ij}))
+\end{eqnarray}
+
+#### Ash Type Maximization for $l$ and $f$
+
+In this part we focus on maximization over $f$ given $q_l,q_z,\pi^l,\xi$ first:
+\begin{eqnarray}
+F(q_f,q_l,q_z,\Theta) & = &  \int q_f(f)q_l(l)q_z(Z) \log \frac{P(Z|l,f)P(f)}{q_f(f)} + C_f \\
+ & = &  E_q \log P(Z|l,f) + E_q \log \frac{P(f)}{q_f(f)}  + C_f \\
+ & = & E_q \sum_{ij}-\frac{1}{2 \sigma_e^2}( Z^2_{ij} - 2 Z_{ij}l_i f_j + l^2_i f^2_j)  +  E_q \log \frac{P(f)}{q_f(f)}  + C'_f \\
+ & = & E_{q_f} \sum_{ij}-\frac{1}{2 \sigma_e^2}( E_{q_z}(Z^2_{ij}) - 2 E_{q_z}(Z_{ij})E_{q_l}(l_i) f_j + E_{q_l}(l^2_i) f^2_j)  +  E_q \log \frac{P(f)}{q_f(f)}  + C''_f
+\end{eqnarray}
+where $C_f,C'_f,C''_f$ are constant with respect to $f$. This is an Ash Type Maximization.
+
+Similarly for the $l$ given $q_f,q_z,\pi^f,\xi$
+\begin{eqnarray}
+F(q_f,q_l,q_z,\Theta) & = &  \int q_f(f)q_l(l)q_z(Z) \log \frac{P(Z|l,f)P(l)}{q_l(l)} + C_l \\
+ & = &  E_{q_l} \sum_{ij}-\frac{1}{2 \sigma_e^2}( E_{q_z}(Z^2_{ij}) - 2 E_{q_z}(Z_{ij})l_i E_{q_f}(f_j) + l^2_i E_{q_f} (f^2_j))  +  E_q \log \frac{P(l)}{q_l(l)}  + C'_l
+\end{eqnarray}
+where $C_l,C'_l$ are constant with respect to $l$. This is also an Ash Type Maximization.
+
+So we can convert the variational inference of $l$ and $f$ part into FLASH problem
+\begin{eqnarray}
+E_{q_z} Z = l f^T + E
+\end{eqnarray}
+
+#### Variational EM algorithm on $Z$
+
+Similarly for the $l$ given $q_f,q_z,\pi^f,\xi$
+\begin{eqnarray}
+F(q_f,q_l,q_z,\Theta) & = &  \int q_f(f)q_l(l)q_z(Z) \log \frac{P(Y|Z)P(Z|l,f)}{q_z(Z)} + C_z \\
+&=& E_q \sum_{ij} \log\frac{P(Y_{ij}|Z_{ij})P(Z_{ij}|l_i,f_j)}{q_z(Z_{ij})} + C_z \\
+& = & \sum_{ij} F^z_{ij} + C_z 
+\end{eqnarray}
+There is no closed form for variational inference. But our goal it to maximize the objective function $F(q_f,q_l,q_z,\Theta)$ with respect to $q_z,\xi$, which is equivalent to maximize each term of $F^z_{ij} = E_q \log \frac{P(Y_{ij}|Z_{ij})P(Z_{ij}|l_i,f_j)}{q_z(Z_{ij})}$. 
+
+Since $\log \frac{P(Y_{ij} = 1|Z_{ij})}{P(Y_{ij} = -1 | Z_{ij})} = Z_{ij}$ and $Y_{ij} = \pm 1$, we can write the
+\begin{eqnarray}
+P(Y_{ij}|Z_{ij}) = h(Y_{ij}Z_{ij}) = \frac{1}{1+ exp(-Y_{ij}Z_{ij})}
+\end{eqnarray}
+Based on the (Tommi S. Jaakkola and Michael I. Jordan 2000)[http://link.springer.com/article/10.1023/A:1008932416310], $h(z)$ has a tight lower bound with parameter $\xi_x$
+
+\begin{eqnarray}
+h(z) \geq h(\xi_z) exp(\frac{z-\xi_z}{2} - \tau(\xi_z)(z^2 - \xi_z^2))\\
+\tau(\xi_z) = \frac{1}{2\xi_z}(h(\xi_z) - \frac{1}{2})
+\end{eqnarray}
+We apply this bound to $F^z_{ij}(q_z,\xi_{ij})$
+
+\begin{eqnarray}
+F^z_{ij}    & = & E_q \log\frac{h(Y_{ij}Z_{ij}) P(Z_{ij}|l_i,f_j)}{q_z(Z_{ij})}   \nonumber \\
+&\geq& H^z_{ij}(q_z,\xi_{ij})  \nonumber \\
+&=& E_q \log\frac{h(\xi_{ij}) exp(\frac{Y_{ij}Z_{ij}-\xi_{ij}}{2} - \tau(\xi_{ij})(Y^2_{ij}Z_{ij}^2 - \xi_{ij}^2)) P(Z_{ij}|l_i,f_j)}{q_z(Z_{ij})}
+\end{eqnarray}
+
+Given $\xi_z$ the maximizer of $q_z$ is 
+ \begin{eqnarray}
+q_z(Z_{ij}) = N(Z_{ij};\mu^z_{ij},s^z_{ij}) \\
+s^z_{ij} = \frac{1}{2\tau(\xi_{ij} )+ \frac{1}{\sigma_e^2}} \\
+\mu^z_{ij} = \frac{\frac{E_q(l_if_j)}{\sigma_e^2} + \frac{Y_{ij}}{2}}{2\tau(\xi_{ij} )+ \frac{1}{\sigma_e^2}}
+\end{eqnarray}
+Given $q_z$ the maximizer of $\xi_{ij}$ is 
+
+\begin{eqnarray}
+\xi^2_{ij} &=& E_{q_z} Z_{ij}^2 \nonumber \\
+&=& (\mu_{ij}^z)^2 + s_{ij}^z
+\end{eqnarray}
+
+This assumption on $Z_{ij}$ with approximation of $q_z$ might be too strong which introduce too many parameters to estimate and make it difficult for each estimation to borrow information across the data points. For example, $E_q Z_{ij}$ should be equal to zero when $El_i = 0$ and $Ef_j = 0$, but $E_q Z_{ij}$ is a constant just depend on $Y_{ij}$ sine we can't borrow information among all the $Y_{ij}$ where $El_i = 0$ and $Ef_j = 0$.
+
+
+### Summary of Methods
+
+Both Type I and Type II have advantages and disadvantages. We list those issues we found so far as following:
+
+\begin{itemize}
+\item Type II
+\subitem cons: only use very limited information in updating $Z_{ij}$ due to too many parameters
+\subitem pros: possible to estimate the rank and variance due to directly apply FLASH
+\item Type I
+\subitem pros: no need of the approximation of $Z$ which reduce the number of parameters
+\subitem cons: not clear how to estimate the rank and the variance of the error term.
+\end{itemize}
+
+
+```{r,echo=FALSE}
+# this is to test the algorithm 1 bit flash
+# we start from rank one problem
+library("MASS")
+source(file = "../code/Rfunctions.R")
+```
+
+
+## simple simulation test
+
+### rank one case
+In this report we focus on the rank one case with known variance because it is not clear to me how to estimate the variance and rank in type II method.
+
+All the simulation based on this model:
+
+\begin{eqnarray*}
+\log\frac{P(Y_{ij} = 1|Z_{ij})}{P(Y_{ij} = -1 | Z_{ij})} = Z_{ij} \\
+Z_{ij} = l_i f_j + E_{ij}\\
+E_{ij} \sim N(0,\sigma_e^2)\\
+f_j \sim  \sum_{m'} \pi_{m'}^f N(f_j; 0, (\sigma_{m'}^f)^2) \\
+l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
+\end{eqnarray*}
+
+We set different sparsity and scale of the loadings and factors to control the strength of signal.
+
+####  big signal
+\begin{eqnarray*}
+N &=& 100 \\
+P &=& 200\\
+(\sigma_{m'}^f) &=& (0.1,0.3,0.6,2)\\
+(\pi_{m'}^f) &=& (0.3,0.2,0.2,0.3) \\
+(\sigma_{m}^l) &=& (0.1,0.5,1,2)\\
+(\pi_{m}^l) &=& (0.3,0.2,0.1,0.4) 
+\end{eqnarray*}
+
+```{r,cache=TRUE,eval=TRUE,message=FALSE,echo=FALSE}
+set.seed(9)
+Data = datamaker(100,200,c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),1,c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),1,sqrt(1))
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+Y_vec_01 = sapply(pY_vec,function(x){rbinom(1,1,x)})
+Y_vec = 2*( Y_vec_01 - 1/2)
+# Y_vec = Y_vec_01
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+gflash = flashr::flash(Y)
+T1 = Lflash_I(Y)
+T2 = Lflash_II(Y)
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+plot((Data$L_true %*% t(Data$F_true)), T1$l %*% t(T1$f),main = "estimated strucure: TypeI")
+plot((Data$L_true %*% t(Data$F_true)), T2$l %*% t(T2$f),main = "estimated strucure: TypeII")
+plot((Data$L_true %*% t(Data$F_true)), gflash$l %*% t(gflash$f),main = "estimated strucure: flash")
+plot(Data$L_true,T1$l,main = "estimated loading: Type I")
+plot(Data$F_true,T1$f,main = "estimated factor: Type I")
+plot(svd(Y)$d,main = "eigen values")
+plot(Data$L_true,T2$l,main = "estimated loading: Type II")
+plot(Data$F_true,T2$f,main = "estimated factor: Type II")
+plot(Data$Z,T2$Z, main = "estimated Z: Type II")
+
+rmse1 = sqrt(mean((Data$L_true %*% t(Data$F_true) - T1$l %*% t(T1$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+rmse2 = sqrt(mean((Data$L_true %*% t(Data$F_true) - T2$l %*% t(T2$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+rmse3 = sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+print(c("Type I",rmse1))
+print(c("Type II", rmse2))
+print(c("FLASH", rmse3))
+```
+
+
+####  mild signal
+
+\begin{eqnarray*}
+N &=& 100 \\
+P &=& 200\\
+(\sigma_{m}^l) &=& (0,0.1,0.5,1,2)\\
+(\pi_{m}^l) &=& (0.4, 0.18, 0.12, 0.06, 0.24) \\
+(\sigma_{m'}^f) &=& (0, 0.1,0.3,0.6,2)\\
+(\pi_{m'}^f) &=& (0.4, 0.18, 0.12, 0.12, 0.18) 
+\end{eqnarray*}
+
+```{r,cache=TRUE,eval=TRUE,message=FALSE,echo=FALSE}
+set.seed(9)
+Data = datamaker(100,200,c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),0.6,c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),0.6,sqrt(1))
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+Y_vec_01 = sapply(pY_vec,function(x){rbinom(1,1,x)})
+Y_vec = 2*( Y_vec_01 - 1/2)
+# Y_vec = Y_vec_01
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+gflash = flashr::flash(Y)
+T1 = Lflash_I(Y)
+T2 = Lflash_II(Y)
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+plot((Data$L_true %*% t(Data$F_true)), T1$l %*% t(T1$f),main = "estimated strucure: TypeI")
+plot((Data$L_true %*% t(Data$F_true)), T2$l %*% t(T2$f),main = "estimated strucure: TypeII")
+plot((Data$L_true %*% t(Data$F_true)), gflash$l %*% t(gflash$f),main = "estimated strucure: flash")
+plot(Data$L_true,T1$l,main = "estimated loading: Type I")
+plot(Data$F_true,T1$f,main = "estimated factor: Type I")
+plot(svd(Y)$d,main = "eigen values")
+plot(Data$L_true,T2$l,main = "estimated loading: Type II")
+plot(Data$F_true,T2$f,main = "estimated factor: Type II")
+plot(Data$Z,T2$Z, main = "estimated Z: Type II")
+
+rmse1 = sqrt(mean((Data$L_true %*% t(Data$F_true) - T1$l %*% t(T1$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+rmse2 = sqrt(mean((Data$L_true %*% t(Data$F_true) - T2$l %*% t(T2$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+rmse3 = sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+print(c("Type I",rmse1))
+print(c("Type II", rmse2))
+print(c("FLASH", rmse3))
+```
+
+
+
+#### small signal due to sparsity 
+
+\begin{eqnarray*}
+N &=& 100 \\
+P &=& 200\\
+(\sigma_{m}^l) &=& (0,0.1,0.5,1,2)\\
+(\pi_{m}^l) &=& (0.7, 0.09, 0.06, 0.03, 0.12) \\
+(\sigma_{m'}^f) &=& (0, 0.1,0.3,0.6,2)\\
+(\pi_{m'}^f) &=& (0.7, 0.09, 0.06, 0.06, 0.09) 
+\end{eqnarray*}
+
+```{r,cache=TRUE,eval=TRUE,message=FALSE,echo=FALSE}
+set.seed(9)
+Data = datamaker(100,200,c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),0.3,c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),0.3,sqrt(1))
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+Y_vec_01 = sapply(pY_vec,function(x){rbinom(1,1,x)})
+Y_vec = 2*( Y_vec_01 - 1/2)
+# Y_vec = Y_vec_01
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+gflash = flashr::flash(Y)
+T1 = Lflash_I(Y)
+T2 = Lflash_II(Y)
+par(mfrow = c(2,3),mar = c(5,4,4,2) - 1.9)
+plot((Data$L_true %*% t(Data$F_true)), T1$l %*% t(T1$f),main = "estimated strucure: TypeI")
+#plot((Data$L_true %*% t(Data$F_true)), T2$l %*% t(T2$f),main = "estimated strucure: TypeII")
+plot(Data$L_true,T1$l,main = "estimated loading: Type I")
+plot(Data$F_true,T1$f,main = "estimated factor: Type I")
+plot(svd(Y)$d,main = "eigen values")
+#plot(Data$L_true,T2$l,main = "estimated loading: Type II")
+#plot(Data$F_true,T2$f,main = "estimated factor: Type II")
+plot(Data$Z,T2$Z, main = "estimated Z: Type II")
+plot((Data$L_true %*% t(Data$F_true)), gflash$l %*% t(gflash$f),main = "estimated strucure: flash")
+
+rmse1 = sqrt(mean((Data$L_true %*% t(Data$F_true) - T1$l %*% t(T1$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+rmse2 = sqrt(mean((Data$L_true %*% t(Data$F_true) - T2$l * (T2$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+rmse3 = sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+print(c("Type I",rmse1))
+print(c("Type II", rmse2))
+print(c("FLASH", rmse3))
+```
+
+
+#### small signal but dense factors and loadings
+
+\begin{eqnarray*}
+N &=& 100 \\
+P &=& 200\\
+(\sigma_{m}^l) &=& (0.1,0.2,0.3,0.4)\\
+(\pi_{m}^l) &=& (0.3,0.2,0.1,0.4) \\
+(\sigma_{m'}^f) &=& (0.15,0.25,0.35,0.45)\\
+(\pi_{m'}^f) &=& (0.3,0.2,0.2,0.3) 
+\end{eqnarray*}
+
+```{r,cache=TRUE,eval=TRUE,message=FALSE,echo=FALSE}
+set.seed(9)
+Data = datamaker(100,200,c(0.3,0.2,0.1,0.4),c(0.1,0.2,0.3,0.4),1,c(0.3,0.2,0.2,0.3),c(0.15,0.25,0.35,0.45),1,sqrt(1))
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+Y_vec_01 = sapply(pY_vec,function(x){rbinom(1,1,x)})
+Y_vec = 2*( Y_vec_01 - 1/2)
+# Y_vec = Y_vec_01
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+gflash = flashr::flash(Y)
+T1 = Lflash_I(Y)
+T2 = Lflash_II(Y)
+par(mfrow = c(2,3),mar = c(5,4,4,2) - 1.9)
+plot((Data$L_true %*% t(Data$F_true)), T1$l %*% t(T1$f),main = "estimated strucure: TypeI")
+#plot((Data$L_true %*% t(Data$F_true)), T2$l %*% t(T2$f),main = "estimated strucure: TypeII")
+plot(Data$L_true,T1$l,main = "estimated loading: Type I")
+plot(Data$F_true,T1$f,main = "estimated factor: Type I")
+plot(svd(Y)$d,main = "eigen values")
+#plot(Data$L_true,T2$l,main = "estimated loading: Type II")
+#plot(Data$F_true,T2$f,main = "estimated factor: Type II")
+plot(Data$Z,T2$Z, main = "estimated Z: Type II")
+plot((Data$L_true %*% t(Data$F_true)), gflash$l %*% t(gflash$f),main = "estimated strucure: flash")
+
+rmse1 = sqrt(mean((Data$L_true %*% t(Data$F_true) - T1$l %*% t(T1$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+rmse2 = sqrt(mean((Data$L_true %*% t(Data$F_true) - T2$l * (T2$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+rmse3 = sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+print(c("Type I",rmse1))
+print(c("Type II", rmse2))
+print(c("FLASH", rmse3))
+```
+
+
+####  no signal
+
+All methods provide zero rank estimations. 
+
+```{r,cache=TRUE,eval=TRUE,message=FALSE,echo=FALSE}
+set.seed(9)
+Data = datamaker(100,200,c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),0.01,c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),0.01,sqrt(1))
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+Y_vec_01 = sapply(pY_vec,function(x){rbinom(1,1,x)})
+Y_vec = 2*( Y_vec_01 - 1/2)
+# Y_vec = Y_vec_01
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+gflash = flashr::flash(Y)
+T1 = Lflash_I(Y)
+T2 = Lflash_II(Y)
+
+rmse1 = sqrt(mean((Data$L_true %*% t(Data$F_true) - T1$l * (T1$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+rmse2 = sqrt(mean((Data$L_true %*% t(Data$F_true) - T2$l * (T2$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+rmse3 = sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l * (gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+print(c("Type I",rmse1))
+print(c("Type II", rmse2))
+print(c("FLASH", rmse3))
+```
+
+###  Summary of the observations
+
+\begin{itemize}
+\item Type I and Type II are better than FLASH on the $\pm 1$ matrix $Y$.
+\item Type I seems to be more reasonable and have better results.
+\item Type II has problem of over shrinkage.
+\item Type II's result concentrates around constant $\pm \frac{1}{2}$ which is due to the $\frac{Y_{ij}}{2}$ in the update of $E_q Z_{ij}$. I think it suggests that the assumprion on $Z$ we used in Type II solution is not proper. By introduce too many parameters, we prevent the estimation of each $Z_{ij}$ borrowing information across $Y_{ij}$. This problem is also mentioned in the section of introducing Type II methods, which is $Z_{ij}$ goes to $\pm \frac{1}{2}$ rather than pure noise when $El_i = 0$ and $Ef_j = 0$.
+\item Type I seems to be a better solution avoiding thinking about the estimation (realization) of latent variable $Z$ which is over-parameterized. But due to avoiding realization of $Z$, it is hard to estimate the rank K and variance $\sigma_e^2$. This is the biggest challenge and I have no idea to solve this obstacle so far.
+\end{itemize}
+
+## Session Information
+
+```{r session-info}
+```
