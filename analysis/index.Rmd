@@ -8,5 +8,6 @@ output:
 # Logistic Flash
 
 ## Noisy Model
-Click on this [First analysis on the noisy model (rank one case)](first-analysis.html) to see my results.
+Click on this [analysis on the noisy model (rank one case)](first-analysis.html) to see my results.
 ## Direct Model
+Click on this [analysis on the direct model (rank K case)](second-analysis.html) to see my results.
