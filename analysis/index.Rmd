@@ -23,3 +23,8 @@ Click on this [analysis on the direct model (rank K case)](second-analysis.html)
 
 In the SPARFA paper [SPARFA](https://3045e02b-a-841a428b-s-sites.googlegroups.com/a/sparfa.com/sparfa/sparfa-technical-papers/files/lan14a_1.pdf?attachauth=ANoY7cqDi7z1qfnqu1RwyAJivN7MLIsG1DWnBat80BwEmzON4pK_N2loGxDDC54k_KjNR1HDc98CPoFKusIWYzjFh9iakzBnPjk5VOs7LNyzHPXAFzL_mTxxLdTheSM8qSEnuMTdfAOcZcgbmsPPGKbP_gB0muVYj7-MBAHd5fxgTAUmlpt0XUGwTl8_96LmZbsUG1BGNxI78IFybiPsMXqBVlA6D7YIcX7UmwC0xnnlo309sa182QdOYQgnbdyHTXQz9g7HHZef&attredirects=3) also proposes this direct model.
 
+## Data Analysis
+
+### Chip-Seq data from Kevin
+
+Click on this [submatrix of chiqseq data](chiseq_kevin.html) to see my results.
