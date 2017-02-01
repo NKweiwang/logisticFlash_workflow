@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Wei Wang" />
+
+
+<title>chipSeq binary data</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">logistic flash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/NKweiwang/logisticFlash_workflow">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">chipSeq binary data</h1>
+<h4 class="author"><em>Wei Wang</em></h4>
+<h4 class="date"><em>1/31/2017</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-01-31</p>
+<p><strong>Code version:</strong> 69c32a8</p>
+<div id="data-from-kevin" class="section level2">
+<h2>data from Kevin</h2>
+<p>This file is for the chip seq data Kevin give to me. And will put it to workflowr page.</p>
+<pre class="r"><code>library(data.table)
+K562 =fread(&quot;~/HG/LogisticFlash/data/K562_chr11_binary.txt&quot;)
+GM12878 = fread(&quot;~/HG/LogisticFlash/data/GM12878_chr11_binary.txt&quot;)</code></pre>
+</div>
+<div id="logistic-flash-on-submatrix-of-data" class="section level2">
+<h2>logistic flash on submatrix of data</h2>
+<p>There are a lot lines with all zero values, so we can just use the subset rows. Here I choose 851 - 1650 row for both of the data: K562 and GM12878. There is no row names of the data. As Kevin suggested, I use the a consecutive subset of the rows to make a small matrix. I choose the <strong>same 800 rows</strong> for both data sets for consistency. For both data, Logistic flash provides estimations of the underlying low rank structure and <strong>both of them are rank 2</strong>. Since the rank is small and I manualy set the <code>maxiter = 100</code>, it only takes 1min to run our algorithm.</p>
+<pre class="r"><code>K562_sub_1 = matrix(as.numeric(as.matrix(K562[851:1650,])),nrow = 800)
+colnames(K562_sub_1) = colnames(K562)
+source(&#39;~/HG/LogisticFlash/Rcode/GD_Rfuncrtions.R&#39;)
+K562_sub1_1 = 2*( K562_sub_1 - 1/2)
+GL_K562_sub_1 = GL_flash(K562_sub1_1,K = 9)</code></pre>
+<pre><code>[1] 2
+[1] &quot;stop here due to no signal&quot;</code></pre>
+<pre class="r"><code>GM12878_sub_1 = matrix(as.numeric(as.matrix(GM12878[851:1650,])),nrow = 800)
+colnames(GM12878_sub_1) = colnames(GM12878)
+source(&#39;~/HG/LogisticFlash/Rcode/GD_Rfuncrtions.R&#39;)
+GM12878_sub1_1 = 2*( GM12878_sub_1 - 1/2)
+GL_GM12878_sub_1 = GL_flash(GM12878_sub1_1,K = 9)</code></pre>
+<pre><code>[1] 2
+[1] &quot;stop here due to no signal&quot;</code></pre>
+</div>
+<div id="some-observations" class="section level2">
+<h2>some observations</h2>
+<pre class="r"><code>par(mfrow = c(2,2),mar = c(5,4,4,2)-1.9)
+barplot(GL_GM12878_sub_1$f[,1],main = &quot;factor1 GM12878&quot;)
+barplot(GL_GM12878_sub_1$f[,2],main = &quot;factor2 GM12878&quot;)
+barplot(GL_K562_sub_1$f[,1],main = &quot;factor1 K562&quot;)
+barplot(GL_K562_sub_1$f[,2],main = &quot;factor2 K562&quot;)</code></pre>
+<p><img src="figure/chiseq_kevin.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>the names of the columns are as follows (with same order as the above plots):</p>
+<pre><code>&quot;CTCF&quot; &quot;H3K27ac&quot; &quot;H3K27me3&quot; &quot;H3K36me3&quot; &quot;H3K4me1&quot; &quot;H3K4me2&quot; &quot;H3K4me3&quot; &quot;H3K9ac&quot; &quot;H4K20me1&quot; &quot;WCE&quot;</code></pre>
+<ol style="list-style-type: decimal">
+<li>for the factors: we can see, in this same region (851 - 1650), the two data have similar structure.</li>
+<li>factor 2 shows the group information of the columns.
+<ul>
+<li>three columns H3K4me1, H3K4me2, H3K4me3 group together.</li>
+<li>H3K27ac and H3K27me3 have different performance on this factor.</li>
+</ul></li>
+</ol>
+<blockquote>
+<p>Acetylation of H3K27 has also been reported. Since a lysine residue cannot be both methylated and acetylated you would expect H3K27ac to be antagonistic to the repression of gene expression by H3K27me2/3. Indeed, data are showing that H3K27ac is associated with active transcription and antagonism of H3K27me3 regulated genes (Tie et al., 2009)<a href="http://epigenie.com/key-epigenetic-players/histone-proteins-and-modifications/histone-h3k27/" class="uri">http://epigenie.com/key-epigenetic-players/histone-proteins-and-modifications/histone-h3k27/</a></p>
+</blockquote>
+<ol start="3" style="list-style-type: decimal">
+<li>for the loadings: the first loading looks similar between K562 and GM12878 as the loadings on the general factor.</li>
+</ol>
+<pre class="r"><code>par(mfrow = c(2,2),mar = c(5,4,4,2)-1.9)
+barplot(GL_GM12878_sub_1$l[,1],main = &quot;loading1 GM12878&quot;)
+barplot(GL_GM12878_sub_1$l[,2],main = &quot;loading2 GM12878&quot;)
+barplot(GL_K562_sub_1$l[,1],main = &quot;loading1 K562&quot;)
+barplot(GL_K562_sub_1$l[,2],main = &quot;loading2 K562&quot;)</code></pre>
+<p><img src="figure/chiseq_kevin.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.0 (2016-05-03)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.12.2 (unknown)
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] workflowr_0.3.0 rmarkdown_1.3  
+
+loaded via a namespace (and not attached):
+ [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   htmltools_0.3.5
+ [5] tools_3.3.0     rstudioapi_0.6  yaml_2.1.14     Rcpp_0.12.8    
+ [9] stringi_1.1.1   knitr_1.15.1    git2r_0.18.0    stringr_1.1.0  
+[13] digest_0.6.11   evaluate_0.10  </code></pre>
+</div>
+
+<hr>
+<p>
+    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
