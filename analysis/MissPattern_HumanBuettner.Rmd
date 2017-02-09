@@ -1,0 +1,93 @@
+---
+title: "missing pattern"
+author: "Wei Wang"
+date: "2/8/2017"
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+
+## data from joyice
+
+Try to find the pattern of the missing position from joyce's data. This a count data with many zeros which are consider as "missing". I want to find if there is a low rank pattern for the missing positions. So I treat the data as Boolean data which are `miss` or `non-miss`. To deal with the Boolean data factor analysis. We can apply Logistic Flash.
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+library(Biobase)
+# Install and load the required library
+library(Biobase)
+# Load Buettner data
+devtools::install_github("jhsiao999/singleCellRNASeqHumanBuettnerTCell")
+library(singleCellRNASeqHumanBuettnerTCell)
+# Extract expression data
+eset <- get(data("HumanBuettnerTCell"))
+# The count matrix is 7073 gene by 81 samples
+counts <- exprs(eset)
+#dim(counts)
+# View sample information (these samples were experimentally-determined to be in two functionally-distinct clusters)
+#pData(eset)
+cluster <- pData(eset)$Cluster
+# table(cluster)
+Binary_count = 1 * (counts != 0)
+Boolean_count = 2*( Binary_count - 1/2)
+```
+
+
+I run Logistic flash (greedy algorithm) with $K=20$ and it only gives me 3 factors.
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+source('~/HG/LogisticFlash/Rcode/GD_Rfuncrtions.R')
+# MissPattern = GL_flash(Boolean_count,K = 20)
+# saveRDS(MissPattern,file = "~/HG/LogisticFlash/data/MissPatternHumanBuettner_K20.rds")
+MissPattern = readRDS("~/HG/LogisticFlash/data/MissPatternHumanBuettner_K20.rds")
+```
+
+
+## factors: need the name of columns
+
+I think I need the name of each cell type or labels for the cell type.
+
+```{r}
+par(mfrow = c(2,2),mar = c(5,4,4,2)-1.9)
+barplot(MissPattern$f[,1],main = "factor 1")
+barplot(MissPattern$f[,2],main = "factor 1")
+barplot(MissPattern$f[,3],main = "factor 1")
+```
+
+### Is there missing pattern?
+
+I think so. If there is only one factor which is common factor, I thinks it just stand for the common signal or the common missing position. The factor 2 and factor 3 should contain the information of missing pattern.
+
+## plot using the cluster in the data
+
+**I don't know what is the** `cluster` and I guess this should be some useful label for the data. Here I think the factor 2 and factor 3 contains the information of the missing position, so I plot the factor 2 vs factor 3. There is some pattern in this plot. I use the label beacuse I can't find other labels. :)
+
+### other type of labels?
+
+I think there is some clustering pattern in the plot, but the cluster might be different from the label `cluster` in the data. (I don't know what is `cluster`.) 
+
+
+```{r}
+library(ggplot2)
+plot_df_f = data.frame(MissPattern$f)
+p <- ggplot(plot_df_f, aes(V3, V2, label = (as.character(cluster) )))
+# p + geom_text()
+p + geom_label(aes(fill = factor(cluster)), colour = "white", fontface = "bold")
+
+```
+
+
+
+## Session Information
+
+```{r session-info}
+```

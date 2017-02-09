@@ -28,3 +28,7 @@ In the SPARFA paper [SPARFA](https://3045e02b-a-841a428b-s-sites.googlegroups.co
 ### Chip-Seq data from Kevin
 
 Click on this [submatrix of chiqseq data](chiseq_kevin.html) to see my results.
+
+### Missing pattern data from Joyce
+
+Click on this [single cell data for missing pattern](MissPattern_HumanBuettner.html) to see my results.
