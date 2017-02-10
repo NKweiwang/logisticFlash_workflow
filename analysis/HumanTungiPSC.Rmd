@@ -150,6 +150,89 @@ par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.6)
 
 ### cell cycle information on factor
 
+```{r,echo=FALSE}
+# This function estimates cell cycle phase 
+# The method is adapted from Whitefield et al.
+cellcycle_phase_score <- function(cellcycle_geneslist, data_expression) {
+
+  phase_score <- sapply(cellcycle_geneslist, function(xx){
+    
+    ## make gene by cell tables for each cell cycle phase
+    expression_eachphase <- data_expression[rownames(data_expression) %in% unlist(xx) ,]
+  
+    ## add to each table the average expression of phase-specific genes
+    combined_matrix <- rbind(expression_eachphase, average = apply(data_expression,2,mean) )
+    
+    ## compute correlation between gene expression and phase-specific average gene expression
+    cor_matrix <- cor(t(combined_matrix))
+    cor_vector <- cor_matrix[,dim(cor_matrix)[1]]
+    
+    ## restrict to correlation >= 0.3 
+    expression_eachphase_restricted <- expression_eachphase[rownames(expression_eachphase) %in% names(cor_vector[cor_vector >= 0.3]),]
+    
+    ## output phase specific scores (mean of normalized expression levels in the phase)
+    apply(expression_eachphase, 2, mean)
+  })
+
+  ## Two-step normalization (by gene and by cell)
+  ## by row (gene)
+  gene_mean <- apply(phase_score, 1, mean)
+  gene_sd   <- apply(phase_score, 1, sd)
+  phase_score_gene_normed <- do.call(rbind, 
+                                lapply(1:dim(phase_score)[1], function(i) {
+                                    (phase_score[i,] - gene_mean[i])/gene_sd[i]
+                                })  )
+  
+  ## by column (cell)
+  cell_mean <- apply(phase_score_gene_normed, 2, mean)
+  cell_sd   <- apply(phase_score_gene_normed, 2, sd)
+  score_final_normed <- do.call(cbind, 
+                            lapply(1:dim(phase_score_gene_normed)[2], function(i) {
+                                (phase_score_gene_normed[, i] - cell_mean[i])/cell_sd[i]
+                            }) )
+  return(score_final_normed)
+}
+
+cellcycle_genes <- read.table("~/HG/LogisticFlash_workflow/data/cellcyclegenes.txt",
+                               header = TRUE, sep = "\t",
+                               stringsAsFactors = FALSE)
+colnames(cellcycle_genes)[colnames(cellcycle_genes) == "G2.M"] <- "G2"
+colnames(cellcycle_genes)[colnames(cellcycle_genes) == "M"] <- "G2.M"
+phase <- apply( cellcycle_phase_score(cellcycle_genes, counts), 
+                       1, function(x) colnames(cellcycle_genes)[which.max(x)])
+```
+
+
+```{r}
+library(ggplot2)
+p <- ggplot(plot_df, aes(total_count, f2, label = (as.character(phase) )))
+# p + geom_text()
+p + geom_label(aes(fill = factor(phase)), colour = "white", fontface = "bold")
+numeric_phase = phase
+numeric_phase[which(phase == "G1.S")] = "1"
+numeric_phase[which(phase == "S")] = "2"
+numeric_phase[which(phase == "G2")] = "3"
+numeric_phase[which(phase == "G2.M")] = "4"
+numeric_phase[which(phase == "M.G1")] = "5"
+plot(as.numeric(as.factor(phase)),MissPattern$f[,2],type = "p", main = "cell cycle phase vs factor 2")
+plot(as.numeric(as.factor(phase)),plot_df$total_count, type = "p", main = "cell cycle phase vs total count")
+```
+
+### point the cell cycle gene into the factor 2 (this might be not correct)
+
+```{r}
+plot(MissPattern$l[,2],pch = 16)
+G1.S_index = which(row.names(counts) %in% cellcycle_genes$G1.S)
+S_index = which(row.names(counts) %in% cellcycle_genes$S)
+G2_index = which(row.names(counts) %in% cellcycle_genes$G2)
+G2.M_index = which(row.names(counts) %in% cellcycle_genes$G2.M)
+M.G1_index = which(row.names(counts) %in% cellcycle_genes$M.G1)
+points(G1.S_index, MissPattern$l[G1.S_index,2], pch = 16, col = "red")
+points(S_index, MissPattern$l[S_index,2], pch = 16, col = "yellow")
+points(G2_index, MissPattern$l[G2_index,2], pch = 16, col = "skyblue")
+points(G2.M_index, MissPattern$l[G2.M_index,2], pch = 16, col = "blue")
+points(M.G1_index, MissPattern$l[M.G1_index,2], pch = 16, col = "green")
+```
 
 ## Session Information
 
