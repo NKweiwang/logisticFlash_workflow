@@ -1,0 +1,91 @@
+---
+title: "MouseBuettnerESC missing pattern analysis"
+author: "wei wang"
+date: 2017-02-10
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+## data 
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+# Biobase is for accessing expressionSet objects
+library(Biobase)
+
+# Load Buettner data
+devtools::install_github("jhsiao999/singleCellRNASeqMouseBuettnerESC")
+library(singleCellRNASeqMouseBuettnerESC)
+
+# Extract expression data
+eset <- get(data("MouseBuettnerESC"))
+
+# Access the count matrix
+counts <- exprs(eset)
+dim(counts)
+
+Binary_count = 1 * (counts != 0)
+Boolean_count = 2*( Binary_count - 1/2)
+# Access cell sample information 
+total_counts = apply(counts,2,sum)
+```
+
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+source('~/HG/LogisticFlash/Rcode/GD_Rfuncrtions.R')
+# MissPattern = GL_flash(Boolean_count,K = 10)
+# saveRDS(MissPattern,file = "~/HG/LogisticFlash/data/MissPatternMouseBuettnerESC_K10.rds")
+MissPattern = readRDS("~/HG/LogisticFlash/data/MissPatternMouseBuettnerESC_K10.rds")
+```
+
+I get 9 factors, but I cut it to four based on the PVE...(need more careful at that).
+
+```{r,echo=FALSE}
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.8)
+for( i in 1:4) barplot(MissPattern$f[,i],main = paste("factor",i))
+total_counts = apply(counts,2,sum)
+for( i in 1:4) plot(total_counts,MissPattern$f[,i],main = paste("factor",i,"vs","total counts"))
+```
+## factor 1 for total missing
+
+this is similar for all studies.
+
+## factor 2 for the outlier 
+
+we can see that factor are mainly tell use about the ourlier of the total count, even if we only use the binary data.
+
+## factor 3 and factor 4 for the cell cycle
+
+```{r}
+phase_lable = colnames(counts)
+which_G1 <- grep("G1", colnames(counts))
+which_G2 <- grep("G2", colnames(counts))
+which_S <- grep("S_", colnames(counts))
+phase_lable[which_G1] = "G1"
+phase_lable[which_S] = "S"
+phase_lable[which_G2] = "G2"
+library(ggplot2)
+plot_df = data.frame(MissPattern$f)
+colnames(plot_df) = c("f1","f2","f3","f4")
+plot_df$total_count = total_counts
+p <- ggplot(plot_df, aes(total_count, f3, label = (as.character(phase_lable) )))
+# p + geom_text()
+p + geom_label(aes(fill = factor(phase_lable)), colour = "white", fontface = "bold")
+p <- ggplot(plot_df, aes(total_count, f4, label = (as.character(phase_lable) )))
+# p + geom_text()
+p + geom_label(aes(fill = factor(phase_lable)), colour = "white", fontface = "bold")
+```
+
+## Session Information
+
+```{r session-info}
+```
