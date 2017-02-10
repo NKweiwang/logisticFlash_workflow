@@ -1,0 +1,157 @@
+---
+title: "HumanTungiPSC missing pattern analysis"
+author: "wei wang"
+date: 2017-02-09
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+# Biobase is for accessing expressionSet objects
+library(Biobase)
+
+# Load Buettner data
+devtools::install_github("jhsiao999/singleCellRNASeqHumanTungiPSC")
+library(singleCellRNASeqHumanTungiPSC)
+
+# Extract expression data
+eset <- get(data("HumanTungiPSC"))
+
+# Access the count matrix
+counts <- exprs(eset)
+dim(counts)
+
+Binary_count = 1 * (counts != 0)
+Boolean_count = 2*( Binary_count - 1/2)
+# Access cell sample information 
+#pData(eset)
+#cluster <- pData(eset)$Cluster
+#table(cluster)
+barlabels = pData(HumanTungiPSC)
+total_counts = apply(counts,2,sum)
+```
+
+
+## run Logistic Flash on the missing position
+
+We run the Logistic flash with greedy algorithm
+
+Before run the algorithm, we have some guess or hypothesis on the missing pattern
+
+### hypothesis
+
+1. the first factor should be correlated with the total counts of each cell type, which represent the total missing pattern.
+2. first factor(total missing pattern) should be correlated with total counts.
+3. there are two types of missing patterns besides the first factor (total missing)
+  + "technical missing"
+  + "system missing"
+4. "technical missing" should be correlated with individual and bacth.
+5. "system missing" should be correlated with cell cycle and total counts.
+6. "technical missing" should not be correlated with the cell cycle (or total count)
+
+
+- total counts is column sum of the raw counts data
+
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+source('~/HG/LogisticFlash/Rcode/GD_Rfuncrtions.R')
+# MissPattern = GL_flash(Boolean_count,K = 20)
+# saveRDS(MissPattern,file = "~/HG/LogisticFlash/data/MissPatternHumanTungiPSC_K20.rds")
+MissPattern = readRDS("~/HG/LogisticFlash/data/MissPatternHumanTungiPSC_K20.rds")
+```
+
+
+## Missing Pattern from Logistic Flash
+
+In the following result, we find that
+
+1. factor 1 is the total missing pattern, which represent the total missing for each cell type. 
+2. factor 1 is correlated with total counts.
+3. factor 2 is correlated with total counts.
+4. all other factors (factor3 - factor8) has nothing to do with total counts.
+5. factor 3 - factor 8 reflect the information of individual and batch.
+
+we can guess that:
+
+1. factor one is total missing pattern
+2. factor two is "system missing" ("biological missing")
+3. factor three - factor eight are "technical missing"
+
+
+```{r,echo=FALSE}
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.6)
+for( i in 1:8) barplot(MissPattern$f[,i],main = paste("factor",i))
+total_counts = apply(counts,2,sum)
+for( i in 1:8) plot(total_counts,MissPattern$f[,i],main = paste("factor",i,"vs","total counts"))
+```
+
+
+### individual information on factors
+
+```{r,echo=FALSE}
+library(ggplot2)
+plot_df = data.frame(MissPattern$f)
+colnames(plot_df) = c("f1","f2","f3","f4","f5","f6","f7","f8")
+plot_df$total_count = total_counts
+# scatter plot
+  par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.6)
+  p1 <- ggplot(plot_df, aes(total_count, f1, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+  # p + geom_text()
+  p1 + geom_label(aes(fill = factor(barlabels$individual)), colour = "white", fontface = "bold")
+
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.6)
+  p2 <- ggplot(plot_df, aes(total_count, f2, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+  # p + geom_text()
+  p2 + geom_label(aes(fill = factor(barlabels$individual)), colour = "white", fontface = "bold")
+  
+  par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.6)
+  p3 <- ggplot(plot_df, aes(total_count, f3, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+  # p + geom_text()
+  p3 + geom_label(aes(fill = factor(barlabels$individual)), colour = "white", fontface = "bold")
+  
+  par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.6)
+  p4 <- ggplot(plot_df, aes(total_count, f4, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+  # p + geom_text()
+  p4 + geom_label(aes(fill = factor(barlabels$individual)), colour = "white", fontface = "bold")
+  
+  par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.6)
+  p5 <- ggplot(plot_df, aes(total_count, f5, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+  # p + geom_text()
+  p5 + geom_label(aes(fill = factor(barlabels$individual)), colour = "white", fontface = "bold")
+  
+  par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.6)
+  p6 <- ggplot(plot_df, aes(total_count, f6, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+  # p + geom_text()
+  p6 + geom_label(aes(fill = factor(barlabels$individual)), colour = "white", fontface = "bold")
+  
+  par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.6)
+  p7 <- ggplot(plot_df, aes(total_count, f7, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+  # p + geom_text()
+  p7 + geom_label(aes(fill = factor(barlabels$individual)), colour = "white", fontface = "bold")
+  
+  par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.6)
+  p8 <- ggplot(plot_df, aes(total_count, f8, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+  # p + geom_text()
+  p8 + geom_label(aes(fill = factor(barlabels$individual)), colour = "white", fontface = "bold")
+
+```
+
+
+### cell cycle information on factor
+
+
+## Session Information
+
+```{r session-info}
+```

@@ -31,4 +31,6 @@ Click on this [submatrix of chiqseq data](chiseq_kevin.html) to see my results.
 
 ### Missing pattern data from Joyce
 
-Click on this [single cell data for missing pattern](MissPattern_HumanBuettner.html) to see my results.
+Click on this [single cell data for missing pattern mices](MissPattern_HumanBuettner.html) to see my results.
+
+Click on this [single cell data for missing pattern human](HumanTungiPSC.html) to see my results.
