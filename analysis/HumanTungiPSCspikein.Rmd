@@ -1,0 +1,61 @@
+---
+title: "HumanTungiPSC missing pattern analysis"
+author: "wei wang"
+date: 2017-02-10
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+# Biobase is for accessing expressionSet objects
+library(Biobase)
+
+# Load Buettner data
+devtools::install_github("jhsiao999/singleCellRNASeqHumanTungiPSC")
+library(singleCellRNASeqHumanTungiPSC)
+
+# Extract expression data
+eset <- get(data("HumanTungiPSC"))
+
+# Access the count matrix
+counts <- exprs(eset)
+dim(counts)
+
+Binary_count = 1 * (counts != 0)
+Boolean_count = 2*( Binary_count - 1/2)
+# Access cell sample information 
+#pData(eset)
+#cluster <- pData(eset)$Cluster
+#table(cluster)
+barlabels = pData(HumanTungiPSC)
+total_counts = apply(counts,2,sum)
+
+which_ercc <- grep("ERCC", rownames(counts))
+ercc_count <- counts[which_ercc,]
+B_ercc_count = Boolean_count[which_ercc,]
+```
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+source('~/HG/LogisticFlash/Rcode/GD_Rfuncrtions.R')
+MissPattern = GL_flash(B_ercc_count,K = 20)
+# saveRDS(MissPattern,file = "~/HG/LogisticFlash/data/MissPatternHumanTungiPSC_K20.rds")
+# MissPattern = readRDS("~/HG/LogisticFlash/data/MissPatternHumanTungiPSC_K20.rds")
+```
+
+So, there is no pattern learned from our algorithm.
+
+## Session Information
+
+```{r session-info}
+```

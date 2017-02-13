@@ -33,6 +33,7 @@ Click on this [submatrix of chiqseq data](chiseq_kevin.html) to see my results.
 
 Click on this [single cell data for missing pattern HumanBuettner](MissPattern_HumanBuettner.html) to see my results.
 
-Click on this [single cell data for missing pattern HumanTungiPSC](HumanTungiPSC.html) to see my results.
+Click on this [single cell data for missing pattern HumanTungiPSC](HumanTungiPSC.html) to see my results; and click this 
+[HumanTungiPSC spike in](HumanTungiPSCspikein.html) to see the result of the spike in gene.
 
 Click on this [single cell data for missing pattern MouseBuettnerESC](MouseBuettnerESC.html) to see my results.
