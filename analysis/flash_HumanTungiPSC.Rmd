@@ -1,0 +1,211 @@
+---
+title: "Flash on HumanTungiPSC"
+author: "wei wang"
+date: 2017-02-14
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+# Biobase is for accessing expressionSet objects
+library(Biobase)
+
+# Load Buettner data
+devtools::install_github("jhsiao999/singleCellRNASeqHumanTungiPSC")
+library(singleCellRNASeqHumanTungiPSC)
+
+# Extract expression data
+eset <- get(data("HumanTungiPSC"))
+
+# Access the count matrix
+counts <- exprs(eset)
+dim(counts)
+
+Binary_count = 1 * (counts != 0)
+Boolean_count = 2*( Binary_count - 1/2)
+# Access cell sample information 
+#pData(eset)
+#cluster <- pData(eset)$Cluster
+#table(cluster)
+barlabels = pData(HumanTungiPSC)
+total_counts = apply(counts,2,sum)
+
+```
+
+## FLASH on the log CPM data
+
+### total log CPM data without imputation
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+total_logcpm = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/HumanTungiPSC/logcpm/bflash_var_col.rds")
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+for(i in 1:16) barplot(total_logcpm$l[,i])
+pve = sapply(seq(1,26),function(x){sum((total_logcpm$l[,x] %*% t(total_logcpm$f[,x]))^2)})
+plot(pve)
+plot(log(pve),main = "log")
+```
+
+### missing pattern
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+MissPattern = readRDS("~/HG/LogisticFlash/data/MissPatternHumanTungiPSC_K20.rds")
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+for( i in 1:8) barplot(MissPattern$f[,i],main = paste("factor",i))
+pve = sapply(seq(1,8),function(x){sum((MissPattern$l[,x] %*% t(MissPattern$f[,x]))^2)})
+# plot(pve)
+plot(log(pve),main = "log")
+```
+
+
+```{r}
+non_miss_logcpm = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/HumanTungiPSC/logcpm/bflash_non_miss_var_col.rds")
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+for(i in 1:16) barplot(non_miss_logcpm$l[,i])
+pve = sapply(seq(1,30),function(x){sum((non_miss_logcpm$l[,x] %*% t(non_miss_logcpm$f[,x]))^2)})
+plot(pve)
+plot(log(pve),main = "log")
+```
+
+
+### log cpm with impute
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+logcpm_imput = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/HumanTungiPSC/logcpm/gflash_var_col_imput.rds")
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+for(i in 1:19) barplot(logcpm_imput$l[,i])
+pve = sapply(seq(1,19),function(x){sum((logcpm_imput$l[,x] %*% t(logcpm_imput$f[,x]))^2)})
+plot(pve)
+plot(log(pve),main = "log")
+```
+
+## compare the impute and non-impute methods
+
+I find the imputation from flash have small difference from the logcpm from voom.
+
+```{r}
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+for(i in 1:9) plot(total_logcpm$l[,i],logcpm_imput$l[,i])
+```
+
+does the imputaion help or not?
+
+```{r}
+par(mfrow = c(2,3),mar = c(5,4,4,2) - 1.9)
+library(ggplot2)
+plot_df = data.frame(total_logcpm$l[,1:8])
+colnames(plot_df) = c("f1","f2","f3","f4","f5","f6","f7","f8")
+plot_df$total_count = total_counts
+p1 <- ggplot(plot_df, aes(total_count, f4, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = "white", fontface = "bold")
+p1 <- ggplot(plot_df, aes(total_count, f6, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = "white", fontface = "bold")
+p1 <- ggplot(plot_df, aes(total_count, f7, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = "white", fontface = "bold")
+```
+
+```{r}
+par(mfrow = c(2,3),mar = c(5,4,4,2) - 1.9)
+library(ggplot2)
+plot_df = data.frame(logcpm_imput$l[,1:8])
+colnames(plot_df) = c("f1","f2","f3","f4","f5","f6","f7","f8")
+plot_df$total_count = total_counts
+p1 <- ggplot(plot_df, aes(total_count, f4, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = "white", fontface = "bold")
+p1 <- ggplot(plot_df, aes(total_count, f6, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = "white", fontface = "bold")
+p1 <- ggplot(plot_df, aes(total_count, f7, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = "white", fontface = "bold")
+```
+
+## what missing patterns learns?
+
+
+```{r}
+library(ggplot2)
+plot_df = data.frame(logcpm_imput$l[,1:8])
+colnames(plot_df) = c("f1","f2","f3","f4","f5","f6","f7","f8")
+plot_df$total_count = total_counts
+p1 <- ggplot(plot_df, aes(total_count, f2, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$individual)), colour = "white", fontface = "bold")
+p1 <- ggplot(plot_df, aes(total_count, f3, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$individual)), colour = "white", fontface = "bold")
+
+```
+
+
+```{r}
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+which_ercc <- grep("ERCC", rownames(counts))
+plot(total_logcpm$f[,2],MissPattern$l[-which_ercc,2])
+plot(total_logcpm$f[,3],MissPattern$l[-which_ercc,3])
+plot(total_logcpm$f[,4],MissPattern$l[-which_ercc,4])
+plot(logcpm_imput$f[,2],MissPattern$l[-which_ercc,2])
+plot(logcpm_imput$f[,3],MissPattern$l[-which_ercc,3])
+plot(logcpm_imput$f[,4],MissPattern$l[-which_ercc,4])
+plot(total_logcpm$f[,2],logcpm_imput$f[,2])
+plot(total_logcpm$f[,3],logcpm_imput$f[,3])
+plot(total_logcpm$f[,4],logcpm_imput$f[,4])
+cor(total_logcpm$f[,2],MissPattern$l[-which_ercc,2])
+cor(total_logcpm$f[,3],MissPattern$l[-which_ercc,3])
+cor(total_logcpm$f[,4],MissPattern$l[-which_ercc,4])
+cor(logcpm_imput$f[,2],MissPattern$l[-which_ercc,2])
+cor(logcpm_imput$f[,3],MissPattern$l[-which_ercc,3])
+cor(logcpm_imput$f[,4],MissPattern$l[-which_ercc,4])
+cor(total_logcpm$f[,2],logcpm_imput$f[,2])
+cor(total_logcpm$f[,3],logcpm_imput$f[,3])
+cor(total_logcpm$f[,4],logcpm_imput$f[,4])
+```
+
+
+```{r}
+which(logcpm_imput$l[,3]>0)
+colnames(counts)[445]
+any_other = data.frame(rawcount = as.vector(counts[,c(400:444,446:500)]))
+out_lier = data.frame(rawcount = counts[,445])
+any_other$name = "others"
+out_lier$name = colnames(counts)[445]
+hist_compare <- rbind(any_other, out_lier)
+ggplot(hist_compare, aes(rawcount, fill = name)) + geom_density(alpha = 0.2)
+any_other = data.frame(rawcount = as.vector(counts[,c(437:445)]))
+out_lier = data.frame(rawcount = counts[,445])
+any_other$name = "others"
+out_lier$name = colnames(counts)[445]
+hist_compare <- rbind(any_other, out_lier)
+ggplot(hist_compare, aes(rawcount, fill = name)) + geom_density(alpha = 0.2)
+ks.test(counts[,445],as.vector(counts[,c(437:445)]))
+```
+
+
+```{r}
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+plot(MissPattern$f[440:450,3])
+plot(total_logcpm$l[440:450,3])
+plot(logcpm_imput$l[440:450,3])
+```
+
+```{r}
+# in the same batch same well
+apply(counts[,437:445],2,sum)
+apply(Binary_count[,440:450],2,sum)
+batch_Dr2 = counts[,437:445]
+cor(counts[,445],counts[,437])
+image(cor(batch_Dr2))
+image(cor(Binary_count[,437:445]))
+```
+
+
+
+## Session Information
+
+```{r session-info}
+```
