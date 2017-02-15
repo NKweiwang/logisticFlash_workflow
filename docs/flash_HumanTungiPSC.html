@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="wei wang" />
+
+<meta name="date" content="2017-02-14" />
+
+<title>Flash on HumanTungiPSC</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">logistic flash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/NKweiwang/logisticFlash_workflow">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Flash on HumanTungiPSC</h1>
+<h4 class="author"><em>wei wang</em></h4>
+<h4 class="date"><em>2017-02-14</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-02-15</p>
+<p><strong>Code version:</strong> c0afed5</p>
+<pre class="r"><code># Biobase is for accessing expressionSet objects
+library(Biobase)
+
+# Load Buettner data
+devtools::install_github(&quot;jhsiao999/singleCellRNASeqHumanTungiPSC&quot;)
+library(singleCellRNASeqHumanTungiPSC)
+
+# Extract expression data
+eset &lt;- get(data(&quot;HumanTungiPSC&quot;))
+
+# Access the count matrix
+counts &lt;- exprs(eset)
+dim(counts)</code></pre>
+<pre><code>[1] 12235   560</code></pre>
+<pre class="r"><code>Binary_count = 1 * (counts != 0)
+Boolean_count = 2*( Binary_count - 1/2)
+# Access cell sample information 
+#pData(eset)
+#cluster &lt;- pData(eset)$Cluster
+#table(cluster)
+barlabels = pData(HumanTungiPSC)
+total_counts = apply(counts,2,sum)</code></pre>
+<div id="flash-on-the-log-cpm-data" class="section level2">
+<h2>FLASH on the log CPM data</h2>
+<div id="total-log-cpm-data-without-imputation" class="section level3">
+<h3>total log CPM data without imputation</h3>
+<pre class="r"><code>total_logcpm = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/HumanTungiPSC/logcpm/bflash_var_col.rds&quot;)
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+for(i in 1:16) barplot(total_logcpm$l[,i])</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pve = sapply(seq(1,26),function(x){sum((total_logcpm$l[,x] %*% t(total_logcpm$f[,x]))^2)})
+plot(pve)
+plot(log(pve),main = &quot;log&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="missing-pattern" class="section level3">
+<h3>missing pattern</h3>
+<pre class="r"><code>MissPattern = readRDS(&quot;~/HG/LogisticFlash/data/MissPatternHumanTungiPSC_K20.rds&quot;)
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+for( i in 1:8) barplot(MissPattern$f[,i],main = paste(&quot;factor&quot;,i))
+pve = sapply(seq(1,8),function(x){sum((MissPattern$l[,x] %*% t(MissPattern$f[,x]))^2)})
+# plot(pve)
+plot(log(pve),main = &quot;log&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>non_miss_logcpm = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/HumanTungiPSC/logcpm/bflash_non_miss_var_col.rds&quot;)
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+for(i in 1:16) barplot(non_miss_logcpm$l[,i])</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pve = sapply(seq(1,30),function(x){sum((non_miss_logcpm$l[,x] %*% t(non_miss_logcpm$f[,x]))^2)})
+plot(pve)
+plot(log(pve),main = &quot;log&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="log-cpm-with-impute" class="section level3">
+<h3>log cpm with impute</h3>
+<pre class="r"><code>logcpm_imput = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/HumanTungiPSC/logcpm/gflash_var_col_imput.rds&quot;)
+par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+for(i in 1:19) barplot(logcpm_imput$l[,i])</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pve = sapply(seq(1,19),function(x){sum((logcpm_imput$l[,x] %*% t(logcpm_imput$f[,x]))^2)})
+plot(pve)
+plot(log(pve),main = &quot;log&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="compare-the-impute-and-non-impute-methods" class="section level2">
+<h2>compare the impute and non-impute methods</h2>
+<p>I find the imputation from flash have small difference from the logcpm from voom.</p>
+<pre class="r"><code>par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+for(i in 1:9) plot(total_logcpm$l[,i],logcpm_imput$l[,i])</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>does the imputaion help or not?</p>
+<pre class="r"><code>par(mfrow = c(2,3),mar = c(5,4,4,2) - 1.9)
+library(ggplot2)
+plot_df = data.frame(total_logcpm$l[,1:8])
+colnames(plot_df) = c(&quot;f1&quot;,&quot;f2&quot;,&quot;f3&quot;,&quot;f4&quot;,&quot;f5&quot;,&quot;f6&quot;,&quot;f7&quot;,&quot;f8&quot;)
+plot_df$total_count = total_counts
+p1 &lt;- ggplot(plot_df, aes(total_count, f4, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = &quot;white&quot;, fontface = &quot;bold&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p1 &lt;- ggplot(plot_df, aes(total_count, f6, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = &quot;white&quot;, fontface = &quot;bold&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p1 &lt;- ggplot(plot_df, aes(total_count, f7, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = &quot;white&quot;, fontface = &quot;bold&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(2,3),mar = c(5,4,4,2) - 1.9)
+library(ggplot2)
+plot_df = data.frame(logcpm_imput$l[,1:8])
+colnames(plot_df) = c(&quot;f1&quot;,&quot;f2&quot;,&quot;f3&quot;,&quot;f4&quot;,&quot;f5&quot;,&quot;f6&quot;,&quot;f7&quot;,&quot;f8&quot;)
+plot_df$total_count = total_counts
+p1 &lt;- ggplot(plot_df, aes(total_count, f4, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = &quot;white&quot;, fontface = &quot;bold&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p1 &lt;- ggplot(plot_df, aes(total_count, f6, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = &quot;white&quot;, fontface = &quot;bold&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p1 &lt;- ggplot(plot_df, aes(total_count, f7, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$batch)), colour = &quot;white&quot;, fontface = &quot;bold&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="what-missing-patterns-learns" class="section level2">
+<h2>what missing patterns learns?</h2>
+<pre class="r"><code>library(ggplot2)
+plot_df = data.frame(logcpm_imput$l[,1:8])
+colnames(plot_df) = c(&quot;f1&quot;,&quot;f2&quot;,&quot;f3&quot;,&quot;f4&quot;,&quot;f5&quot;,&quot;f6&quot;,&quot;f7&quot;,&quot;f8&quot;)
+plot_df$total_count = total_counts
+p1 &lt;- ggplot(plot_df, aes(total_count, f2, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$individual)), colour = &quot;white&quot;, fontface = &quot;bold&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p1 &lt;- ggplot(plot_df, aes(total_count, f3, label = (as.character(factor(barlabels$individual )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(barlabels$individual)), colour = &quot;white&quot;, fontface = &quot;bold&quot;)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(3,3),mar = c(5,4,4,2) - 1.9)
+which_ercc &lt;- grep(&quot;ERCC&quot;, rownames(counts))
+plot(total_logcpm$f[,2],MissPattern$l[-which_ercc,2])
+plot(total_logcpm$f[,3],MissPattern$l[-which_ercc,3])
+plot(total_logcpm$f[,4],MissPattern$l[-which_ercc,4])
+plot(logcpm_imput$f[,2],MissPattern$l[-which_ercc,2])
+plot(logcpm_imput$f[,3],MissPattern$l[-which_ercc,3])
+plot(logcpm_imput$f[,4],MissPattern$l[-which_ercc,4])
+plot(total_logcpm$f[,2],logcpm_imput$f[,2])
+plot(total_logcpm$f[,3],logcpm_imput$f[,3])
+plot(total_logcpm$f[,4],logcpm_imput$f[,4])</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cor(total_logcpm$f[,2],MissPattern$l[-which_ercc,2])</code></pre>
+<pre><code>[1] 0.3710225</code></pre>
+<pre class="r"><code>cor(total_logcpm$f[,3],MissPattern$l[-which_ercc,3])</code></pre>
+<pre><code>[1] -0.7513462</code></pre>
+<pre class="r"><code>cor(total_logcpm$f[,4],MissPattern$l[-which_ercc,4])</code></pre>
+<pre><code>[1] 0.4606355</code></pre>
+<pre class="r"><code>cor(logcpm_imput$f[,2],MissPattern$l[-which_ercc,2])</code></pre>
+<pre><code>[1] -0.6254888</code></pre>
+<pre class="r"><code>cor(logcpm_imput$f[,3],MissPattern$l[-which_ercc,3])</code></pre>
+<pre><code>[1] 0.4003885</code></pre>
+<pre class="r"><code>cor(logcpm_imput$f[,4],MissPattern$l[-which_ercc,4])</code></pre>
+<pre><code>[1] -0.242261</code></pre>
+<pre class="r"><code>cor(total_logcpm$f[,2],logcpm_imput$f[,2])</code></pre>
+<pre><code>[1] -0.8326584</code></pre>
+<pre class="r"><code>cor(total_logcpm$f[,3],logcpm_imput$f[,3])</code></pre>
+<pre><code>[1] -0.8084712</code></pre>
+<pre class="r"><code>cor(total_logcpm$f[,4],logcpm_imput$f[,4])</code></pre>
+<pre><code>[1] -0.8272185</code></pre>
+<pre class="r"><code>which(logcpm_imput$l[,3]&gt;0)</code></pre>
+<pre><code>  [1]   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17
+ [18]  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34
+ [35]  35  36  37  38  39  40  41  42  43  44  45  46  47  48  49  50  51
+ [52]  52  53  54  55  56  57  58  59  60  61  62  63  64  65  66  67  68
+ [69]  69  70  71  72  73  74  75  76  77  78  79  80  81  82  83  84  85
+ [86]  86  87  88  89  90  91  92  93  94  95  96  97  98  99 100 101 102
+[103] 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119
+[120] 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136
+[137] 137 138 139 140 141 142 143 147 148 149 151 152 153 154 155 156 158
+[154] 161 162 163 164 165 166 168 169 170 171 173 174 175 178 179 180 181
+[171] 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198
+[188] 199 200 201 202 203 204 205 206 208 209 210 211 213 214 215 216 217
+[205] 218 220 222 223 224 225 226 228 229 230 231 232 233 234 235 236 237
+[222] 238 239 240 241 243 244 245 247 248 249 250 251 252 253 254 255 256
+[239] 257 258 259 260 261 262 263 264 265 266 267 268 269 270 271 272 273
+[256] 274 275 276 277 278 279 280 281 282 283 284 285 286 287 288 289 290
+[273] 291 292 293 294 295 296 298 299 300 301 303 305 306 307 308 309 310
+[290] 311 312 313 315 316 317 318 319 320 321 322 324 325 326 328 329 330
+[307] 331 332 445 475</code></pre>
+<pre class="r"><code>colnames(counts)[445]</code></pre>
+<pre><code>[1] &quot;NA19239.r2.D12&quot;</code></pre>
+<pre class="r"><code>any_other = data.frame(rawcount = as.vector(counts[,c(400:444,446:500)]))
+out_lier = data.frame(rawcount = counts[,445])
+any_other$name = &quot;others&quot;
+out_lier$name = colnames(counts)[445]
+hist_compare &lt;- rbind(any_other, out_lier)
+ggplot(hist_compare, aes(rawcount, fill = name)) + geom_density(alpha = 0.2)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>any_other = data.frame(rawcount = as.vector(counts[,c(437:445)]))
+out_lier = data.frame(rawcount = counts[,445])
+any_other$name = &quot;others&quot;
+out_lier$name = colnames(counts)[445]
+hist_compare &lt;- rbind(any_other, out_lier)
+ggplot(hist_compare, aes(rawcount, fill = name)) + geom_density(alpha = 0.2)</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ks.test(counts[,445],as.vector(counts[,c(437:445)]))</code></pre>
+<pre><code>Warning in ks.test(counts[, 445], as.vector(counts[, c(437:445)])): p-value
+will be approximate in the presence of ties</code></pre>
+<pre><code>
+    Two-sample Kolmogorov-Smirnov test
+
+data:  counts[, 445] and as.vector(counts[, c(437:445)])
+D = 0.023248, p-value = 1.354e-05
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+plot(MissPattern$f[440:450,3])
+plot(total_logcpm$l[440:450,3])
+plot(logcpm_imput$l[440:450,3])</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># in the same batch same well
+apply(counts[,437:445],2,sum)</code></pre>
+<pre><code>NA19239.r2.D01 NA19239.r2.D02 NA19239.r2.D03 NA19239.r2.D04 NA19239.r2.D05 
+         68863          66074          45985          79236          51870 
+NA19239.r2.D06 NA19239.r2.D08 NA19239.r2.D11 NA19239.r2.D12 
+         53926          39580          82083          50016 </code></pre>
+<pre class="r"><code>apply(Binary_count[,440:450],2,sum)</code></pre>
+<pre><code>NA19239.r2.D04 NA19239.r2.D05 NA19239.r2.D06 NA19239.r2.D08 NA19239.r2.D11 
+          8715           7757           7787           7264           8722 
+NA19239.r2.D12 NA19239.r2.E01 NA19239.r2.E02 NA19239.r2.E04 NA19239.r2.E05 
+          7982           8883           8932           8785           8559 
+NA19239.r2.E06 
+          8993 </code></pre>
+<pre class="r"><code>batch_Dr2 = counts[,437:445]
+cor(counts[,445],counts[,437])</code></pre>
+<pre><code>[1] 0.8699784</code></pre>
+<pre class="r"><code>image(cor(batch_Dr2))</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>image(cor(Binary_count[,437:445]))</code></pre>
+<p><img src="figure/flash_HumanTungiPSC.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.0 (2016-05-03)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.12.3 (unknown)
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+[1] workflowr_0.3.0                         
+[2] rmarkdown_1.3                           
+[3] ggplot2_2.2.1                           
+[4] MASS_7.3-45                             
+[5] singleCellRNASeqMouseJaitinSpleen_0.99.0
+[6] ashr_2.0.5                              
+[7] limma_3.24.15                           
+[8] Biobase_2.28.0                          
+[9] BiocGenerics_0.14.0                     
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.9                         
+ [2] plyr_1.8.4                          
+ [3] BiocInstaller_1.18.5                
+ [4] git2r_0.18.0                        
+ [5] singleCellRNASeqHumanTungiPSC_0.99.0
+ [6] iterators_1.0.8                     
+ [7] tools_3.3.0                         
+ [8] digest_0.6.12                       
+ [9] tibble_1.2                          
+[10] gtable_0.2.0                        
+[11] evaluate_0.10                       
+[12] memoise_1.0.0                       
+[13] lattice_0.20-34                     
+[14] Matrix_1.2-8                        
+[15] foreach_1.4.3                       
+[16] curl_2.3                            
+[17] yaml_2.1.14                         
+[18] withr_1.0.2                         
+[19] httr_1.2.1                          
+[20] stringr_1.1.0                       
+[21] knitr_1.15.1                        
+[22] devtools_1.12.0                     
+[23] REBayes_0.73                        
+[24] rprojroot_1.2                       
+[25] grid_3.3.0                          
+[26] R6_2.2.0                            
+[27] irlba_2.1.2                         
+[28] flashr_0.1.1                        
+[29] magrittr_1.5                        
+[30] scales_0.4.1                        
+[31] backports_1.0.5                     
+[32] codetools_0.2-15                    
+[33] htmltools_0.3.5                     
+[34] assertthat_0.1                      
+[35] colorspace_1.3-2                    
+[36] labeling_0.3                        
+[37] stringi_1.1.2                       
+[38] Rmosek_7.1.2                        
+[39] lazyeval_0.2.0                      
+[40] munsell_0.4.3                       
+[41] doParallel_1.0.10                   
+[42] pscl_1.4.9                          
+[43] truncnorm_1.0-7                     
+[44] SQUAREM_2016.8-2                    </code></pre>
+</div>
+
+<hr>
+<p>
+    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
