@@ -51,27 +51,58 @@ we plot the first 5 factor (we get 14 factors in total and use the first 5 of th
 ```{r}
 MissPattern = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/MouseJatinspleen/logcpm_noERCC/MissPatternMouseJaitinSpleen_K20.rds")
 
-for(i in 1:5){
-  par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
-plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
-}
 ```
 
 ### factor 1 
 
 factor 1 is mainly for the total missing rate
 
+```{r}
+i = 1
+par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+
+```
+
+
 ### factor 2: hemato lineages
 
 factor 2 is mianly for the hemato lineages
+
+```{r}
+i = 2
+par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+
+```
 
 ### factor 3: amplification batch
 
 factor 3 is for the amplification_batch
 
+```{r}
+i = 3
+par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+
+```
+
 ### factor 4,5
+
+```{r}
+for(i in 4:5){
+par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+}
+```
 
 here, I check the factor values with excluding the:"CD11c+", "CD11c+(2hr_LPS)", "hemato lineages" (and "splenocyte"?)
 
