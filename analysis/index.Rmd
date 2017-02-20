@@ -39,3 +39,6 @@ Click on this [single cell data for missing pattern HumanTungiPSC](HumanTungiPSC
 Click on this [single cell data for missing pattern MouseBuettnerESC](MouseBuettnerESC.html) to see my results.
 
 Click on this [flash on HumanTungiPCS](flash_HumanTungiPSC.html) to see my results.
+
+Click on this[Missing patter of Mouse spleen](MouseSpleen.html) to see my results.
+

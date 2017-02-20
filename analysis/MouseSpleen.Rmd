@@ -1,0 +1,140 @@
+---
+title: "Mouse Spleen"
+author: "Wei Wang"
+date: 2017-02-17
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+
+## data
+
+we load the data and exclude the ERCC genes
+
+we also exclude the all zero columns and rows
+
+```{r,warning=FALSE,cache=TRUE,eval=TRUE,message=FALSE}
+devtools::install_github("jhsiao999/singleCellRNASeqMouseJaitinSpleen")
+
+library(singleCellRNASeqMouseJaitinSpleen)
+
+counts <- exprs(MouseJaitinSpleen)
+
+cell_labels <- pData(MouseJaitinSpleen)
+
+col_sum = colSums(counts)
+row_sum = rowSums(counts)
+col_index = which(col_sum != 0)
+row_index = which(row_sum != 0)
+# exclude the missing values
+count_data = counts[row_index,col_index]
+which_ercc <- grep("ERCC", rownames(count_data))
+count_data = count_data[-which_ercc,]
+dim(count_data)
+```
+
+
+## Leading Factors of Missing pattern
+
+we plot the first 5 factor (we get 14 factors in total and use the first 5 of them)
+
+```{r}
+MissPattern = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/MouseJatinspleen/logcpm_noERCC/MissPatternMouseJaitinSpleen_K20.rds")
+
+for(i in 1:5){
+  par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+}
+```
+
+### factor 1 
+
+factor 1 is mainly for the total missing rate
+
+### factor 2: hemato lineages
+
+factor 2 is mianly for the hemato lineages
+
+### factor 3: amplification batch
+
+factor 3 is for the amplification_batch
+
+### factor 4,5
+
+here, I check the factor values with excluding the:"CD11c+", "CD11c+(2hr_LPS)", "hemato lineages" (and "splenocyte"?)
+
+```{r}
+library(ggplot2)
+# this is the plot index for the count_data
+plot_index = which(cell_labels$group_name[col_index] %in% as.character(levels(factor(cell_labels$group_name)))[c(1,4,5,6,7,8,9,11,12)] )
+plot_df = data.frame(MissPattern$f[plot_index,1:5])
+colnames(plot_df) = c("f1","f2","f3","f4","f5")
+# scatter plot
+#plot(plot_df$f3,plot_df$f4)
+#plot(plot_df$f3,plot_df$f5)
+plot(plot_df$f4,plot_df$f5)
+```
+
+
+```{r}
+which_list = list()
+group_number = as.numeric(as.factor((cell_labels$group_name[col_index])[plot_index]))
+levels(factor(cell_labels$group_name))[c(1,4,5,6,7,8,9,11,12)]
+p1 <- ggplot(plot_df, aes(f4, f5, label = (as.character(factor(group_number )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(group_number)), colour = "white", fontface = "bold")
+```
+
+
+
+```{r}
+group_number_6 = group_number
+group_number_6[which(group_number == 1 )] = 1
+group_number_6[which(group_number == 7 )] = 1
+group_number_6[which(group_number == 2 )] = 2
+group_number_6[which(group_number == 4 )] = 3
+group_number_6[which(group_number == 5 )] = 3
+group_number_6[which(group_number == 3)] = 4
+group_number_6[which(group_number == 6)] = 5
+group_number_6[which(group_number == 8)] = 6
+group_number_6[which(group_number == 9)] = 7
+p2 <- ggplot(plot_df, aes(f4, f5, label = (as.character(factor(group_number_6)) )), parse = FALSE)
+p2 + geom_label(aes(fill = factor(group_number_6)), colour = "white", fontface = "bold")
+```
+
+- group 1: "B cell"  "GC B cell"
+- group 2: "CD8-CD4+ESAM+"
+- group 3: "CD8+CD86-" "CD8+CD86+"
+- group 4: "CD8-pDC"
+- group 5: "CD8+pDC"
+- group 6: "monocyte_or_neutrophil"
+- group 7: "NK_cell"
+
+
+```{r}
+bflash = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/MouseJatinspleen/logcpm_noERCC/bflash.rds")
+for(i in 1:9){
+  par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),bflash$l[,i])
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),bflash$l[,i])
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),bflash$l[,i])
+}
+```
+
+
+## Session Information
+
+
+```{r session-info}
+```
