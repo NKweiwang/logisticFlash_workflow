@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Wei Wang" />
+
+<meta name="date" content="2017-02-17" />
+
+<title>Mouse Spleen</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">logistic flash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/NKweiwang/logisticFlash_workflow">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Mouse Spleen</h1>
+<h4 class="author"><em>Wei Wang</em></h4>
+<h4 class="date"><em>2017-02-17</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-02-20</p>
+<p><strong>Code version:</strong> 1014238</p>
+<div id="data" class="section level2">
+<h2>data</h2>
+<p>we load the data and exclude the ERCC genes</p>
+<p>we also exclude the all zero columns and rows</p>
+<pre class="r"><code>devtools::install_github(&quot;jhsiao999/singleCellRNASeqMouseJaitinSpleen&quot;)
+
+library(singleCellRNASeqMouseJaitinSpleen)
+
+counts &lt;- exprs(MouseJaitinSpleen)
+
+cell_labels &lt;- pData(MouseJaitinSpleen)
+
+col_sum = colSums(counts)
+row_sum = rowSums(counts)
+col_index = which(col_sum != 0)
+row_index = which(row_sum != 0)
+# exclude the missing values
+count_data = counts[row_index,col_index]
+which_ercc &lt;- grep(&quot;ERCC&quot;, rownames(count_data))
+count_data = count_data[-which_ercc,]
+dim(count_data)</code></pre>
+<pre><code>[1] 19473  4500</code></pre>
+</div>
+<div id="leading-factors-of-missing-pattern" class="section level2">
+<h2>Leading Factors of Missing pattern</h2>
+<p>we plot the first 5 factor (we get 14 factors in total and use the first 5 of them)</p>
+<pre class="r"><code>MissPattern = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/MouseJatinspleen/logcpm_noERCC/MissPatternMouseJaitinSpleen_K20.rds&quot;)
+
+for(i in 1:5){
+  par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+}</code></pre>
+<p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-2-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-2-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-2-5.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="factor-1" class="section level3">
+<h3>factor 1</h3>
+<p>factor 1 is mainly for the total missing rate</p>
+</div>
+<div id="factor-2-hemato-lineages" class="section level3">
+<h3>factor 2: hemato lineages</h3>
+<p>factor 2 is mianly for the hemato lineages</p>
+</div>
+<div id="factor-3-amplification-batch" class="section level3">
+<h3>factor 3: amplification batch</h3>
+<p>factor 3 is for the amplification_batch</p>
+</div>
+<div id="factor-45" class="section level3">
+<h3>factor 4,5</h3>
+<p>here, I check the factor values with excluding the:“CD11c+”, “CD11c+(2hr_LPS)”, “hemato lineages” (and “splenocyte”?)</p>
+<pre class="r"><code>library(ggplot2)
+# this is the plot index for the count_data
+plot_index = which(cell_labels$group_name[col_index] %in% as.character(levels(factor(cell_labels$group_name)))[c(1,4,5,6,7,8,9,11,12)] )
+plot_df = data.frame(MissPattern$f[plot_index,1:5])
+colnames(plot_df) = c(&quot;f1&quot;,&quot;f2&quot;,&quot;f3&quot;,&quot;f4&quot;,&quot;f5&quot;)
+# scatter plot
+#plot(plot_df$f3,plot_df$f4)
+#plot(plot_df$f3,plot_df$f5)
+plot(plot_df$f4,plot_df$f5)</code></pre>
+<p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>which_list = list()
+group_number = as.numeric(as.factor((cell_labels$group_name[col_index])[plot_index]))
+levels(factor(cell_labels$group_name))[c(1,4,5,6,7,8,9,11,12)]</code></pre>
+<pre><code>[1] &quot;B cell&quot;                 &quot;CD8-CD4+ESAM+&quot;         
+[3] &quot;CD8-pDC&quot;                &quot;CD8+CD86-&quot;             
+[5] &quot;CD8+CD86+&quot;              &quot;CD8+pDC&quot;               
+[7] &quot;GC B cell&quot;              &quot;monocyte_or_neutrophil&quot;
+[9] &quot;NK_cell&quot;               </code></pre>
+<pre class="r"><code>p1 &lt;- ggplot(plot_df, aes(f4, f5, label = (as.character(factor(group_number )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(group_number)), colour = &quot;white&quot;, fontface = &quot;bold&quot;)</code></pre>
+<p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>group_number_6 = group_number
+group_number_6[which(group_number == 1 )] = 1
+group_number_6[which(group_number == 7 )] = 1
+group_number_6[which(group_number == 2 )] = 2
+group_number_6[which(group_number == 4 )] = 3
+group_number_6[which(group_number == 5 )] = 3
+group_number_6[which(group_number == 3)] = 4
+group_number_6[which(group_number == 6)] = 5
+group_number_6[which(group_number == 8)] = 6
+group_number_6[which(group_number == 9)] = 7
+p2 &lt;- ggplot(plot_df, aes(f4, f5, label = (as.character(factor(group_number_6)) )), parse = FALSE)
+p2 + geom_label(aes(fill = factor(group_number_6)), colour = &quot;white&quot;, fontface = &quot;bold&quot;)</code></pre>
+<p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li>group 1: “B cell” “GC B cell”</li>
+<li>group 2: “CD8-CD4+ESAM+”</li>
+<li>group 3: “CD8+CD86-” “CD8+CD86+”</li>
+<li>group 4: “CD8-pDC”</li>
+<li>group 5: “CD8+pDC”</li>
+<li>group 6: “monocyte_or_neutrophil”</li>
+<li>group 7: “NK_cell”</li>
+</ul>
+<pre class="r"><code>bflash = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/MouseJatinspleen/logcpm_noERCC/bflash.rds&quot;)
+for(i in 1:9){
+  par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),bflash$l[,i])
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),bflash$l[,i])
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),bflash$l[,i])
+}</code></pre>
+<p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-9.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.0 (2016-05-03)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.12.3 (unknown)
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+[1] singleCellRNASeqMouseZeiselBrain_0.99.0 
+[2] ggplot2_2.2.1                           
+[3] singleCellRNASeqMouseJaitinSpleen_0.99.0
+[4] Biobase_2.28.0                          
+[5] BiocGenerics_0.14.0                     
+[6] workflowr_0.3.0                         
+[7] rmarkdown_1.3                           
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.9      rstudioapi_0.6   knitr_1.15.1     magrittr_1.5    
+ [5] devtools_1.12.0  munsell_0.4.3    colorspace_1.3-2 R6_2.2.0        
+ [9] plyr_1.8.4       stringr_1.1.0    httr_1.2.1       tools_3.3.0     
+[13] grid_3.3.0       gtable_0.2.0     git2r_0.18.0     withr_1.0.2     
+[17] htmltools_0.3.5  assertthat_0.1   lazyeval_0.2.0   yaml_2.1.14     
+[21] rprojroot_1.2    digest_0.6.12    tibble_1.2       curl_2.3        
+[25] memoise_1.0.0    evaluate_0.10    labeling_0.3     stringi_1.1.2   
+[29] scales_0.4.1     backports_1.0.5 </code></pre>
+</div>
+
+<hr>
+<p>
+    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
