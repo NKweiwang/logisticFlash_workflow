@@ -310,7 +310,7 @@ div.tocify {
 
 
 <p><strong>Last updated:</strong> 2017-02-20</p>
-<p><strong>Code version:</strong> 644adc4</p>
+<p><strong>Code version:</strong> 641c711</p>
 <div id="data" class="section level2">
 <h2>data</h2>
 <p>we load the data and exclude the ERCC genes</p>
@@ -338,9 +338,9 @@ dim(count_data)</code></pre>
 <h2>Leading Factors of Missing pattern</h2>
 <p>we plot the first 5 factor (we get 14 factors in total and use the first 5 of them)</p>
 <pre class="r"><code>MissPattern = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/MouseJatinspleen/logcpm_noERCC/MissPatternMouseJaitinSpleen_K20.rds&quot;)</code></pre>
-<div id="factor-1" class="section level3">
-<h3>factor 1</h3>
-<p>factor 1 is mainly for the total missing rate</p>
+<div id="factor-1-total-detected-rate" class="section level3">
+<h3>factor 1: total detected rate</h3>
+<p>factor 1 is mainly for the total detected rate</p>
 <pre class="r"><code>i = 1
 par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
 plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
@@ -378,8 +378,9 @@ plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
 }</code></pre>
 <p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>here, I check the factor values with excluding the:“CD11c+”, “CD11c+(2hr_LPS)”, “hemato lineages” (and “splenocyte”?)</p>
-<pre class="r"><code>library(ggplot2)
-# this is the plot index for the count_data
+<pre class="r"><code>library(ggplot2)</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 3.3.2</code></pre>
+<pre class="r"><code># this is the plot index for the count_data
 plot_index = which(cell_labels$group_name[col_index] %in% as.character(levels(factor(cell_labels$group_name)))[c(1,4,5,6,7,8,9,11,12)] )
 plot_df = data.frame(MissPattern$f[plot_index,1:5])
 colnames(plot_df) = c(&quot;f1&quot;,&quot;f2&quot;,&quot;f3&quot;,&quot;f4&quot;,&quot;f5&quot;)
@@ -442,27 +443,18 @@ locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 attached base packages:
-[1] parallel  stats     graphics  grDevices utils     datasets  methods  
-[8] base     
+[1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] singleCellRNASeqMouseZeiselBrain_0.99.0 
-[2] ggplot2_2.2.1                           
-[3] singleCellRNASeqMouseJaitinSpleen_0.99.0
-[4] Biobase_2.28.0                          
-[5] BiocGenerics_0.14.0                     
-[6] workflowr_0.3.0                         
-[7] rmarkdown_1.3                           
+[1] ggplot2_2.2.1   workflowr_0.3.0 rmarkdown_1.3  
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.9      rstudioapi_0.6   knitr_1.15.1     magrittr_1.5    
- [5] devtools_1.12.0  munsell_0.4.3    colorspace_1.3-2 R6_2.2.0        
- [9] plyr_1.8.4       stringr_1.1.0    httr_1.2.1       tools_3.3.0     
-[13] grid_3.3.0       gtable_0.2.0     git2r_0.18.0     withr_1.0.2     
-[17] htmltools_0.3.5  assertthat_0.1   lazyeval_0.2.0   yaml_2.1.14     
-[21] rprojroot_1.2    digest_0.6.12    tibble_1.2       curl_2.3        
-[25] memoise_1.0.0    evaluate_0.10    labeling_0.3     stringi_1.1.2   
-[29] scales_0.4.1     backports_1.0.5 </code></pre>
+ [1] Rcpp_0.12.9      assertthat_0.1   digest_0.6.12    rprojroot_1.2   
+ [5] plyr_1.8.4       grid_3.3.0       gtable_0.2.0     backports_1.0.5 
+ [9] git2r_0.18.0     magrittr_1.5     scales_0.4.1     evaluate_0.10   
+[13] stringi_1.1.2    lazyeval_0.2.0   labeling_0.3     tools_3.3.0     
+[17] stringr_1.1.0    munsell_0.4.3    yaml_2.1.14      colorspace_1.3-2
+[21] htmltools_0.3.5  knitr_1.15.1     tibble_1.2      </code></pre>
 </div>
 
 <hr>

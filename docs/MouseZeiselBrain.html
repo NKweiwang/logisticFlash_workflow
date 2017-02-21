@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="wei wang" />
+
+<meta name="date" content="2017-02-20" />
+
+<title>MouseZeiselBrain</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">logistic flash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/NKweiwang/logisticFlash_workflow">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">MouseZeiselBrain</h1>
+<h4 class="author"><em>wei wang</em></h4>
+<h4 class="date"><em>2017-02-20</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-02-20</p>
+<p><strong>Code version:</strong> 641c711</p>
+<div id="load-the-data" class="section level2">
+<h2>load the data</h2>
+<p>there is no ercc in this data set.</p>
+<pre class="r"><code>#devtools::install_github(&quot;jhsiao999/singleCellRNASeqMouseZeiselBrain&quot;)
+
+library(singleCellRNASeqMouseZeiselBrain)</code></pre>
+<pre><code>Loading required package: Biobase</code></pre>
+<pre><code>Loading required package: BiocGenerics</code></pre>
+<pre><code>Loading required package: parallel</code></pre>
+<pre><code>
+Attaching package: &#39;BiocGenerics&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:parallel&#39;:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
+<pre><code>The following object is masked from &#39;package:stats&#39;:
+
+    xtabs</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    anyDuplicated, append, as.data.frame, cbind, colnames,
+    do.call, duplicated, eval, evalq, Filter, Find, get,
+    intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rep.int, rownames, sapply, setdiff, sort,
+    table, tapply, union, unique, unsplit</code></pre>
+<pre><code>Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    &#39;browseVignettes()&#39;. To cite Bioconductor, see
+    &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
+<pre class="r"><code>counts &lt;- exprs(MouseZeiselBrain)
+
+cell_labels &lt;- pData(MouseZeiselBrain)
+col_sum = colSums(counts)
+row_sum = rowSums(counts)
+col_index = which(col_sum != 0)
+row_index = which(row_sum != 0)
+# exclude the missing values
+count_data = counts[row_index,col_index]
+
+dim(count_data)</code></pre>
+<pre><code>[1] 19968  3005</code></pre>
+</div>
+<div id="missing-pattern" class="section level2">
+<h2>missing pattern</h2>
+<p>There are 20 rank in our result, so there might more rank.</p>
+<pre class="r"><code>MissPattern = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/MissPatternMouseZeiselBrain_K20.rds&quot;)</code></pre>
+</div>
+<div id="no-structure-in-age-sex-or-tissue" class="section level2">
+<h2>no structure in age, sex or tissue</h2>
+<pre class="r"><code> par(mfrow = c(3,4), mar = c(5,4,4,2) - 1.9)
+for(i in 1:3){
+  plot(as.numeric(as.factor(cell_labels$tissue[col_index])),MissPattern$f[,i],main = paste(&quot;f&quot;,i,&quot;: tissue&quot; ))
+  plot(as.numeric(as.factor(cell_labels$sex[col_index])),MissPattern$f[,i],main = paste(&quot;f&quot;,i,&quot;: sex&quot;))
+  plot(as.numeric(as.factor(cell_labels$age[col_index])),MissPattern$f[,i],main = paste(&quot;f&quot;,i,&quot;: age&quot;))
+  plot(as.numeric(as.factor(cell_labels$level1_class[col_index])),MissPattern$f[,i],main = paste(&quot;f&quot;,i,&quot;: level1&quot;))
+}</code></pre>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="level1_class" class="section level2">
+<h2>level1_class</h2>
+<pre class="r"><code>plot(MissPattern$f[,2],MissPattern$f[,3])
+unique(cell_labels$level1_class)</code></pre>
+<pre><code>[1] &quot;interneurons&quot;         &quot;pyramidal SS&quot;         &quot;pyramidal CA1&quot;       
+[4] &quot;oligodendrocytes&quot;     &quot;microglia&quot;            &quot;endothelial-mural&quot;   
+[7] &quot;astrocytes_ependymal&quot;</code></pre>
+<pre class="r"><code>class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(MissPattern$f[class_index[[i]],2],MissPattern$f[class_index[[i]],3],col = rainbow(7)[i])
+}</code></pre>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We can see there are three classes</p>
+<ul>
+<li>class 1: “interneurons” “pyramidal SS” “pyramidal CA1”</li>
+<li>class 2: “oligodendrocytes”</li>
+<li>class 3: “microglia” “endothelial-mural” “astrocytes_ependymal”</li>
+</ul>
+</div>
+<div id="level1-factor-2-factor-3" class="section level2">
+<h2>level1: factor 2; factor 3</h2>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>this structure makes sense based on the paper <a href="http://linnarssonlab.org/pdf/Science%202015a.pdf">check the fig 1 C</a></p>
+</div>
+<div id="flash" class="section level2">
+<h2>FLASH</h2>
+<pre class="r"><code>bflash = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/bflash.rds&quot;)
+bflash_varcol = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/bflash_var_col.rds&quot;)</code></pre>
+<pre class="r"><code>par(mfrow = c(3,4), mar = c(5,4,4,2) - 1.9)
+for(i in 1:6){
+  #par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+  plot(as.numeric(as.factor(cell_labels$tissue[col_index])),bflash$l[,i],main = paste(&quot;f&quot;,i,&quot;: tissue&quot; ))
+  plot(as.numeric(as.factor(cell_labels$sex[col_index])),bflash$l[,i],main = paste(&quot;f&quot;,i,&quot;: sex&quot;))
+  plot(as.numeric(as.factor(cell_labels$age[col_index])),bflash$l[,i],main = paste(&quot;f&quot;,i,&quot;: age&quot;))
+  plot(as.numeric(as.factor(cell_labels$level1_class[col_index])),bflash$l[,i],main = paste(&quot;f&quot;,i,&quot;: level1&quot;))
+}</code></pre>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+plot(bflash$l[,2],bflash$l[,3],main = &quot;flash&quot;)
+unique(cell_labels$level1_class)</code></pre>
+<pre><code>[1] &quot;interneurons&quot;         &quot;pyramidal SS&quot;         &quot;pyramidal CA1&quot;       
+[4] &quot;oligodendrocytes&quot;     &quot;microglia&quot;            &quot;endothelial-mural&quot;   
+[7] &quot;astrocytes_ependymal&quot;</code></pre>
+<pre class="r"><code>class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(bflash$l[class_index[[i]],2],bflash$l[class_index[[i]],3],col = rainbow(7)[i])
+}
+
+#plot(bflash_varcol$l[,2],bflash_varcol$l[,3],main = &quot;flash column-wise variacne&quot;)
+# unique(cell_labels$level1_class)
+#class_level = unique(cell_labels$level1_class)
+#class_index = list()
+#for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+#for(i in 1:7){
+#points(bflash_varcol$l[class_index[[i]],2],bflash_varcol$l[class_index[[i]],3],col = rainbow(7)[i])
+#}
+
+plot(MissPattern$f[,2],MissPattern$f[,3],main = &quot;Logistic flash&quot;)
+# unique(cell_labels$level1_class)
+class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(MissPattern$f[class_index[[i]],2],MissPattern$f[class_index[[i]],3],col = rainbow(7)[i])
+}
+#library(limma)
+#voom_ouptut &lt;- voom(count_data, normalization = &quot;none&quot;)
+#log_cpm = voom_ouptut$E
+#Y = t(log_cpm)
+
+# svd_5 = svd(Y,nu = 5,nv = 5)
+# saveRDS(svd_5,&quot;~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/svd_5.rds&quot;)
+svd_5 = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/svd_5.rds&quot;)
+plot(svd_5$u[,2],svd_5$u[,3],main = &quot;PCA&quot;)
+# unique(cell_labels$level1_class)
+class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(svd_5$u[class_index[[i]],2],svd_5$u[class_index[[i]],3],col = rainbow(7)[i])
+}
+tsne_3 = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/tsne_3.rds&quot;)
+plot(tsne_3$Y[,2],tsne_3$Y[,3],main = &quot;TSNE&quot;)
+# unique(cell_labels$level1_class)
+class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(tsne_3$Y[class_index[[i]],2],tsne_3$Y[class_index[[i]],3],col = rainbow(7)[i])
+}</code></pre>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.0 (2016-05-03)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.12.3 (unknown)
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+[1] singleCellRNASeqMouseZeiselBrain_0.99.0
+[2] Biobase_2.28.0                         
+[3] BiocGenerics_0.14.0                    
+[4] ggplot2_2.2.1                          
+[5] workflowr_0.3.0                        
+[6] rmarkdown_1.3                          
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.9      knitr_1.15.1     magrittr_1.5     munsell_0.4.3   
+ [5] colorspace_1.3-2 stringr_1.1.0    plyr_1.8.4       tools_3.3.0     
+ [9] grid_3.3.0       gtable_0.2.0     git2r_0.18.0     htmltools_0.3.5 
+[13] yaml_2.1.14      lazyeval_0.2.0   rprojroot_1.2    digest_0.6.12   
+[17] assertthat_0.1   tibble_1.2       evaluate_0.10    labeling_0.3    
+[21] stringi_1.1.2    scales_0.4.1     backports_1.0.5 </code></pre>
+</div>
+
+<hr>
+<p>
+    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
