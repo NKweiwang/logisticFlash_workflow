@@ -1,0 +1,180 @@
+---
+title: "MouseZeiselBrain"
+author: "wei wang"
+date: 2017-02-20
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+## load the data
+
+there is no ercc in this data set.
+
+```{r}
+#devtools::install_github("jhsiao999/singleCellRNASeqMouseZeiselBrain")
+
+library(singleCellRNASeqMouseZeiselBrain)
+
+counts <- exprs(MouseZeiselBrain)
+
+cell_labels <- pData(MouseZeiselBrain)
+col_sum = colSums(counts)
+row_sum = rowSums(counts)
+col_index = which(col_sum != 0)
+row_index = which(row_sum != 0)
+# exclude the missing values
+count_data = counts[row_index,col_index]
+
+dim(count_data)
+```
+
+## missing pattern
+
+There are 20 rank in our result, so there might more rank.
+
+```{r}
+MissPattern = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/MissPatternMouseZeiselBrain_K20.rds")
+```
+
+
+## no structure in age, sex or tissue
+
+```{r}
+ par(mfrow = c(3,4), mar = c(5,4,4,2) - 1.9)
+for(i in 1:3){
+  plot(as.numeric(as.factor(cell_labels$tissue[col_index])),MissPattern$f[,i],main = paste("f",i,": tissue" ))
+  plot(as.numeric(as.factor(cell_labels$sex[col_index])),MissPattern$f[,i],main = paste("f",i,": sex"))
+  plot(as.numeric(as.factor(cell_labels$age[col_index])),MissPattern$f[,i],main = paste("f",i,": age"))
+  plot(as.numeric(as.factor(cell_labels$level1_class[col_index])),MissPattern$f[,i],main = paste("f",i,": level1"))
+}
+```
+
+## level1_class
+
+```{r}
+plot(MissPattern$f[,2],MissPattern$f[,3])
+unique(cell_labels$level1_class)
+class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(MissPattern$f[class_index[[i]],2],MissPattern$f[class_index[[i]],3],col = rainbow(7)[i])
+}
+```
+
+We can see there are three classes
+
+- class 1: "interneurons" "pyramidal SS" "pyramidal CA1"
+- class 2: "oligodendrocytes"
+- class 3: "microglia" "endothelial-mural" "astrocytes_ependymal"
+
+## level1: factor 2; factor 3
+
+```{r,echo=FALSE}
+library(ggplot2)
+# this is the plot index for the count_data
+plot_df = data.frame(MissPattern$f[,1:5])
+colnames(plot_df) = c("f1","f2","f3","f4","f5")
+
+group_number = cell_labels$level1_class
+group_number[which(cell_labels$level1_class == "interneurons" )] = 1
+group_number[which(cell_labels$level1_class == "pyramidal SS" )] = 1
+group_number[which(cell_labels$level1_class == "pyramidal CA1" )] = 1
+group_number[which(cell_labels$level1_class == "oligodendrocytes" )] = 2
+group_number[which(cell_labels$level1_class == "microglia" )] = 3
+group_number[which(cell_labels$level1_class == "endothelial-mural" )] = 3
+group_number[which(cell_labels$level1_class == "astrocytes_ependymal" )] = 3
+p1 <- ggplot(plot_df, aes(f2, f3, label = (as.character(factor(group_number)) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(group_number)), colour = "white", fontface = "bold")
+```
+
+this structure makes sense based on the paper [check the fig 1 C](http://linnarssonlab.org/pdf/Science%202015a.pdf)
+
+## FLASH
+
+```{r}
+bflash = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/bflash.rds")
+bflash_varcol = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/bflash_var_col.rds")
+```
+
+
+```{r}
+par(mfrow = c(3,4), mar = c(5,4,4,2) - 1.9)
+for(i in 1:6){
+  #par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+  plot(as.numeric(as.factor(cell_labels$tissue[col_index])),bflash$l[,i],main = paste("f",i,": tissue" ))
+  plot(as.numeric(as.factor(cell_labels$sex[col_index])),bflash$l[,i],main = paste("f",i,": sex"))
+  plot(as.numeric(as.factor(cell_labels$age[col_index])),bflash$l[,i],main = paste("f",i,": age"))
+  plot(as.numeric(as.factor(cell_labels$level1_class[col_index])),bflash$l[,i],main = paste("f",i,": level1"))
+}
+```
+
+```{r}
+par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+plot(bflash$l[,2],bflash$l[,3],main = "flash")
+unique(cell_labels$level1_class)
+class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(bflash$l[class_index[[i]],2],bflash$l[class_index[[i]],3],col = rainbow(7)[i])
+}
+
+#plot(bflash_varcol$l[,2],bflash_varcol$l[,3],main = "flash column-wise variacne")
+# unique(cell_labels$level1_class)
+#class_level = unique(cell_labels$level1_class)
+#class_index = list()
+#for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+#for(i in 1:7){
+#points(bflash_varcol$l[class_index[[i]],2],bflash_varcol$l[class_index[[i]],3],col = rainbow(7)[i])
+#}
+
+plot(MissPattern$f[,2],MissPattern$f[,3],main = "Logistic flash")
+# unique(cell_labels$level1_class)
+class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(MissPattern$f[class_index[[i]],2],MissPattern$f[class_index[[i]],3],col = rainbow(7)[i])
+}
+#library(limma)
+#voom_ouptut <- voom(count_data, normalization = "none")
+#log_cpm = voom_ouptut$E
+#Y = t(log_cpm)
+
+# svd_5 = svd(Y,nu = 5,nv = 5)
+# saveRDS(svd_5,"~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/svd_5.rds")
+svd_5 = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/svd_5.rds")
+plot(svd_5$u[,2],svd_5$u[,3],main = "PCA")
+# unique(cell_labels$level1_class)
+class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(svd_5$u[class_index[[i]],2],svd_5$u[class_index[[i]],3],col = rainbow(7)[i])
+}
+tsne_3 = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/tsne_3.rds")
+plot(tsne_3$Y[,2],tsne_3$Y[,3],main = "TSNE")
+# unique(cell_labels$level1_class)
+class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(tsne_3$Y[class_index[[i]],2],tsne_3$Y[class_index[[i]],3],col = rainbow(7)[i])
+}
+```
+
+## Session Information
+
+```{r session-info}
+```

@@ -53,9 +53,9 @@ MissPattern = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/MouseJatinspl
 
 ```
 
-### factor 1 
+### factor 1: total detected rate
 
-factor 1 is mainly for the total missing rate
+factor 1 is mainly for the total detected rate
 
 ```{r}
 i = 1
