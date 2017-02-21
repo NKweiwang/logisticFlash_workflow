@@ -310,40 +310,15 @@ div.tocify {
 
 
 <p><strong>Last updated:</strong> 2017-02-20</p>
-<p><strong>Code version:</strong> 641c711</p>
+<p><strong>Code version:</strong> 2e2f0f7</p>
 <div id="load-the-data" class="section level2">
 <h2>load the data</h2>
 <p>there is no ercc in this data set.</p>
 <pre class="r"><code>#devtools::install_github(&quot;jhsiao999/singleCellRNASeqMouseZeiselBrain&quot;)
 
-library(singleCellRNASeqMouseZeiselBrain)</code></pre>
-<pre><code>Loading required package: Biobase</code></pre>
-<pre><code>Loading required package: BiocGenerics</code></pre>
-<pre><code>Loading required package: parallel</code></pre>
-<pre><code>
-Attaching package: &#39;BiocGenerics&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:parallel&#39;:
+library(singleCellRNASeqMouseZeiselBrain)
 
-    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-    clusterExport, clusterMap, parApply, parCapply, parLapply,
-    parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
-<pre><code>The following object is masked from &#39;package:stats&#39;:
-
-    xtabs</code></pre>
-<pre><code>The following objects are masked from &#39;package:base&#39;:
-
-    anyDuplicated, append, as.data.frame, cbind, colnames,
-    do.call, duplicated, eval, evalq, Filter, Find, get,
-    intersect, is.unsorted, lapply, Map, mapply, match, mget,
-    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
-    rbind, Reduce, rep.int, rownames, sapply, setdiff, sort,
-    table, tapply, union, unique, unsplit</code></pre>
-<pre><code>Welcome to Bioconductor
-
-    Vignettes contain introductory material; view with
-    &#39;browseVignettes()&#39;. To cite Bioconductor, see
-    &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
-<pre class="r"><code>counts &lt;- exprs(MouseZeiselBrain)
+counts &lt;- exprs(MouseZeiselBrain)
 
 cell_labels &lt;- pData(MouseZeiselBrain)
 col_sum = colSums(counts)
@@ -370,7 +345,7 @@ for(i in 1:3){
   plot(as.numeric(as.factor(cell_labels$age[col_index])),MissPattern$f[,i],main = paste(&quot;f&quot;,i,&quot;: age&quot;))
   plot(as.numeric(as.factor(cell_labels$level1_class[col_index])),MissPattern$f[,i],main = paste(&quot;f&quot;,i,&quot;: level1&quot;))
 }</code></pre>
-<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="level1_class" class="section level2">
 <h2>level1_class</h2>
@@ -385,7 +360,7 @@ for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i
 for(i in 1:7){
 points(MissPattern$f[class_index[[i]],2],MissPattern$f[class_index[[i]],3],col = rainbow(7)[i])
 }</code></pre>
-<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>We can see there are three classes</p>
 <ul>
 <li>class 1: “interneurons” “pyramidal SS” “pyramidal CA1”</li>
@@ -395,7 +370,7 @@ points(MissPattern$f[class_index[[i]],2],MissPattern$f[class_index[[i]],3],col =
 </div>
 <div id="level1-factor-2-factor-3" class="section level2">
 <h2>level1: factor 2; factor 3</h2>
-<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>this structure makes sense based on the paper <a href="http://linnarssonlab.org/pdf/Science%202015a.pdf">check the fig 1 C</a></p>
 </div>
 <div id="flash" class="section level2">
@@ -410,7 +385,7 @@ for(i in 1:6){
   plot(as.numeric(as.factor(cell_labels$age[col_index])),bflash$l[,i],main = paste(&quot;f&quot;,i,&quot;: age&quot;))
   plot(as.numeric(as.factor(cell_labels$level1_class[col_index])),bflash$l[,i],main = paste(&quot;f&quot;,i,&quot;: level1&quot;))
 }</code></pre>
-<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
 plot(bflash$l[,2],bflash$l[,3],main = &quot;flash&quot;)
 unique(cell_labels$level1_class)</code></pre>
@@ -466,7 +441,17 @@ for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i
 for(i in 1:7){
 points(tsne_3$Y[class_index[[i]],2],tsne_3$Y[class_index[[i]],3],col = rainbow(7)[i])
 }</code></pre>
-<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>tsne_2 = readRDS(&quot;~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/tsne_2.rds&quot;)
+plot(tsne_2$Y[,1],tsne_2$Y[,2],main = &quot;TSNE&quot;)
+# unique(cell_labels$level1_class)
+class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(tsne_2$Y[class_index[[i]],1],tsne_2$Y[class_index[[i]],2],col = rainbow(7)[i])
+}</code></pre>
+<p><img src="figure/MouseZeiselBrain.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session Information</h2>
