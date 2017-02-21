@@ -174,6 +174,18 @@ points(tsne_3$Y[class_index[[i]],2],tsne_3$Y[class_index[[i]],3],col = rainbow(7
 }
 ```
 
+```{r}
+tsne_2 = readRDS("~/HG/LogisticFlash_workflow/data/singelcell/MouseZeiselBrain/logcpm/tsne_2.rds")
+plot(tsne_2$Y[,1],tsne_2$Y[,2],main = "TSNE")
+# unique(cell_labels$level1_class)
+class_level = unique(cell_labels$level1_class)
+class_index = list()
+for(i in 1:7){class_index[[i]] = which(cell_labels$level1_class == class_level[i])}
+for(i in 1:7){
+points(tsne_2$Y[class_index[[i]],1],tsne_2$Y[class_index[[i]],2],col = rainbow(7)[i])
+}
+```
+
 ## Session Information
 
 ```{r session-info}
