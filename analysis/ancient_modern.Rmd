@@ -1,0 +1,122 @@
+---
+title: "ancient data modern part"
+author: "wei wang"
+date: 2017-02-20
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+
+## load the meta
+
+```{r}
+meta_df <- read.table("~/HG/LogisticFlash_workflow/data/popgen/meta.tsv", stringsAsFactors = FALSE, header=TRUE)
+meta = meta_df[130:dim(meta_df)[1],]
+binflash = readRDS("~/HG/LogisticFlash_workflow/data/popgen/ancientModernpart_K10.rds")
+```
+
+## load the factors
+
+```{r}
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+for(i in 1:7) barplot(binflash$l[,i])
+```
+
+
+```{r}
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+for(i in 1:7) plot(meta$long,binflash$l[,i])
+
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+for(i in 1:7) plot(meta$lat,binflash$l[,i])
+```
+
+## the group index
+
+```{r}
+HG_index = grep("HG",meta$iid)
+HGDP_index = grep("HGDP",meta$iid)
+HG_only_index = HG_index[which(!(HG_index %in% HGDP_index))]
+ITS_index = grep("ITS",meta$iid)
+NOR_index = grep("NOR",meta$iid)
+CRO_index = grep("CRO",meta$iid)
+French_index = grep("French",meta$iid)
+sFrench_index = grep("SouthFrench",meta$iid)
+French_only_index = French_index[which(!(French_index %in% sFrench_index))]
+Est_index = grep("Est",meta$iid)
+
+# made the group in to the meta
+meta$group_number = meta$iid
+meta$group_number[HGDP_index] = 1
+meta$group_number[HG_only_index] = 2
+meta$group_number[ITS_index] = 3
+meta$group_number[NOR_index] = 4
+meta$group_number[grep("BEL",meta$iid)] = 4
+meta$group_number[CRO_index] = 5
+meta$group_number[French_only_index] = 6
+meta$group_number[sFrench_index] = 7
+meta$group_number[Est_index] = 8
+meta$group_number[grep("NA",meta$iid)] = 0
+```
+
+## check the factor based on meta 
+
+```{r}
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+for(i in 1:7) plot(meta$group_number,binflash$l[,i])
+```
+
+
+```{r}
+plot(binflash$l[which(meta$group_number %in% c(1,2,6,7,8)),1],binflash$l[which(meta$group_number %in% c(1,2,6,7,8)),4])
+for(i in c(1,2,6,7,8))points(binflash$l[which(meta$group_number == i),1],binflash$l[which(meta$group_number == i),4],col = rainbow(11)[i])
+```
+
+```{r}
+plot(binflash$l[which(meta$group_number %in% c(1,2,4,5,6,7,8)),3],binflash$l[which(meta$group_number %in% c(1,2,4,5,6,7,8)),4])
+for(i in c(1,2,4,5,6,7,8))points(binflash$l[which(meta$group_number == i),3],binflash$l[which(meta$group_number == i),4],col = rainbow(11)[i])
+```
+
+```{r}
+library(ggplot2)
+# this is the plot index for the count_data
+plot_index = which(meta$group_number %in% c(1,2,4,5,6,7,8))
+plot_df = data.frame(binflash$l[plot_index,1:5])
+colnames(plot_df) = c("f1","f2","f3","f4","f5")
+group_number = meta$group_number[plot_index]
+p1 <- ggplot(plot_df, aes(f3, f4, label = (as.character(factor(group_number )) )), parse = FALSE)
+p1 + geom_label(aes(fill = factor(group_number)), colour = "white", fontface = "bold")
+```
+
+## TSNE
+
+```{r}
+tsne_out = readRDS("~/HG/LogisticFlash_workflow/data/popgen/ancientModernpart_tsne.rds")
+```
+
+```{r}
+# par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+plot(tsne_out$Y[,1],tsne_out$Y[,2])
+for(i in 1:8)points(tsne_out$Y[which(meta$group_number == i),1],tsne_out$Y[which(meta$group_number == i),2],col = rainbow(11)[i])
+```
+
+```{r}
+tsne_2d = readRDS("~/HG/LogisticFlash_workflow/data/popgen/ancientModernpart_tsne_2d.rds")
+plot(tsne_2d$Y[,1],tsne_2d$Y[,2])
+for(i in 1:8)points(tsne_2d$Y[which(meta$group_number == i),1],tsne_2d$Y[which(meta$group_number == i),2],col = rainbow(11)[i])
+```
+
+## Session Information
+
+```{r session-info}
+```
