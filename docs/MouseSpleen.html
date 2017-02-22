@@ -309,8 +309,8 @@ div.tocify {
 </div>
 
 
-<p><strong>Last updated:</strong> 2017-02-20</p>
-<p><strong>Code version:</strong> 641c711</p>
+<p><strong>Last updated:</strong> 2017-02-22</p>
+<p><strong>Code version:</strong> 2f3e52e</p>
 <div id="data" class="section level2">
 <h2>data</h2>
 <p>we load the data and exclude the ERCC genes</p>
@@ -343,9 +343,9 @@ dim(count_data)</code></pre>
 <p>factor 1 is mainly for the total detected rate</p>
 <pre class="r"><code>i = 1
 par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
-plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])</code></pre>
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i],main = &quot;sequencing_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i],main = &quot;amplification_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i],main = &quot;group_name&quot;)</code></pre>
 <p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="factor-2-hemato-lineages" class="section level3">
@@ -353,9 +353,9 @@ plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
 <p>factor 2 is mianly for the hemato lineages</p>
 <pre class="r"><code>i = 2
 par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
-plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])</code></pre>
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i],main = &quot;sequencing_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i],main = &quot;amplification_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i],main = &quot;group_name&quot;)</code></pre>
 <p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="factor-3-amplification-batch" class="section level3">
@@ -363,18 +363,18 @@ plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
 <p>factor 3 is for the amplification_batch</p>
 <pre class="r"><code>i = 3
 par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
-plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])</code></pre>
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i],main = &quot;sequencing_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i],main = &quot;amplification_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i],main = &quot;group_name&quot;)</code></pre>
 <p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="factor-45" class="section level3">
 <h3>factor 4,5</h3>
 <pre class="r"><code>for(i in 4:5){
 par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
-plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i],main = &quot;sequencing_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i],main = &quot;amplification_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i],main = &quot;group_name&quot;)
 }</code></pre>
 <p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>here, I check the factor values with excluding the:“CD11c+”, “CD11c+(2hr_LPS)”, “hemato lineages” (and “splenocyte”?)</p>
@@ -430,10 +430,10 @@ plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),bflash$l[
 plot(as.numeric(as.factor(cell_labels$group_name[col_index])),bflash$l[,i])
 }</code></pre>
 <p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-10-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-10-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-10-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-10-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-10-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/MouseSpleen.Rmd/unnamed-chunk-10-9.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
-</div>
-<div id="session-information" class="section level2">
-<h2>Session Information</h2>
+<pre class="r"><code>par(mfrow = c(3,2),mar = c(5,4,4,2) - 1.8)
+total_count = colSums(count_data)
+for(i in 1:5) plot(total_count,MissPattern$f[,i],main = paste(&quot;factor&quot;,i,&quot;vs total count&quot;))</code></pre>
+<p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /> ## Session Information</p>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.3.0 (2016-05-03)
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
@@ -455,6 +455,7 @@ loaded via a namespace (and not attached):
 [13] stringi_1.1.2    lazyeval_0.2.0   labeling_0.3     tools_3.3.0     
 [17] stringr_1.1.0    munsell_0.4.3    yaml_2.1.14      colorspace_1.3-2
 [21] htmltools_0.3.5  knitr_1.15.1     tibble_1.2      </code></pre>
+</div>
 </div>
 
 <hr>
