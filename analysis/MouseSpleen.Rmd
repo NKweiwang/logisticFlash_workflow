@@ -60,9 +60,9 @@ factor 1 is mainly for the total detected rate
 ```{r}
 i = 1
 par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
-plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i],main = "sequencing_batch")
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i],main = "amplification_batch")
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i],main = "group_name")
 
 ```
 
@@ -74,9 +74,9 @@ factor 2 is mianly for the hemato lineages
 ```{r}
 i = 2
 par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
-plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i],main = "sequencing_batch")
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i],main = "amplification_batch")
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i],main = "group_name")
 
 ```
 
@@ -87,9 +87,9 @@ factor 3 is for the amplification_batch
 ```{r}
 i = 3
 par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
-plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i],main = "sequencing_batch")
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i],main = "amplification_batch")
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i],main = "group_name")
 
 ```
 
@@ -98,9 +98,9 @@ plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
 ```{r}
 for(i in 4:5){
 par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
-plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i])
-plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i])
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[col_index])),MissPattern$f[,i],main = "sequencing_batch")
+plot(as.numeric(as.factor(cell_labels$amplification_batch[col_index])),MissPattern$f[,i],main = "amplification_batch")
+plot(as.numeric(as.factor(cell_labels$group_name[col_index])),MissPattern$f[,i],main = "group_name")
 }
 ```
 
@@ -163,7 +163,11 @@ plot(as.numeric(as.factor(cell_labels$group_name[col_index])),bflash$l[,i])
 }
 ```
 
-
+```{r}
+par(mfrow = c(3,2),mar = c(5,4,4,2) - 1.8)
+total_count = colSums(count_data)
+for(i in 1:5) plot(total_count,MissPattern$f[,i],main = paste("factor",i,"vs total count"))
+```
 ## Session Information
 
 
