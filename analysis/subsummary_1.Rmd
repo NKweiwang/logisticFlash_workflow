@@ -1,0 +1,105 @@
+---
+title: "subsummary 1"
+author: "wei wang"
+date: 2017-02-21
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+## Mouse Spleen data (Jaitin)
+
+In this data, we treat the nonzero values are detected data and zero values are undetected data, and we want to learn the pattern of detecting signal. The result of logistic flash provide 14 rank, but we just analysis the first leading 5 factors.
+
+1. factor 1 stands for the total detecting signal
+2. factor 2 clearly stands for hemato lineages
+3. factor 3 shows the imformation about amplification batch
+4. factor 4 and 5 shows the structure of different cell types
+  + we have alread pick the factor for hemato lineages
+  + CD11c+ are too common 
+  + I am not sure if we should include splenocyte.
+5. we find that some cell type group together (B cell, GC B cell) and different cell type separate from each other. 
+
+
+## Mouse Brain data
+
+In this data analysis, we compare PCA, flash, logistic flash and TSNE.
+
+we find that the results of PCA, flash, logistic flash are very similar and TSNE is kind of similar with all others. 
+
+I also check the TSNE with `dim = 2`, which the result seem not as good as above.
+
+## Human iPCS data
+
+In this data, we consider the first leading 8 factors and there is clear pattern of bacthes. At begining, we first think we are learning the missing pattern of the data. And we have some hypothesis as follows:
+
+1. the first factor should be correlated with the total counts of each cell type, which represent the total missing pattern.
+2. first factor(total missing pattern) should be correlated with total counts.
+3. there are two types of missing patterns besides the first factor (total missing)
+  + "technical missing"
+  + "system missing"
+4. "technical missing" should be correlated with individual and bacth.
+5. "system missing" should be correlated with cell cycle and total counts.
+6. "technical missing" should not be correlated with the cell cycle (or total count)
+
+In the following result, we find that
+
+1. factor 1 is the total missing pattern, which represent the total missing for each cell type. 
+2. factor 1 is correlated with total counts.
+3. factor 2 is correlated with total counts.
+4. all other factors (factor3 - factor8) has nothing to do with total counts.
+5. factor 3 - factor 8 reflect the information of individual and batch.
+
+we can guess that:
+
+1. factor one is total missing pattern
+2. factor two is "system missing" ("biological missing")
+3. factor three - factor eight are "technical missing"
+
+check the result[here](HumanTungiPSC.html)
+
+## Mouse ESC data
+
+In this data set, we get 3 factors.
+
+Only the factor 1 correlated with the total counts, and there is no factor 2 like that one in Human iPSC data. 
+
+In this data, the batches are different cell type, so we can see that factor 3 and 4 show the batch pattern or cell type pattern.
+
+After dicuss with John, John said the factor 2 might be correlated with the molecular count (not sure the exactly name). This observation make sense bacause mouse data doesn't have melecular count. 
+
+check the result[here](MouseBuettnerESC.html)
+
+## flash on the Human iPSC
+
+I compare the results of 
+
+1. logistic flash
+2. flash on logcpm
+3. flash with missing value on logcpm
+
+To check if what we find is not new based on the flash data or not.
+
+observation:
+
+1. three individuals performs slightly different on flash and logistic flash, after imputing the missing value, we find that the pattern changes according to the missing pattern.
+2. the gene loadings change
+  + loadings of flash and loadings of flash with imputation are highly correlated
+  + the correlation between loading of logistic flash and flash are much small than correlation between loading of logistic flash and flash with imputation
+3. there is an outlier in individual 3 in the flash with imputation, we check the correlation of the raw count of samples in the same batch and same well and we find this individual is different than others.
+
+check the result[here](flash_HumanTungiPSC.html)
+
+## Session Information
+
+```{r session-info}
+```
