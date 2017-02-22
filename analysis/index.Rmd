@@ -49,3 +49,5 @@ Click on this[Missing patter of Mouse Brain](MouseZeiselBrain.html) to see my re
 ### Genotype data
 
 Click on this[H938 data](H938_test.html) to see my result.
+
+Click on this[ancient data modern part](ancient_modern.html) to see my result.
