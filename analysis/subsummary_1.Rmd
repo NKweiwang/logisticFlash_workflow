@@ -29,6 +29,8 @@ In this data, we treat the nonzero values are detected data and zero values are 
   + I am not sure if we should include splenocyte.
 5. we find that some cell type group together (B cell, GC B cell) and different cell type separate from each other. 
 
+check the result[here](MouseSpleen.html)
+
 
 ## Mouse Brain data
 
@@ -37,6 +39,9 @@ In this data analysis, we compare PCA, flash, logistic flash and TSNE.
 we find that the results of PCA, flash, logistic flash are very similar and TSNE is kind of similar with all others. 
 
 I also check the TSNE with `dim = 2`, which the result seem not as good as above.
+
+check the result[here](MouseZeiselBrain.html)
+
 
 ## Human iPCS data
 
