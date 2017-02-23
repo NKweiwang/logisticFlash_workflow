@@ -310,7 +310,7 @@ div.tocify {
 
 
 <p><strong>Last updated:</strong> 2017-02-22</p>
-<p><strong>Code version:</strong> 2f3e52e</p>
+<p><strong>Code version:</strong> 31fca41</p>
 <div id="data" class="section level2">
 <h2>data</h2>
 <p>we load the data and exclude the ERCC genes</p>
@@ -433,7 +433,36 @@ plot(as.numeric(as.factor(cell_labels$group_name[col_index])),bflash$l[,i])
 <pre class="r"><code>par(mfrow = c(3,2),mar = c(5,4,4,2) - 1.8)
 total_count = colSums(count_data)
 for(i in 1:5) plot(total_count,MissPattern$f[,i],main = paste(&quot;factor&quot;,i,&quot;vs total count&quot;))</code></pre>
-<p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /> ## Session Information</p>
+<p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+# this is the plot index for the count_data
+plot(MissPattern$f[,4],MissPattern$f[,5],col = grey(0.8))
+new_group_name = cell_labels$group_name[col_index]
+cell_type = unique(new_group_name)
+points(MissPattern$f[which(new_group_name == &quot;B cell&quot;),4],MissPattern$f[which(new_group_name == &quot;B cell&quot;),5],col = &quot;red&quot;)
+points(MissPattern$f[which(new_group_name == &quot;GC B cell&quot;),4],
+       MissPattern$f[which(new_group_name == &quot;GC B cell&quot;),5],col = &quot;red&quot;)
+points(MissPattern$f[which(new_group_name == &quot;CD8+CD86+&quot;),4],
+       MissPattern$f[which(new_group_name == &quot;CD8+CD86+&quot;),5],col = &quot;yellow&quot;)
+points(MissPattern$f[which(new_group_name == &quot;CD8+CD86-&quot;),4],
+       MissPattern$f[which(new_group_name == &quot;CD8+CD86-&quot;),5],col = &quot;yellow&quot;)
+points(MissPattern$f[which(new_group_name == &quot;NK_cell&quot;),4],
+       MissPattern$f[which(new_group_name == &quot;NK_cell&quot;),5],col = &quot;purple&quot;)
+points(MissPattern$f[which(new_group_name == &quot;CD8-pDC&quot;),4],
+       MissPattern$f[which(new_group_name == &quot;CD8-pDC&quot;),5],col = &quot;forestgreen&quot;)
+points(MissPattern$f[which(new_group_name == &quot;CD8+pDC&quot;),4],
+       MissPattern$f[which(new_group_name == &quot;CD8+pDC&quot;),5],col = &quot;green&quot;)
+points(MissPattern$f[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),4],
+       MissPattern$f[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),5],col = &quot;blue&quot;)
+points(MissPattern$f[which(new_group_name == &quot;CD8-CD4+ESAM+&quot;),4],
+       MissPattern$f[which(new_group_name == &quot;CD8-CD4+ESAM+&quot;),5],col = &quot;yellow&quot;)</code></pre>
+<p><img src="figure/MouseSpleen.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#points(MissPattern$f[which(new_group_name == &quot;splenocyte&quot;),4],
+#       MissPattern$f[which(new_group_name == &quot;splenocyte&quot;),5],col = &quot;skyblue&quot;)</code></pre>
+</div>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.3.0 (2016-05-03)
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
@@ -455,7 +484,6 @@ loaded via a namespace (and not attached):
 [13] stringi_1.1.2    lazyeval_0.2.0   labeling_0.3     tools_3.3.0     
 [17] stringr_1.1.0    munsell_0.4.3    yaml_2.1.14      colorspace_1.3-2
 [21] htmltools_0.3.5  knitr_1.15.1     tibble_1.2      </code></pre>
-</div>
 </div>
 
 <hr>
