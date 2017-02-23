@@ -128,7 +128,6 @@ p1 + geom_label(aes(fill = factor(group_number)), colour = "white", fontface = "
 ```
 
 
-
 ```{r}
 group_number_6 = group_number
 group_number_6[which(group_number == 1 )] = 1
@@ -168,6 +167,36 @@ par(mfrow = c(3,2),mar = c(5,4,4,2) - 1.8)
 total_count = colSums(count_data)
 for(i in 1:5) plot(total_count,MissPattern$f[,i],main = paste("factor",i,"vs total count"))
 ```
+
+```{r}
+library(ggplot2)
+# this is the plot index for the count_data
+plot(MissPattern$f[,4],MissPattern$f[,5],col = grey(0.8))
+new_group_name = cell_labels$group_name[col_index]
+cell_type = unique(new_group_name)
+points(MissPattern$f[which(new_group_name == "B cell"),4],MissPattern$f[which(new_group_name == "B cell"),5],col = "red")
+points(MissPattern$f[which(new_group_name == "GC B cell"),4],
+       MissPattern$f[which(new_group_name == "GC B cell"),5],col = "red")
+points(MissPattern$f[which(new_group_name == "CD8+CD86+"),4],
+       MissPattern$f[which(new_group_name == "CD8+CD86+"),5],col = "yellow")
+points(MissPattern$f[which(new_group_name == "CD8+CD86-"),4],
+       MissPattern$f[which(new_group_name == "CD8+CD86-"),5],col = "yellow")
+points(MissPattern$f[which(new_group_name == "NK_cell"),4],
+       MissPattern$f[which(new_group_name == "NK_cell"),5],col = "purple")
+points(MissPattern$f[which(new_group_name == "CD8-pDC"),4],
+       MissPattern$f[which(new_group_name == "CD8-pDC"),5],col = "forestgreen")
+points(MissPattern$f[which(new_group_name == "CD8+pDC"),4],
+       MissPattern$f[which(new_group_name == "CD8+pDC"),5],col = "green")
+points(MissPattern$f[which(new_group_name == "monocyte_or_neutrophil"),4],
+       MissPattern$f[which(new_group_name == "monocyte_or_neutrophil"),5],col = "blue")
+points(MissPattern$f[which(new_group_name == "CD8-CD4+ESAM+"),4],
+       MissPattern$f[which(new_group_name == "CD8-CD4+ESAM+"),5],col = "yellow")
+#points(MissPattern$f[which(new_group_name == "splenocyte"),4],
+#       MissPattern$f[which(new_group_name == "splenocyte"),5],col = "skyblue")
+```
+
+
+
 ## Session Information
 
 
