@@ -296,8 +296,8 @@ points(g_total$f[which(new_group_name == "CD8+pDC"),4],
        g_total$f[which(new_group_name == "CD8+pDC"),3],col = "green")
 ```
 
-![grey cloud](~/Desktop/greycloud.png)
-![labeled data on cloud](~/Desktop/labeldcell.png)
+![grey cloud](figure/reproducemousespleen.Rmd/greycloud.png)
+![labeled data on cloud](figure/reproducemousespleen.Rmd/labeldcell.png)
 
 
 ## Session Information
