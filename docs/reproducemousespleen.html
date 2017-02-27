@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="wei wang" />
+
+<meta name="date" content="2017-02-25" />
+
+<title>try the label and unlabeled data</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">logistic flash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/NKweiwang/logisticFlash_workflow">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">try the label and unlabeled data</h1>
+<h4 class="author"><em>wei wang</em></h4>
+<h4 class="date"><em>2017-02-25</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-02-27</p>
+<p><strong>Code version:</strong> 3e9d536</p>
+<div id="try-the-code-to-find-the-1041-cells" class="section level2">
+<h2>try the code to find the 1041 cells</h2>
+<pre class="r"><code>######  In this code, we try to replicate the CAP projection plot code sent
+
+######  by Effi and others and also try to do the batchwise and cluster label 
+
+######   wise distruct plots, and also do the PCA analysis
+
+library(data.table)
+Data=data.frame(fread(&quot;../data/singelcell/MouseJatinspleen/GSE54006_umitab.txt&quot;));</code></pre>
+<pre><code>
+Read 49.5% of 20190 rows
+Read 99.1% of 20190 rows
+Read 20190 rows and 4591 (of 4591) columns from 0.173 GB file in 00:00:05</code></pre>
+<pre class="r"><code>gene_names=as.matrix(Data[,1]);
+Exp_details=read.table(file=&quot;../data/singelcell/MouseJatinspleen/GSE54006_experimental_design.txt&quot;,fill=T);
+
+#################   replicating the CAP  projection plot  ####################
+
+indices=read.table(&quot;../data/singelcell/MouseJatinspleen/indices_1041_cells.txt&quot;);
+indices=as.vector(as.matrix(indices));
+
+ERCC_genes=grep(&quot;ERCC&quot;,gene_names);
+Data_non_ERCC=Data[-ERCC_genes,];
+counts =t(as.matrix(Data_non_ERCC[,-1]))
+gene_list = gene_names
+gene_list = gene_list[-ERCC_genes]
+batch_well_ID=colnames(Data_non_ERCC)[-1]
+bwlist=strsplit(batch_well_ID,&quot;_&quot;);
+index_ID = as.numeric(matrix(unlist(bwlist),nrow=2)[2,])  
+
+filterlist=c(&quot;M34473&quot;,&quot;abParts&quot;,&quot;M13680&quot;,&quot;Tmsb4x&quot;,&quot;S100a4&quot;,&quot;B2m&quot;,&quot;Atpase6&quot;,&quot;Rpl23&quot;,&quot;Rps18&quot;,&quot;Rpl13&quot;,&quot;Rps19&quot;,&quot;H2-Ab1&quot;,&quot;Rplp1&quot;,&quot;Rpl4&quot;,&quot;Rps26&quot;,&quot;EF437368&quot;) ;
+fcounts = counts[,-match(filterlist,gene_names[-ERCC_genes])];
+gene_list = gene_list[-match(filterlist,gene_names[-ERCC_genes])]
+dim(fcounts)</code></pre>
+<pre><code>[1]  4590 20091</code></pre>
+<pre class="r"><code>fcounts_reduced=fcounts[match(indices,index_ID),]
+sample_list = match(indices,index_ID)
+###  fcounts_reduced is the counts matrix of the 1041 cells for which the CAP plot was made and 
+###  the 200091 genes of interest (removing controls)</code></pre>
+<pre class="r"><code>devtools::install_github(&quot;jhsiao999/singleCellRNASeqMouseJaitinSpleen&quot;)
+
+library(singleCellRNASeqMouseJaitinSpleen)
+
+J_counts &lt;- exprs(MouseJaitinSpleen)
+
+cell_labels &lt;- pData(MouseJaitinSpleen)
+
+dim(J_counts)</code></pre>
+<pre><code>[1] 20190  4590</code></pre>
+<pre class="r"><code>grey_data = J_counts[gene_list,sample_list]
+Bcell_list= grep(&quot;B cell&quot;,cell_labels$group_name)
+NK_list = grep(&quot;NK_cell&quot;,cell_labels$group_name)
+monocyte_list = grep(&quot;monocyte_or_neutrophil&quot;,cell_labels$group_name)
+pD_list = grep(&quot;pDC&quot;,cell_labels$group_name)
+pDminus_list = grep(&quot;CD8-pDC&quot;,cell_labels$group_name)
+pDplus_list = pD_list[-which(pD_list %in% pDminus_list)]
+CD8CD4_list = grep(&quot;ESAM&quot;,cell_labels$group_name)
+CD86_list = grep(&quot;CD86&quot;,cell_labels$group_name)
+splenocyte_list = grep(&quot;splenocyte&quot;,cell_labels$group_name)
+labeled_list = c(Bcell_list,NK_list,monocyte_list,pDplus_list,pDminus_list,CD8CD4_list,CD86_list,splenocyte_list)
+labeled_name = cell_labels$group_name[labeled_list]
+# prepare the data
+labeled_data = J_counts[gene_list,labeled_list]
+dim(labeled_data)</code></pre>
+<pre><code>[1] 20091   720</code></pre>
+<pre class="r"><code># to get the label and unlabel data
+total_list = c(sample_list,labeled_list)
+total_data = J_counts[gene_list,total_list]
+saveRDS(total_data,&quot;../data/singelcell/MouseJatinspleen/labelunlabel/totaldata.rds&quot;)
+saveRDS(grey_data,&quot;../data/singelcell/MouseJatinspleen/labelunlabel/greydata.rds&quot;)
+saveRDS(labeled_data,&quot;../data/singelcell/MouseJatinspleen/labelunlabel/labeldata.rds&quot;)</code></pre>
+<pre class="r"><code>grey_data = readRDS(&quot;../data/singelcell/MouseJatinspleen/labelunlabel/greydata.rds&quot;)
+col_sum = colSums(grey_data)
+row_sum = rowSums(grey_data)
+gcol_index = which(col_sum != 0)
+grow_index = which(row_sum != 0)
+
+Binary_count = 1 * (grey_data[grow_index,gcol_index] != 0)
+Boolean_count = 2*( Binary_count - 1/2)
+#source(&#39;~/HG/LogisticFlash/Rcode/GD_Rfuncrtions.R&#39;)
+#g_cloud = GL_flash(Boolean_count,K = 6)
+#saveRDS(g_cloud,file = &quot;../data/singelcell/MouseJatinspleen/labelunlabel/g_cloud.rds&quot;)
+g_cloud = readRDS(&quot;../data/singelcell/MouseJatinspleen/labelunlabel/g_cloud.rds&quot;)</code></pre>
+<pre class="r"><code>total_data = readRDS(&quot;../data/singelcell/MouseJatinspleen/labelunlabel/totaldata.rds&quot;)
+col_sum = colSums(total_data)
+row_sum = rowSums(total_data)
+tcol_index = which(col_sum != 0)
+trow_index = which(row_sum != 0)
+Binary_count = 1 * (total_data[trow_index,tcol_index] != 0)
+Boolean_count = 2*( Binary_count - 1/2)
+#source(&#39;~/HG/LogisticFlash/Rcode/GD_Rfuncrtions.R&#39;)
+#g_total = GL_flash(Boolean_count,K = 6)
+#saveRDS(g_total,file = &quot;../data/singelcell/MouseJatinspleen/labelunlabel/g_total.rds&quot;)
+g_total = readRDS(&quot;../data/singelcell/MouseJatinspleen/labelunlabel/g_total.rds&quot;)</code></pre>
+<p>for the cloud</p>
+<pre class="r"><code>par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+for(i in 1:6){
+
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[sample_list])),g_cloud$f[,i],main = &quot;sequencing_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$amplification_batch[sample_list])),g_cloud$f[,i],main = &quot;amplification_batch&quot;)
+#plot(as.numeric(as.factor(cell_labels$group_name[sample_list])),g_cloud$f[,i],main = &quot;group_name&quot;)
+}</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>for(i in 1:6){
+  barplot(g_cloud$f[,i],main = paste(&quot;factor&quot;,i))
+}</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(g_cloud$f[,4],g_cloud$f[,5])</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>need to project the labeled data on the cloud</p>
+<pre class="r"><code>projectf = t(labeled_data[grow_index,]) %*% g_cloud$l
+for(i in 1:6)plot(projectf[,i])</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(projectf[,3],projectf[,4])
+new_group_name = cell_labels$group_name[labeled_list]
+cell_type = unique(new_group_name)
+points(projectf[which(new_group_name == &quot;B cell&quot;),3],projectf[which(new_group_name == &quot;B cell&quot;),4],col = &quot;red&quot;)
+points(projectf[which(new_group_name == &quot;GC B cell&quot;),3],
+       projectf[which(new_group_name == &quot;GC B cell&quot;),4],col = &quot;red&quot;)
+points(projectf[which(new_group_name == &quot;CD8+CD86+&quot;),3],
+       projectf[which(new_group_name == &quot;CD8+CD86+&quot;),4],col = &quot;yellow&quot;)
+points(projectf[which(new_group_name == &quot;CD8+CD86-&quot;),3],
+       projectf[which(new_group_name == &quot;CD8+CD86-&quot;),4],col = &quot;yellow&quot;)
+points(projectf[which(new_group_name == &quot;NK_cell&quot;),3],
+       projectf[which(new_group_name == &quot;NK_cell&quot;),4],col = &quot;purple&quot;)
+points(projectf[which(new_group_name == &quot;CD8-pDC&quot;),3],
+       projectf[which(new_group_name == &quot;CD8-pDC&quot;),4],col = &quot;forestgreen&quot;)
+points(projectf[which(new_group_name == &quot;CD8+pDC&quot;),3],
+       projectf[which(new_group_name == &quot;CD8+pDC&quot;),4],col = &quot;green&quot;)
+points(projectf[which(new_group_name == &quot;CD8-CD4+ESAM+&quot;),3],
+       projectf[which(new_group_name == &quot;CD8-CD4+ESAM+&quot;),4],col = &quot;yellow&quot;)
+points(projectf[which(new_group_name == &quot;splenocyte&quot;),3],
+       projectf[which(new_group_name == &quot;splenocyte&quot;),4],col = &quot;skyblue&quot;)
+points(projectf[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),3],
+       projectf[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),4],col = &quot;blue&quot;)</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-7.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>projectf = t(labeled_data[grow_index,]) %*% g_cloud$l
+for(i in 1:6)plot(projectf[,i])</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-6.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(projectf[,4],projectf[,5])
+new_group_name = cell_labels$group_name[labeled_list]
+cell_type = unique(new_group_name)
+points(projectf[which(new_group_name == &quot;B cell&quot;),4],projectf[which(new_group_name == &quot;B cell&quot;),5],col = &quot;red&quot;)
+points(projectf[which(new_group_name == &quot;GC B cell&quot;),4],
+       projectf[which(new_group_name == &quot;GC B cell&quot;),5],col = &quot;red&quot;)
+points(projectf[which(new_group_name == &quot;CD8+CD86+&quot;),4],
+       projectf[which(new_group_name == &quot;CD8+CD86+&quot;),5],col = &quot;yellow&quot;)
+points(projectf[which(new_group_name == &quot;CD8+CD86-&quot;),4],
+       projectf[which(new_group_name == &quot;CD8+CD86-&quot;),5],col = &quot;yellow&quot;)
+points(projectf[which(new_group_name == &quot;NK_cell&quot;),4],
+       projectf[which(new_group_name == &quot;NK_cell&quot;),5],col = &quot;purple&quot;)
+points(projectf[which(new_group_name == &quot;CD8-pDC&quot;),4],
+       projectf[which(new_group_name == &quot;CD8-pDC&quot;),5],col = &quot;forestgreen&quot;)
+points(projectf[which(new_group_name == &quot;CD8+pDC&quot;),4],
+       projectf[which(new_group_name == &quot;CD8+pDC&quot;),5],col = &quot;green&quot;)
+points(projectf[which(new_group_name == &quot;CD8-CD4+ESAM+&quot;),4],
+       projectf[which(new_group_name == &quot;CD8-CD4+ESAM+&quot;),5],col = &quot;yellow&quot;)
+points(projectf[which(new_group_name == &quot;splenocyte&quot;),4],
+       projectf[which(new_group_name == &quot;splenocyte&quot;),5],col = &quot;skyblue&quot;)
+points(projectf[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),4],
+       projectf[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),5],col = &quot;blue&quot;)</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-7.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(2,3), mar = c(5,4,4,2) - 1.9)
+for(i in 1:6){
+
+plot(as.numeric(as.factor(cell_labels$sequencing_batch[total_list[tcol_index]])),g_total$f[,i],main = &quot;sequencing_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$amplification_batch[total_list[tcol_index]])),g_total$f[,i],main = &quot;amplification_batch&quot;)
+plot(as.numeric(as.factor(cell_labels$group_name[total_list[tcol_index]])),g_total$f[,i],main = &quot;group_name&quot;)
+}</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-9-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
+for(i in 1:6){
+  barplot(g_total$f[,i],main = paste(&quot;factor&quot;,i))
+}</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-9-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-9-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1,2), mar = c(5,4,4,2) - 1.9)
+new_group_name = cell_labels$group_name[total_list[tcol_index]]
+cell_type = unique(new_group_name)
+plot(g_total$f[which(new_group_name == &quot;CD11c+&quot;),3],g_total$f[which(new_group_name == &quot;CD11c+&quot;),4],col = grey(0.8))
+plot(g_total$f[,3],g_total$f[,4],col = grey(0.8))
+points(g_total$f[which(new_group_name == &quot;B cell&quot;),3],g_total$f[which(new_group_name == &quot;B cell&quot;),4],col = &quot;red&quot;)
+points(g_total$f[which(new_group_name == &quot;GC B cell&quot;),3],
+       g_total$f[which(new_group_name == &quot;GC B cell&quot;),4],col = &quot;red&quot;)
+points(g_total$f[which(new_group_name == &quot;CD8+CD86+&quot;),3],
+       g_total$f[which(new_group_name == &quot;CD8+CD86+&quot;),4],col = &quot;yellow&quot;)
+points(g_total$f[which(new_group_name == &quot;CD8+CD86-&quot;),3],
+       g_total$f[which(new_group_name == &quot;CD8+CD86-&quot;),4],col = &quot;yellow&quot;)
+points(g_total$f[which(new_group_name == &quot;CD8-pDC&quot;),3],
+       g_total$f[which(new_group_name == &quot;CD8-pDC&quot;),4],col = &quot;forestgreen&quot;)
+points(g_total$f[which(new_group_name == &quot;CD8+pDC&quot;),3],
+       g_total$f[which(new_group_name == &quot;CD8+pDC&quot;),4],col = &quot;green&quot;)
+points(g_total$f[which(new_group_name == &quot;CD8-CD4+ESAM+&quot;),3],
+       g_total$f[which(new_group_name == &quot;CD8-CD4+ESAM+&quot;),4],col = &quot;yellow&quot;)
+points(g_total$f[which(new_group_name == &quot;splenocyte&quot;),3],
+       g_total$f[which(new_group_name == &quot;splenocyte&quot;),4],col = &quot;skyblue&quot;)
+points(g_total$f[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),3],
+       g_total$f[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),4],col = &quot;blue&quot;)
+points(g_total$f[which(new_group_name == &quot;NK_cell&quot;),3],
+       g_total$f[which(new_group_name == &quot;NK_cell&quot;),4],col = &quot;purple&quot;)</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_cell_grey = function(i,j){
+par(mfrow = c(1,2), mar = c(5,4,4,2) - 1.9,pty=&quot;s&quot;)
+new_group_name = cell_labels$group_name[total_list[tcol_index]]
+cell_type = unique(new_group_name)
+plot(g_total$f[which(new_group_name == &quot;CD11c+&quot;),i],g_total$f[which(new_group_name == &quot;CD11c+&quot;),j],col = grey(0.8),main = &quot;grey cloud&quot;,asp=1)
+plot(g_total$f[,i],g_total$f[,j],col = grey(0.8), main = &quot;all labeled cells on the cloud&quot;,asp=1)
+points(g_total$f[which(new_group_name == &quot;B cell&quot;),i],g_total$f[which(new_group_name == &quot;B cell&quot;),j],col = &quot;red&quot;)
+points(g_total$f[which(new_group_name == &quot;GC B cell&quot;),i],
+       g_total$f[which(new_group_name == &quot;GC B cell&quot;),j],col = &quot;red&quot;)
+points(g_total$f[which(new_group_name == &quot;CD8+CD86+&quot;),i],
+       g_total$f[which(new_group_name == &quot;CD8+CD86+&quot;),j],col = &quot;yellow&quot;)
+points(g_total$f[which(new_group_name == &quot;CD8+CD86-&quot;),i],
+       g_total$f[which(new_group_name == &quot;CD8+CD86-&quot;),j],col = &quot;yellow&quot;)
+points(g_total$f[which(new_group_name == &quot;CD8-pDC&quot;),i],
+       g_total$f[which(new_group_name == &quot;CD8-pDC&quot;),j],col = &quot;forestgreen&quot;)
+points(g_total$f[which(new_group_name == &quot;CD8+pDC&quot;),i],
+       g_total$f[which(new_group_name == &quot;CD8+pDC&quot;),j],col = &quot;green&quot;)
+points(g_total$f[which(new_group_name == &quot;CD8-CD4+ESAM+&quot;),i],
+       g_total$f[which(new_group_name == &quot;CD8-CD4+ESAM+&quot;),j],col = &quot;yellow&quot;)
+points(g_total$f[which(new_group_name == &quot;splenocyte&quot;),i],
+       g_total$f[which(new_group_name == &quot;splenocyte&quot;),j],col = &quot;skyblue&quot;)
+points(g_total$f[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),i],
+       g_total$f[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),j],col = &quot;blue&quot;)
+points(g_total$f[which(new_group_name == &quot;NK_cell&quot;),i],
+       g_total$f[which(new_group_name == &quot;NK_cell&quot;),j],col = &quot;purple&quot;)
+}
+plot_cell_grey(4,3)</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="/Users/weiwang/Desktop/greycloud.png" alt="grey cloud" /> <img src="/Users/weiwang/Desktop/labeldcell.png" alt="labeled data on cloud" /></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.0 (2016-05-03)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.12.3 (unknown)
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] flare_1.5.0                             
+ [2] igraph_1.0.1                            
+ [3] Matrix_1.2-8                            
+ [4] MASS_7.3-45                             
+ [5] lattice_0.20-34                         
+ [6] singleCellRNASeqMouseJaitinSpleen_0.99.0
+ [7] Biobase_2.28.0                          
+ [8] BiocGenerics_0.14.0                     
+ [9] data.table_1.10.4                       
+[10] workflowr_0.3.0                         
+[11] rmarkdown_1.3                           
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.9       git2r_0.18.0      iterators_1.0.8  
+ [4] tools_3.3.0       digest_0.6.12     evaluate_0.10    
+ [7] memoise_1.0.0     foreach_1.4.3     rstudioapi_0.6   
+[10] curl_2.3          yaml_2.1.14       withr_1.0.2      
+[13] httr_1.2.1        stringr_1.1.0     knitr_1.15.1     
+[16] devtools_1.12.0   REBayes_0.73      rprojroot_1.2    
+[19] grid_3.3.0        R6_2.2.0          glasso_1.8       
+[22] irlba_2.1.2       flashr_0.1.1      ashr_2.1.4       
+[25] magrittr_1.5      backports_1.0.5   codetools_0.2-15 
+[28] htmltools_0.3.5   assertthat_0.1    stringi_1.1.2    
+[31] Rmosek_7.1.2      doParallel_1.0.10 pscl_1.4.9       
+[34] truncnorm_1.0-7   SQUAREM_2016.8-2 </code></pre>
+</div>
+
+<hr>
+<p>
+    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
