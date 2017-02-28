@@ -52,6 +52,8 @@ Click on this [subsummary 1](subsummary_1.html)
 
 Click on this[reproduce Jaitin plot using logistic flash](reproducemousespleen.html)
 
+Click on this[Jaitin plot](Jaitinplot.html)
+
 ### Genotype data
 
 Click on this [H938 data](H938_test.html) to see my result.
