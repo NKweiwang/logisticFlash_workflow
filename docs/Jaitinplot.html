@@ -9,9 +9,11 @@
 <meta name="generator" content="pandoc" />
 
 
+<meta name="author" content="wei wang" />
 
+<meta name="date" content="2017-02-26" />
 
-<title>Home</title>
+<title>try to get Jaitin plot</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +21,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
@@ -162,6 +167,101 @@ $(document).ready(function () {
 
 
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
 
 
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
@@ -202,53 +302,37 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Home</h1>
+<h1 class="title toc-ignore">try to get Jaitin plot</h1>
+<h4 class="author"><em>wei wang</em></h4>
+<h4 class="date"><em>2017-02-26</em></h4>
 
 </div>
 
 
-<div id="logistic-flash" class="section level1">
-<h1>Logistic Flash</h1>
-<p>This project is about to use ASH prior on the factors and loadings to deal with sparse factor model on Boolean data.</p>
-<p>There are two possible models being of interest.</p>
-<div id="noisy-model" class="section level2">
-<h2>Noisy Model</h2>
-<p>Click on this <a href="first-analysis.html">analysis on the noisy model (rank one case)</a> to see my results.</p>
-<p>On this model, we found that the fit is also not very good, which also can see in the paper <a href="http://www.jmlr.org/proceedings/papers/v39/klami14.pdf">Polya-Gamma augmentations for factor models</a>.</p>
-</div>
-<div id="direct-model" class="section level2">
-<h2>Direct Model</h2>
-<p>Click on this <a href="second-analysis.html">analysis on the direct model (rank K case)</a> to see my results.</p>
-<p>In the SPARFA paper <a href="https://3045e02b-a-841a428b-s-sites.googlegroups.com/a/sparfa.com/sparfa/sparfa-technical-papers/files/lan14a_1.pdf?attachauth=ANoY7cqDi7z1qfnqu1RwyAJivN7MLIsG1DWnBat80BwEmzON4pK_N2loGxDDC54k_KjNR1HDc98CPoFKusIWYzjFh9iakzBnPjk5VOs7LNyzHPXAFzL_mTxxLdTheSM8qSEnuMTdfAOcZcgbmsPPGKbP_gB0muVYj7-MBAHd5fxgTAUmlpt0XUGwTl8_96LmZbsUG1BGNxI78IFybiPsMXqBVlA6D7YIcX7UmwC0xnnlo309sa182QdOYQgnbdyHTXQz9g7HHZef&amp;attredirects=3">SPARFA</a> also proposes this direct model.</p>
-<p>Click on this <a href="third-analysis.html">logistic flash for binomial data</a> to see my results.</p>
-</div>
-<div id="data-analysis" class="section level2">
-<h2>Data Analysis</h2>
-<div id="chip-seq-data-from-kevin" class="section level3">
-<h3>Chip-Seq data from Kevin</h3>
-<p>Click on this <a href="chiseq_kevin.html">submatrix of chiqseq data</a> to see my results.</p>
-</div>
-<div id="missing-pattern-data-from-joyce" class="section level3">
-<h3>Missing pattern data from Joyce</h3>
-<p>Click on this <a href="MissPattern_HumanBuettner.html">single cell data for missing pattern HumanBuettner</a> to see my results.</p>
-<p>Click on this <a href="HumanTungiPSC.html">single cell data for missing pattern HumanTungiPSC</a> to see my results; and click this <a href="HumanTungiPSCspikein.html">HumanTungiPSC spike in</a> to see the result of the spike in gene.</p>
-<p>Click on this <a href="MouseBuettnerESC.html">single cell data for missing pattern MouseBuettnerESC</a> to see my results.</p>
-<p>Click on this <a href="flash_HumanTungiPSC.html">flash on HumanTungiPCS</a> to see my results.</p>
-<p>Click on this <a href="MouseSpleen.html">Missing patter of Mouse spleen</a> to see my results.</p>
-<p>Click on this <a href="MouseZeiselBrain.html">Missing patter of Mouse Brain</a> to see my results.</p>
-<p>Click on this <a href="subsummary_1.html">subsummary 1</a></p>
-<div id="try-to-reproduce-the-jaitin-paper-plot" class="section level4">
-<h4>try to reproduce the Jaitin paper plot</h4>
-<p>Click on this<a href="reproducemousespleen.html">reproduce Jaitin plot using logistic flash</a></p>
-<p>Click on this<a href="Jaitinplot.html">Jaitin plot</a></p>
-</div>
-</div>
-<div id="genotype-data" class="section level3">
-<h3>Genotype data</h3>
-<p>Click on this <a href="H938_test.html">H938 data</a> to see my result.</p>
-<p>Click on this <a href="ancient_modern.html">ancient data modern part</a> to see my result.</p>
-</div>
-</div>
+<p><strong>Last updated:</strong> 2017-02-27</p>
+<p><strong>Code version:</strong> a0f6072 <img src="figure/reproducemousespleen.Rmd/unnamed-chunk-11-1.png" alt="grey could" /> <img src="figure/reproducemousespleen.Rmd/unnamed-chunk-12-1.png" alt="labeled data" /> <img src="figure/reproducemousespleen.Rmd/greycloud.png" alt="grey cloud" /> <img src="figure/reproducemousespleen.Rmd/labeldcell.png" alt="labeled data on cloud" /></p>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.0 (2016-05-03)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.12.3 (unknown)
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] workflowr_0.3.0 rmarkdown_1.3  
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.9     digest_0.6.12   withr_1.0.2     rprojroot_1.2  
+ [5] backports_1.0.5 git2r_0.18.0    magrittr_1.5    evaluate_0.10  
+ [9] stringi_1.1.2   rstudioapi_0.6  devtools_1.12.0 tools_3.3.0    
+[13] stringr_1.1.0   yaml_2.1.14     memoise_1.0.0   htmltools_0.3.5
+[17] knitr_1.15.1   </code></pre>
 </div>
 
 <hr>
@@ -277,6 +361,8 @@ $(document).ready(function () {
 -->
 
 
+</div>
+</div>
 
 </div>
 
