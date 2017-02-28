@@ -52,7 +52,7 @@ Click on this [subsummary 1](subsummary_1.html)
 
 Click on this[reproduce Jaitin plot using logistic flash](reproducemousespleen.html)
 
-Click on this[Jaitin plot](Jaitinplot.html)
+Click on this[Jaitin plot (plot only)](Jaitinplot.html)
 
 ### Genotype data
 
