@@ -58,7 +58,7 @@ sample_list = match(indices,index_ID)
 
 
 ```{r,cache=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
-devtools::install_github("jhsiao999/singleCellRNASeqMouseJaitinSpleen")
+#devtools::install_github("jhsiao999/singleCellRNASeqMouseJaitinSpleen")
 
 library(singleCellRNASeqMouseJaitinSpleen)
 
@@ -86,9 +86,9 @@ dim(labeled_data)
 # to get the label and unlabel data
 total_list = c(sample_list,labeled_list)
 total_data = J_counts[gene_list,total_list]
-saveRDS(total_data,"../data/singelcell/MouseJatinspleen/labelunlabel/totaldata.rds")
-saveRDS(grey_data,"../data/singelcell/MouseJatinspleen/labelunlabel/greydata.rds")
-saveRDS(labeled_data,"../data/singelcell/MouseJatinspleen/labelunlabel/labeldata.rds")
+#saveRDS(total_data,"../data/singelcell/MouseJatinspleen/labelunlabel/totaldata.rds")
+#saveRDS(grey_data,"../data/singelcell/MouseJatinspleen/labelunlabel/greydata.rds")
+#saveRDS(labeled_data,"../data/singelcell/MouseJatinspleen/labelunlabel/labeldata.rds")
 ```
 
 
@@ -272,6 +272,9 @@ points(g_total$f[which(new_group_name == "NK_cell"),i],
        g_total$f[which(new_group_name == "NK_cell"),j],col = "purple")
 }
 plot_cell_grey(4,3)
+plot_cell_grey(4,5)
+plot_cell_grey(4,6)
+plot_cell_grey(5,6)
 ```
 
 ```{r,echo=FALSE}
@@ -298,6 +301,41 @@ points(g_total$f[which(new_group_name == "CD8+pDC"),4],
 
 ![grey cloud](figure/reproducemousespleen.Rmd/greycloud.png)
 ![labeled data on cloud](figure/reproducemousespleen.Rmd/labeldcell.png)
+
+color the batch
+
+```{r}
+new_group_name = cell_labels$amplification_batch[total_list[tcol_index]]
+unique(new_group_name)
+par(mfrow = c(1,2), mar = c(5,4,4,2) - 1.9,pty="s")
+print("batch 0,1,2,3,4,28,29,32,33,36,37,40,41 are all for cd11, 13 for B cell, 14 for monocyte, Nk and splenocyte,12 for +PDc, 7 for - PDc, 8 for cd8-cd4, 5 for cd8 cd86+, 11 for cd8cd86-")
+plot_batch_grey = function(i,j){
+new_group_name = cell_labels$amplification_batch[total_list[tcol_index]]
+batch_type = unique(new_group_name)
+# cell_type = unique(cell_labels$group_name[total_list[tcol_index]])
+# plot(g_total$f[which(new_group_name == "CD11c+"),i],g_total$f[which(new_group_name == "CD11c+"),j],col = grey(0.8),main = "grey cloud",asp=1)
+plot(g_total$f[,i],g_total$f[,j],col = grey(0.8), main = "all labeled cells on the cloud",asp=1)
+points(g_total$f[which(new_group_name == "13"),i],g_total$f[which(new_group_name == "13"),j],col = "red")
+points(g_total$f[which(new_group_name == "5"),i],
+       g_total$f[which(new_group_name == "5"),j],col = "blue")
+points(g_total$f[which(new_group_name == "11"),i],
+       g_total$f[which(new_group_name == "11"),j],col = "skyblue")
+points(g_total$f[which(new_group_name == "7"),i],
+       g_total$f[which(new_group_name == "7"),j],col = "forestgreen")
+points(g_total$f[which(new_group_name == "12"),i],
+       g_total$f[which(new_group_name == "12"),j],col = "green")
+points(g_total$f[which(new_group_name == "8"),i],
+       g_total$f[which(new_group_name == "8"),j],col = "yellow")
+points(g_total$f[which(new_group_name == "14"),i],
+       g_total$f[which(new_group_name == "14"),j],col = "purple")
+}
+plot_batch_grey(4,3)
+plot_batch_grey(2,3)
+plot_batch_grey(1,2)
+plot_batch_grey(2,4)
+
+```
+
 
 
 ## Session Information
