@@ -309,8 +309,8 @@ div.tocify {
 </div>
 
 
-<p><strong>Last updated:</strong> 2017-03-01</p>
-<p><strong>Code version:</strong> cfbdab9</p>
+<p><strong>Last updated:</strong> 2017-03-02</p>
+<p><strong>Code version:</strong> a746216</p>
 <div id="try-the-code-to-find-the-1041-cells" class="section level2">
 <h2>try the code to find the 1041 cells</h2>
 <pre class="r"><code>######  In this code, we try to replicate the CAP projection plot code sent
@@ -414,17 +414,17 @@ plot(as.numeric(as.factor(cell_labels$sequencing_batch[sample_list])),g_cloud$f[
 plot(as.numeric(as.factor(cell_labels$amplification_batch[sample_list])),g_cloud$f[,i],main = &quot;amplification_batch&quot;)
 #plot(as.numeric(as.factor(cell_labels$group_name[sample_list])),g_cloud$f[,i],main = &quot;group_name&quot;)
 }</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-37-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-37-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>for(i in 1:6){
   barplot(g_cloud$f[,i],main = paste(&quot;factor&quot;,i))
 }</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-37-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-37-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot(g_cloud$f[,4],g_cloud$f[,5])</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-38-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>need to project the labeled data on the cloud</p>
 <pre class="r"><code>projectf = t(labeled_data[grow_index,]) %*% g_cloud$l
 for(i in 1:6)plot(projectf[,i])</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-39-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-39-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-39-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-39-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-39-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot(projectf[,3],projectf[,4])
 new_group_name = cell_labels$group_name[labeled_list]
 cell_type = unique(new_group_name)
@@ -447,10 +447,10 @@ points(projectf[which(new_group_name == &quot;splenocyte&quot;),3],
        projectf[which(new_group_name == &quot;splenocyte&quot;),4],col = &quot;skyblue&quot;)
 points(projectf[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),3],
        projectf[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),4],col = &quot;blue&quot;)</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-39-7.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-7-7.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>projectf = t(labeled_data[grow_index,]) %*% g_cloud$l
 for(i in 1:6)plot(projectf[,i])</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-40-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-40-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-40-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-40-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-40-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-6.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot(projectf[,4],projectf[,5])
 new_group_name = cell_labels$group_name[labeled_list]
 cell_type = unique(new_group_name)
@@ -473,7 +473,7 @@ points(projectf[which(new_group_name == &quot;splenocyte&quot;),4],
        projectf[which(new_group_name == &quot;splenocyte&quot;),5],col = &quot;skyblue&quot;)
 points(projectf[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),4],
        projectf[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),5],col = &quot;blue&quot;)</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-40-7.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-8-7.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>par(mfrow = c(2,3), mar = c(5,4,4,2) - 1.9)
 for(i in 1:6){
 
@@ -481,12 +481,12 @@ plot(as.numeric(as.factor(cell_labels$sequencing_batch[total_list[tcol_index]]))
 plot(as.numeric(as.factor(cell_labels$amplification_batch[total_list[tcol_index]])),g_total$f[,i],main = &quot;amplification_batch&quot;)
 plot(as.numeric(as.factor(cell_labels$group_name[total_list[tcol_index]])),g_total$f[,i],main = &quot;group_name&quot;)
 }</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-41-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-41-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-41-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-9-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>par(mfrow = c(2,2), mar = c(5,4,4,2) - 1.9)
 for(i in 1:6){
   barplot(g_total$f[,i],main = paste(&quot;factor&quot;,i))
 }</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-41-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-41-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-9-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-9-5.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>par(mfrow = c(1,2), mar = c(5,4,4,2) - 1.9)
 new_group_name = cell_labels$group_name[total_list[tcol_index]]
 cell_type = unique(new_group_name)
@@ -511,7 +511,7 @@ points(g_total$f[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),3],
        g_total$f[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),4],col = &quot;blue&quot;)
 points(g_total$f[which(new_group_name == &quot;NK_cell&quot;),3],
        g_total$f[which(new_group_name == &quot;NK_cell&quot;),4],col = &quot;purple&quot;)</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-42-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot_cell_grey = function(i,j){
 par(mfrow = c(1,2), mar = c(5,4,4,2) - 1.9,pty=&quot;s&quot;)
 new_group_name = cell_labels$group_name[total_list[tcol_index]]
@@ -537,16 +537,18 @@ points(g_total$f[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),i],
        g_total$f[which(new_group_name == &quot;monocyte_or_neutrophil&quot;),j],col = &quot;blue&quot;)
 points(g_total$f[which(new_group_name == &quot;NK_cell&quot;),i],
        g_total$f[which(new_group_name == &quot;NK_cell&quot;),j],col = &quot;purple&quot;)
+legend(&quot;topright&quot;, legend=c(&quot;B cell&quot;, &quot;cd8...&quot;, &quot;-pDC&quot;, &quot;+pDC&quot;, &quot;splenocyte&quot;, &quot;monocyte&quot;, &quot;NK cell&quot;),
+       col=c(&quot;red&quot;, &quot;yellow&quot;,  &quot;forestgreen&quot;, &quot;green&quot;,&quot;skyblue&quot;,&quot;blue&quot;, &quot;purple&quot; ),pch = 1, cex=0.8)
 }
 plot_cell_grey(4,3)</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-43-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot_cell_grey(4,5)</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-43-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot_cell_grey(4,6)</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-43-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot_cell_grey(5,6)</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-43-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-44-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-11-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p><img src="figure/reproducemousespleen.Rmd/greycloud.png" alt="grey cloud" /> <img src="figure/reproducemousespleen.Rmd/labeldcell.png" alt="labeled data on cloud" /></p>
 <p>color the batch</p>
 <pre class="r"><code>new_group_name = cell_labels$amplification_batch[total_list[tcol_index]]
@@ -575,13 +577,15 @@ points(g_total$f[which(new_group_name == &quot;8&quot;),i],
        g_total$f[which(new_group_name == &quot;8&quot;),j],col = &quot;yellow&quot;)
 points(g_total$f[which(new_group_name == &quot;14&quot;),i],
        g_total$f[which(new_group_name == &quot;14&quot;),j],col = &quot;purple&quot;)
+legend(&quot;topright&quot;, legend=c(&quot;batch 13&quot;, &quot;batch 5&quot;, &quot;batch 11&quot;, &quot;batch 7&quot;, &quot;batch 12&quot;, &quot;batch 8&quot;, &quot;batch 14&quot;),
+       col=c(&quot;red&quot;, &quot;blue&quot;, &quot;skyblue&quot;, &quot;forestgreen&quot;, &quot;green&quot;,&quot;yellow&quot; , &quot;purple&quot; ),pch = 1, cex=0.8)
 }
 plot_batch_grey(4,3)
 plot_batch_grey(2,3)</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-45-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot_batch_grey(1,2)
 plot_batch_grey(2,4)</code></pre>
-<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-45-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session Information</h2>
@@ -594,29 +598,16 @@ locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 attached base packages:
-[1] parallel  stats     graphics  grDevices utils     datasets  methods  
-[8] base     
+[1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] huge_1.2.7                              
- [2] MASS_7.3-45                             
- [3] igraph_1.0.1                            
- [4] lattice_0.20-34                         
- [5] Matrix_1.2-8                            
- [6] singleCellRNASeqMouseJaitinSpleen_0.99.0
- [7] Biobase_2.28.0                          
- [8] BiocGenerics_0.14.0                     
- [9] data.table_1.10.4                       
-[10] workflowr_0.3.0                         
-[11] rmarkdown_1.3                           
+[1] workflowr_0.3.0 rmarkdown_1.3  
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.9      rstudioapi_0.6   knitr_1.15.1     magrittr_1.5    
- [5] devtools_1.12.0  R6_2.2.0         stringr_1.1.0    httr_1.2.1      
- [9] tools_3.3.0      grid_3.3.0       git2r_0.18.0     withr_1.0.2     
-[13] htmltools_0.3.5  yaml_2.1.14      rprojroot_1.2    digest_0.6.12   
-[17] codetools_0.2-15 curl_2.3         memoise_1.0.0    evaluate_0.10   
-[21] stringi_1.1.2    backports_1.0.5 </code></pre>
+ [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   htmltools_0.3.5
+ [5] tools_3.3.0     yaml_2.1.14     Rcpp_0.12.9     stringi_1.1.2  
+ [9] knitr_1.15.1    git2r_0.18.0    stringr_1.1.0   digest_0.6.12  
+[13] evaluate_0.10  </code></pre>
 </div>
 
 <hr>
