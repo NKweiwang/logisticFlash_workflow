@@ -31,6 +31,10 @@ Here we can see that almost each cell type in one batch, but cell type monocyte,
 
 In our plot, we separate these three cell types in the same batch, and the factor values have different sign, which means monocyte performs differently from NK cell on this factor (factor 4.)
 
+## color the grey cloud by batch (no labeled data)
+
+![labeled data on cloud by batch](figure/reproducemousespleen.Rmd/unnamed-chunk-14-1.png)
+
 ## Session Information
 
 ```{r session-info}

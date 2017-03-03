@@ -342,6 +342,30 @@ plot_batch_grey(2,4)
 
 
 
+```{r}
+new_group_name = cell_labels$amplification_batch[total_list[tcol_index]]
+unique(new_group_name)
+par(mfrow = c(1,1), mar = c(5,4,4,2) - 1.9,pty="s")
+print("batch 0,1,2,3,4,28,29,32,33,36,37,40,41 are all for cd11, 13 for B cell, 14 for monocyte, Nk and splenocyte,12 for +PDc, 7 for - PDc, 8 for cd8-cd4, 5 for cd8 cd86+, 11 for cd8cd86-")
+plot_batch_grey = function(i,j){
+new_group_name = cell_labels$amplification_batch[total_list[tcol_index]]
+batch_type = unique(new_group_name)
+# cell_type = unique(cell_labels$group_name[total_list[tcol_index]])
+# plot(g_total$f[which(new_group_name == "CD11c+"),i],g_total$f[which(new_group_name == "CD11c+"),j],col = grey(0.8),main = "grey cloud",asp=1)
+grey_batches = c("0" , "1" , "2" , "3" , "4"  ,"28" ,"29" ,"32" ,"33", "36","37", "40" ,"41")
+plot(g_total$f[which(new_group_name %in% grey_batches ),i],g_total$f[which(new_group_name %in% grey_batches ),j],col = grey(0.8), main = "all labeled cells on the cloud",asp=1)
+for(k in 1:length(grey_batches)){
+  points(g_total$f[which(new_group_name == grey_batches[k]),i],
+       g_total$f[which(new_group_name == grey_batches[k]),j],col = rainbow(13)[k])
+}
+legend("topright", legend=c("batch 0", "batch 1", "batch 2", "batch 3", "batch 4", "batch 28", "batch 29",
+                            "batch 32", "batch 33", "batch 36", "batch 37", "batch 40", "batch 41"),
+       col=rainbow(13),pch = 1, cex=0.5)
+}
+plot_batch_grey(4,3)
+
+```
+
 ## Session Information
 
 ```{r session-info}
