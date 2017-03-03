@@ -309,8 +309,8 @@ div.tocify {
 </div>
 
 
-<p><strong>Last updated:</strong> 2017-03-02</p>
-<p><strong>Code version:</strong> a746216</p>
+<p><strong>Last updated:</strong> 2017-03-03</p>
+<p><strong>Code version:</strong> a7496c3</p>
 <div id="try-the-code-to-find-the-1041-cells" class="section level2">
 <h2>try the code to find the 1041 cells</h2>
 <pre class="r"><code>######  In this code, we try to replicate the CAP projection plot code sent
@@ -586,6 +586,30 @@ plot_batch_grey(2,3)</code></pre>
 <pre class="r"><code>plot_batch_grey(1,2)
 plot_batch_grey(2,4)</code></pre>
 <p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>new_group_name = cell_labels$amplification_batch[total_list[tcol_index]]
+unique(new_group_name)</code></pre>
+<pre><code> [1] &quot;0&quot;  &quot;1&quot;  &quot;2&quot;  &quot;3&quot;  &quot;4&quot;  &quot;28&quot; &quot;29&quot; &quot;32&quot; &quot;33&quot; &quot;36&quot; &quot;37&quot; &quot;40&quot; &quot;41&quot; &quot;13&quot;
+[15] &quot;14&quot; &quot;12&quot; &quot;7&quot;  &quot;8&quot;  &quot;5&quot;  &quot;11&quot;</code></pre>
+<pre class="r"><code>par(mfrow = c(1,1), mar = c(5,4,4,2) - 1.9,pty=&quot;s&quot;)
+print(&quot;batch 0,1,2,3,4,28,29,32,33,36,37,40,41 are all for cd11, 13 for B cell, 14 for monocyte, Nk and splenocyte,12 for +PDc, 7 for - PDc, 8 for cd8-cd4, 5 for cd8 cd86+, 11 for cd8cd86-&quot;)</code></pre>
+<pre><code>[1] &quot;batch 0,1,2,3,4,28,29,32,33,36,37,40,41 are all for cd11, 13 for B cell, 14 for monocyte, Nk and splenocyte,12 for +PDc, 7 for - PDc, 8 for cd8-cd4, 5 for cd8 cd86+, 11 for cd8cd86-&quot;</code></pre>
+<pre class="r"><code>plot_batch_grey = function(i,j){
+new_group_name = cell_labels$amplification_batch[total_list[tcol_index]]
+batch_type = unique(new_group_name)
+# cell_type = unique(cell_labels$group_name[total_list[tcol_index]])
+# plot(g_total$f[which(new_group_name == &quot;CD11c+&quot;),i],g_total$f[which(new_group_name == &quot;CD11c+&quot;),j],col = grey(0.8),main = &quot;grey cloud&quot;,asp=1)
+grey_batches = c(&quot;0&quot; , &quot;1&quot; , &quot;2&quot; , &quot;3&quot; , &quot;4&quot;  ,&quot;28&quot; ,&quot;29&quot; ,&quot;32&quot; ,&quot;33&quot;, &quot;36&quot;,&quot;37&quot;, &quot;40&quot; ,&quot;41&quot;)
+plot(g_total$f[which(new_group_name %in% grey_batches ),i],g_total$f[which(new_group_name %in% grey_batches ),j],col = grey(0.8), main = &quot;all labeled cells on the cloud&quot;,asp=1)
+for(k in 1:length(grey_batches)){
+  points(g_total$f[which(new_group_name == grey_batches[k]),i],
+       g_total$f[which(new_group_name == grey_batches[k]),j],col = rainbow(13)[k])
+}
+legend(&quot;topright&quot;, legend=c(&quot;batch 0&quot;, &quot;batch 1&quot;, &quot;batch 2&quot;, &quot;batch 3&quot;, &quot;batch 4&quot;, &quot;batch 28&quot;, &quot;batch 29&quot;,
+                            &quot;batch 32&quot;, &quot;batch 33&quot;, &quot;batch 36&quot;, &quot;batch 37&quot;, &quot;batch 40&quot;, &quot;batch 41&quot;),
+       col=rainbow(13),pch = 1, cex=0.5)
+}
+plot_batch_grey(4,3)</code></pre>
+<p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session Information</h2>
@@ -598,16 +622,22 @@ locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
 
 other attached packages:
-[1] workflowr_0.3.0 rmarkdown_1.3  
+[1] singleCellRNASeqMouseJaitinSpleen_0.99.0
+[2] Biobase_2.28.0                          
+[3] BiocGenerics_0.14.0                     
+[4] data.table_1.10.4                       
+[5] workflowr_0.3.0                         
+[6] rmarkdown_1.3                           
 
 loaded via a namespace (and not attached):
- [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   htmltools_0.3.5
- [5] tools_3.3.0     yaml_2.1.14     Rcpp_0.12.9     stringi_1.1.2  
- [9] knitr_1.15.1    git2r_0.18.0    stringr_1.1.0   digest_0.6.12  
-[13] evaluate_0.10  </code></pre>
+ [1] Rcpp_0.12.9     digest_0.6.12   rprojroot_1.2   backports_1.0.5
+ [5] git2r_0.18.0    magrittr_1.5    evaluate_0.10   stringi_1.1.2  
+ [9] tools_3.3.0     stringr_1.1.0   yaml_2.1.14     htmltools_0.3.5
+[13] knitr_1.15.1   </code></pre>
 </div>
 
 <hr>

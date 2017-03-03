@@ -309,8 +309,8 @@ div.tocify {
 </div>
 
 
-<p><strong>Last updated:</strong> 2017-03-02</p>
-<p><strong>Code version:</strong> a746216 <img src="figure/reproducemousespleen.Rmd/unnamed-chunk-11-1.png" alt="grey could" /> <img src="figure/reproducemousespleen.Rmd/unnamed-chunk-12-1.png" alt="labeled data" /> <img src="figure/reproducemousespleen.Rmd/greycloud.png" alt="grey cloud" /> <img src="figure/reproducemousespleen.Rmd/labeldcell.png" alt="labeled data on cloud" /></p>
+<p><strong>Last updated:</strong> 2017-03-03</p>
+<p><strong>Code version:</strong> a7496c3 <img src="figure/reproducemousespleen.Rmd/unnamed-chunk-11-1.png" alt="grey could" /> <img src="figure/reproducemousespleen.Rmd/unnamed-chunk-12-1.png" alt="labeled data" /> <img src="figure/reproducemousespleen.Rmd/greycloud.png" alt="grey cloud" /> <img src="figure/reproducemousespleen.Rmd/labeldcell.png" alt="labeled data on cloud" /></p>
 <div id="plot-for-the-batch" class="section level2">
 <h2>plot for the batch</h2>
 <div id="note-that-the-color-is-not-for-cell-type-any-more-they-are-for-the-batch." class="section level3">
@@ -318,6 +318,13 @@ div.tocify {
 <p><img src="figure/reproducemousespleen.Rmd/unnamed-chunk-13-1.png" alt="labeled data on cloud by batch" /> first plot for the factor 3 vs factor 4, and plot on the right is for factor 2 vs factor 3.</p>
 <p>Here we can see that almost each cell type in one batch, but cell type monocyte, NK cell and splenocyte are in the same batch (batch 14: the purple one).</p>
 <p>In our plot, we separate these three cell types in the same batch, and the factor values have different sign, which means monocyte performs differently from NK cell on this factor (factor 4.)</p>
+</div>
+</div>
+<div id="color-the-grey-cloud-by-batch-no-labeled-data" class="section level2">
+<h2>color the grey cloud by batch (no labeled data)</h2>
+<div class="figure">
+<img src="figure/reproducemousespleen.Rmd/unnamed-chunk-14-1.png" alt="labeled data on cloud by batch" />
+<p class="caption">labeled data on cloud by batch</p>
 </div>
 </div>
 <div id="session-information" class="section level2">
@@ -331,16 +338,22 @@ locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
 
 other attached packages:
-[1] workflowr_0.3.0 rmarkdown_1.3  
+[1] singleCellRNASeqMouseJaitinSpleen_0.99.0
+[2] Biobase_2.28.0                          
+[3] BiocGenerics_0.14.0                     
+[4] data.table_1.10.4                       
+[5] workflowr_0.3.0                         
+[6] rmarkdown_1.3                           
 
 loaded via a namespace (and not attached):
- [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   htmltools_0.3.5
- [5] tools_3.3.0     yaml_2.1.14     Rcpp_0.12.9     stringi_1.1.2  
- [9] knitr_1.15.1    git2r_0.18.0    stringr_1.1.0   digest_0.6.12  
-[13] evaluate_0.10  </code></pre>
+ [1] Rcpp_0.12.9     digest_0.6.12   rprojroot_1.2   backports_1.0.5
+ [5] git2r_0.18.0    magrittr_1.5    evaluate_0.10   stringi_1.1.2  
+ [9] tools_3.3.0     stringr_1.1.0   yaml_2.1.14     htmltools_0.3.5
+[13] knitr_1.15.1   </code></pre>
 </div>
 
 <hr>
