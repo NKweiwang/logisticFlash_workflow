@@ -270,6 +270,8 @@ points(g_total$f[which(new_group_name == "monocyte_or_neutrophil"),i],
        g_total$f[which(new_group_name == "monocyte_or_neutrophil"),j],col = "blue")
 points(g_total$f[which(new_group_name == "NK_cell"),i],
        g_total$f[which(new_group_name == "NK_cell"),j],col = "purple")
+legend("topright", legend=c("B cell", "cd8...", "-pDC", "+pDC", "splenocyte", "monocyte", "NK cell"),
+       col=c("red", "yellow",  "forestgreen", "green","skyblue","blue", "purple" ),pch = 1, cex=0.8)
 }
 plot_cell_grey(4,3)
 plot_cell_grey(4,5)
@@ -328,6 +330,8 @@ points(g_total$f[which(new_group_name == "8"),i],
        g_total$f[which(new_group_name == "8"),j],col = "yellow")
 points(g_total$f[which(new_group_name == "14"),i],
        g_total$f[which(new_group_name == "14"),j],col = "purple")
+legend("topright", legend=c("batch 13", "batch 5", "batch 11", "batch 7", "batch 12", "batch 8", "batch 14"),
+       col=c("red", "blue", "skyblue", "forestgreen", "green","yellow" , "purple" ),pch = 1, cex=0.8)
 }
 plot_batch_grey(4,3)
 plot_batch_grey(2,3)

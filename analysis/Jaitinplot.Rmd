@@ -20,6 +20,17 @@ knitr::read_chunk("chunks.R")
 ![grey cloud](figure/reproducemousespleen.Rmd/greycloud.png)
 ![labeled data on cloud](figure/reproducemousespleen.Rmd/labeldcell.png)
 
+## plot for the batch
+
+### note that the color is not for cell type any more, they are for the batch.
+
+![labeled data on cloud by batch](figure/reproducemousespleen.Rmd/unnamed-chunk-13-1.png)
+first plot for the factor 3 vs factor 4, and plot on the right is for factor 2 vs factor 3.
+
+Here we can see that almost each cell type in one batch, but cell type monocyte, NK cell and splenocyte are in the same batch (batch 14: the purple one). 
+
+In our plot, we separate these three cell types in the same batch, and the factor values have different sign, which means monocyte performs differently from NK cell on this factor (factor 4.)
+
 ## Session Information
 
 ```{r session-info}
