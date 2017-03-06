@@ -9,22 +9,6 @@ output:
 
 This project is about to use ASH prior on the factors and loadings to deal with sparse factor model on Boolean data.
 
-There are two possible models being of interest.
-
-## Noisy Model
-
-Click on this [analysis on the noisy model (rank one case)](first-analysis.html) to see my results.
-
-On this model, we found that the fit is also not very good, which also can see in the paper [Polya-Gamma augmentations for factor models](http://www.jmlr.org/proceedings/papers/v39/klami14.pdf).
-
-## Direct Model
-
-Click on this [analysis on the direct model (rank K case)](second-analysis.html) to see my results.
-
-In the SPARFA paper [SPARFA](https://3045e02b-a-841a428b-s-sites.googlegroups.com/a/sparfa.com/sparfa/sparfa-technical-papers/files/lan14a_1.pdf?attachauth=ANoY7cqDi7z1qfnqu1RwyAJivN7MLIsG1DWnBat80BwEmzON4pK_N2loGxDDC54k_KjNR1HDc98CPoFKusIWYzjFh9iakzBnPjk5VOs7LNyzHPXAFzL_mTxxLdTheSM8qSEnuMTdfAOcZcgbmsPPGKbP_gB0muVYj7-MBAHd5fxgTAUmlpt0XUGwTl8_96LmZbsUG1BGNxI78IFybiPsMXqBVlA6D7YIcX7UmwC0xnnlo309sa182QdOYQgnbdyHTXQz9g7HHZef&attredirects=3) also proposes this direct model.
-
-Click on this [logistic flash for binomial data](third-analysis.html) to see my results.
-
 ## Data Analysis
 
 ### Chip-Seq data from Kevin
