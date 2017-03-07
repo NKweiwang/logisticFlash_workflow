@@ -47,3 +47,7 @@ Click on this [ancient data modern part](ancient_modern.html) to see my result.
 ## TSNE on the MNIST data
 
 Click on this [small sample MNIST data](MNISTdata_1000.html) to see my result.
+
+## test
+
+[test](test.html)
