@@ -167,6 +167,12 @@ plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f))
 abline(0,1,col = "red")
 plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = "estimated structure flash")
 abline(0,1,col = "red")
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = "estimated structure flash")
+abline(0,1,col = "red")
+library(boot)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% t(gflash$f))),main = "estimated structure flash")
+abline(0,1,col = "red")
+
 ```
 
 
@@ -205,6 +211,12 @@ plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f))
 abline(0,1,col = "red")
 plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = "estimated structure flash")
 abline(0,1,col = "red")
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = "estimated structure flash")
+abline(0,1,col = "red")
+library(boot)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% t(gflash$f))),main = "estimated structure flash")
+abline(0,1,col = "red")
+
 ```
 
 ### 3.1.3 small signal due to sparsity 
@@ -243,6 +255,7 @@ abline(0,1,col = "red")
 plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = "estimated structure flash")
 abline(0,1,col = "red")
 ```
+
 
 ## Session Information
 
