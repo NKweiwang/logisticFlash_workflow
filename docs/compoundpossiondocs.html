@@ -9,9 +9,11 @@
 <meta name="generator" content="pandoc" />
 
 
+<meta name="author" content="Wei Wang" />
 
+<meta name="date" content="2017-03-08" />
 
-<title>Home</title>
+<title>compound possion with logistic flash</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +21,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
@@ -162,6 +167,101 @@ $(document).ready(function () {
 
 
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
 
 
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
@@ -202,49 +302,85 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Home</h1>
+<h1 class="title toc-ignore">compound possion with logistic flash</h1>
+<h4 class="author"><em>Wei Wang</em></h4>
+<h4 class="date"><em>2017-03-08</em></h4>
 
 </div>
 
 
-<div id="logistic-flash" class="section level1">
-<h1>Logistic Flash</h1>
-<p>This project is about to use ASH prior on the factors and loadings to deal with sparse factor model on Boolean data.</p>
-<div id="data-analysis" class="section level2">
-<h2>Data Analysis</h2>
-<div id="chip-seq-data-from-kevin" class="section level3">
-<h3>Chip-Seq data from Kevin</h3>
-<p>Click on this <a href="chiseq_kevin.html">submatrix of chiqseq data</a> to see my results.</p>
+<!-- The file analysis/chunks.R contains chunks that define default settings
+shared across the workflowr files. -->
+<!-- Update knitr chunk options -->
+<!-- Insert the date the file was last updated -->
+<p><strong>Last updated:</strong> 2017-03-08</p>
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+<p><strong>Code version:</strong> 95de6f4</p>
+<!-- Add your analysis here -->
+<div id="compound-possion-model-with-logistic-flash" class="section level2">
+<h2>Compound Possion model with logistic flash</h2>
+<div id="model" class="section level3">
+<h3>model</h3>
+<span class="math display">\[\begin{eqnarray}
+Y_{ij}|n_{ij},p_{ij} &amp;=&amp; Bin(n_{ij},p_{ij}) \\
+logit(p_{ij}) &amp;=&amp; L_i F_j \\
+n_{ij} &amp;\sim&amp; Poisson(\lambda_{ij})\\
+log(\lambda_{ij}) &amp;=&amp; C_i \beta_1 + G_j \beta_2\\ 
+L_i &amp;\sim&amp; g_{ash}(.) \\
+F_j &amp;\sim&amp; g_{ash}(.) 
+\end{eqnarray}\]</span>
+<p>Where <span class="math inline">\(C_i\)</span> and <span class="math inline">\(G_j\)</span> are covariates, such as total counts of the sample and GC constant.</p>
+<p><span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span> can have certain pior for GLM model.</p>
 </div>
-<div id="missing-pattern-data-from-joyce" class="section level3">
-<h3>Missing pattern data from Joyce</h3>
-<p>Click on this <a href="MissPattern_HumanBuettner.html">single cell data for missing pattern HumanBuettner</a> to see my results.</p>
-<p>Click on this <a href="HumanTungiPSC.html">single cell data for missing pattern HumanTungiPSC</a> to see my results; and click this <a href="HumanTungiPSCspikein.html">HumanTungiPSC spike in</a> to see the result of the spike in gene.</p>
-<p>Click on this <a href="MouseBuettnerESC.html">single cell data for missing pattern MouseBuettnerESC</a> to see my results.</p>
-<p>Click on this <a href="flash_HumanTungiPSC.html">flash on HumanTungiPCS</a> to see my results.</p>
-<p>Click on this <a href="MouseSpleen.html">Missing patter of Mouse spleen</a> to see my results.</p>
-<p>Click on this <a href="MouseZeiselBrain.html">Missing patter of Mouse Brain</a> to see my results.</p>
-<p>Click on this <a href="subsummary_1.html">subsummary 1</a></p>
-<div id="try-to-reproduce-the-jaitin-paper-plot" class="section level4">
-<h4>try to reproduce the Jaitin paper plot</h4>
-<p>Click on this<a href="reproducemousespleen.html">reproduce Jaitin plot using logistic flash</a></p>
-<p>Click on this<a href="Jaitinplot.html">Jaitin plot (plot only)</a></p>
+<div id="inference" class="section level3">
+<h3>inference</h3>
+<div id="for-p_ij" class="section level4">
+<h4>1 for <span class="math inline">\(p_{ij}\)</span></h4>
+<p>we can apply logistic flash on <span class="math inline">\(p_{ij}\)</span> given <span class="math inline">\(n_ij\)</span>, since given <span class="math inline">\(n_{ij}\)</span> the problem is a logistic flash model:</p>
+<span class="math display">\[\begin{eqnarray}
+Y_{ij}|n_{ij},p_{ij} &amp;=&amp; Bin(n_{ij},p_{ij}) \\
+logit(p_{ij}) &amp;=&amp; L_i F_j \\
+L_i &amp;\sim&amp; g_{ash}(.) \\
+F_j &amp;\sim&amp; g_{ash}(.) 
+\end{eqnarray}\]</span>
+</div>
+<div id="for-n_ij" class="section level4">
+<h4>2 for <span class="math inline">\(n_{ij}\)</span></h4>
+<p>The marginalization disctribution of <span class="math inline">\(n_{ij}\)</span> given <span class="math inline">\(p_{ij}\)</span> is</p>
+<span class="math display">\[\begin{eqnarray}
+n_{ij} \sim Y_{ij} + poisson(\lambda_{ij}(1-p_{ij}))
+\end{eqnarray}\]</span>
+<p>this can be calculated</p>
+</div>
+<div id="for-the-beta" class="section level4">
+<h4>3 for the <span class="math inline">\(\beta\)</span></h4>
+<p>we can use GLM estimation.</p>
 </div>
 </div>
-<div id="genotype-data" class="section level3">
-<h3>Genotype data</h3>
-<p>Click on this <a href="H938_test.html">H938 data</a> to see my result.</p>
-<p>Click on this <a href="ancient_modern.html">ancient data modern part</a> to see my result.</p>
 </div>
-</div>
-<div id="tsne-on-the-mnist-data" class="section level2">
-<h2>TSNE on the MNIST data</h2>
-<p>Click on this <a href="MNISTdata_1000.html">small sample MNIST data</a> to see my result.</p>
-</div>
-<div id="compound-poisson-process-with-logistic-flash" class="section level2">
-<h2>Compound poisson process with logistic flash</h2>
-<p>Click on this <a href="compoundpossiondocs.html">compound poisson + logistic flash</a> to see my result.</p>
-</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<!-- Insert the session information into the document -->
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.0 (2016-05-03)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.12.3 (unknown)
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] workflowr_0.4.0 rmarkdown_1.3  
+
+loaded via a namespace (and not attached):
+ [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   htmltools_0.3.5
+ [5] tools_3.3.0     rstudioapi_0.6  yaml_2.1.14     Rcpp_0.12.9    
+ [9] stringi_1.1.2   knitr_1.15.1    git2r_0.18.0    stringr_1.2.0  
+[13] digest_0.6.12   evaluate_0.10  </code></pre>
 </div>
 
 <hr>
@@ -273,6 +409,8 @@ $(document).ready(function () {
 -->
 
 
+</div>
+</div>
 
 </div>
 
