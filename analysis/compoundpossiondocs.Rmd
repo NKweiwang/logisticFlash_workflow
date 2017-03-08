@@ -1,0 +1,78 @@
+---
+title: "compound possion with logistic flash"
+author: "Wei Wang"
+date: 2017-03-08
+output: html_document
+---
+
+<!-- The file analysis/chunks.R contains chunks that define default settings
+shared across the workflowr files. -->
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+<!-- Add your analysis here -->
+
+## Compound Possion model with logistic flash
+
+### model
+
+\begin{eqnarray}
+Y_{ij}|n_{ij},p_{ij} &=& Bin(n_{ij},p_{ij}) \\
+logit(p_{ij}) &=& L_i F_j \\
+n_{ij} &\sim& Poisson(\lambda_{ij})\\
+log(\lambda_{ij}) &=& C_i \beta_1 + G_j \beta_2\\ 
+L_i &\sim& g_{ash}(.) \\
+F_j &\sim& g_{ash}(.) 
+\end{eqnarray}
+
+Where $C_i$ and $G_j$ are covariates, such as total counts of the sample and GC constant. 
+
+$\beta_1$ and $\beta_2$ can have certain pior for GLM model.
+
+### inference
+
+#### 1 for $p_{ij}$
+
+we can apply logistic flash on $p_{ij}$ given $n_ij$, since given $n_{ij}$ the problem is a logistic flash model:
+
+\begin{eqnarray}
+Y_{ij}|n_{ij},p_{ij} &=& Bin(n_{ij},p_{ij}) \\
+logit(p_{ij}) &=& L_i F_j \\
+L_i &\sim& g_{ash}(.) \\
+F_j &\sim& g_{ash}(.) 
+\end{eqnarray}
+
+#### 2 for $n_{ij}$
+
+The marginalization disctribution of $n_{ij}$ given $p_{ij}$ is 
+
+\begin{eqnarray}
+n_{ij} \sim Y_{ij} + poisson(\lambda_{ij}(1-p_{ij}))
+\end{eqnarray}
+this can be calculated
+
+#### 3 for the $\beta$
+
+we can use GLM estimation.
+
+
+
+## Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```

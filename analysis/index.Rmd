@@ -48,6 +48,6 @@ Click on this [ancient data modern part](ancient_modern.html) to see my result.
 
 Click on this [small sample MNIST data](MNISTdata_1000.html) to see my result.
 
-## test
+## Compound poisson process with logistic flash
 
-[test](test.html)
+Click on this [compound poisson + logistic flash](compoundpossiondocs.html) to see my result.
