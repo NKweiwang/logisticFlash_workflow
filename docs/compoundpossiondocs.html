@@ -316,37 +316,45 @@ shared across the workflowr files. -->
 <p><strong>Last updated:</strong> 2017-03-09</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> c6703be</p>
+<p><strong>Code version:</strong> 6205b74</p>
 <!-- Add your analysis here -->
 <div id="compound-possion-model-with-logistic-flash" class="section level2">
 <h2>Compound Possion model with logistic flash</h2>
 <div id="model" class="section level3">
 <h3>model</h3>
 <span class="math display">\[\begin{eqnarray}
-Y_{ij}|n_{ij},p_{ij} &amp;=&amp; Bin(n_{ij},p_{ij}) \\
+Y_{ij}|\lambda_{ij},p_{ij} &amp;=&amp; poisson(\lambda_{ij} p_{ij}) \\
 logit(p_{ij}) &amp;=&amp; L_i F_j \\
-n_{ij} &amp;\sim&amp; Poisson(\lambda_{ij})\\
-log(\lambda_{ij}) &amp;=&amp; C_i \beta_1 + G_j \beta_2\\ 
-L_i &amp;\sim&amp; g_{ash}(.) \\
-F_j &amp;\sim&amp; g_{ash}(.) 
+\lambda_{ij} &amp;\sim&amp; g_{ash}(\cdot)\\ 
+L_i &amp;\sim&amp; g_{ash}(\cdot) \\
+F_j &amp;\sim&amp; g_{ash}(\cdot)
 \end{eqnarray}\]</span>
-<p>Where <span class="math inline">\(C_i\)</span> and <span class="math inline">\(G_j\)</span> are covariates, such as total counts of the sample and GC constant.</p>
-<p><span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span> can have certain pior for GLM model.</p>
-</div>
-<div id="inference" class="section level3">
-<h3>inference</h3>
-<div id="for-p_ij" class="section level4">
-<h4>1 for <span class="math inline">\(p_{ij}\)</span></h4>
-<p>we can apply logistic flash on <span class="math inline">\(p_{ij}\)</span> given <span class="math inline">\(n_ij\)</span>, since given <span class="math inline">\(n_{ij}\)</span> the problem is a logistic flash model:</p>
+<div id="write-the-model-in-compound-possion-distribution" class="section level4">
+<h4>write the model in compound possion distribution</h4>
 <span class="math display">\[\begin{eqnarray}
 Y_{ij}|n_{ij},p_{ij} &amp;=&amp; Bin(n_{ij},p_{ij}) \\
 logit(p_{ij}) &amp;=&amp; L_i F_j \\
-L_i &amp;\sim&amp; g_{ash}(.) \\
-F_j &amp;\sim&amp; g_{ash}(.) 
+n_{ij} &amp;\sim&amp; Poisson(\lambda_{ij})\\
+\lambda_{ij} &amp;\sim&amp; g_{ash}(\cdot)\\ 
+L_i &amp;\sim&amp; g_{ash}(\cdot) \\
+F_j &amp;\sim&amp; g_{ash}(\cdot)
 \end{eqnarray}\]</span>
 </div>
-<div id="for-n_ij" class="section level4">
-<h4>2 for <span class="math inline">\(n_{ij}\)</span></h4>
+</div>
+<div id="inference" class="section level3">
+<h3>inference</h3>
+<div id="p_ijy_ijn_ij" class="section level4">
+<h4>1 <span class="math inline">\(p_{ij}|Y_{ij},n_{ij}\)</span></h4>
+<p>we can apply logistic flash on <span class="math inline">\(p_{ij}\)</span> given <span class="math inline">\(n_{ij}\)</span>, since given <span class="math inline">\(n_{ij}\)</span> the problem is a logistic flash model:</p>
+<span class="math display">\[\begin{eqnarray}
+Y_{ij}|n_{ij},p_{ij} &amp;=&amp; Bin(n_{ij},p_{ij}) \\
+logit(p_{ij}) &amp;=&amp; L_i F_j \\
+L_i &amp;\sim&amp; g_{ash}(\cdot) \\
+F_j &amp;\sim&amp; g_{ash}(\cdot)
+\end{eqnarray}\]</span>
+</div>
+<div id="n_ijp_ijy_ijlambda_ij" class="section level4">
+<h4>2 <span class="math inline">\(n_{ij}|p_{ij},Y_{ij},\lambda_{ij}\)</span></h4>
 <p>The marginalization disctribution of <span class="math inline">\(n_{ij}\)</span> given <span class="math inline">\(p_{ij}\)</span> is</p>
 <span class="math display">\[\begin{eqnarray}
 n_{ij} \sim Y_{ij} + poisson(\lambda_{ij}(1-p_{ij}))
@@ -357,9 +365,13 @@ p(n_{ij}|p_{ij},\lambda_{ij},Y_{ij}) &amp;\propto&amp; p_{ij}^{Y_{ij}}(1-p_{ij})
 &amp;\propto&amp;  \frac{(\lambda_{ij}(1-p_{ij}))^{(n_{ij}-Y_{ij})} e^{-(\lambda_{ij}(1-p_{ij}))}}{(n_{ij}-Y_{ij})!}
 \end{eqnarray}\]</span>
 </div>
-<div id="for-the-beta" class="section level4">
-<h4>3 for the <span class="math inline">\(\beta\)</span></h4>
-<p>we can use GLM estimation.</p>
+<div id="lambda_ijp_ijy_ij" class="section level4">
+<h4>3 <span class="math inline">\(\lambda_{ij}|p_{ij},Y_{ij}\)</span></h4>
+<p>This is the model for ash on poisson likelihood:</p>
+<span class="math display">\[\begin{eqnarray}
+Y_{ij} &amp;\sim&amp; poisson(\lambda_{ij}p_{ij})\\
+\lambda_{ij} &amp;\sim&amp; g_{ash}(\cdot)
+\end{eqnarray}\]</span>
 </div>
 </div>
 </div>
