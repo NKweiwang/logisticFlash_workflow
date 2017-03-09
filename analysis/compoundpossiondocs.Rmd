@@ -63,7 +63,11 @@ The marginalization disctribution of $n_{ij}$ given $p_{ij}$ is
 \begin{eqnarray}
 n_{ij} \sim Y_{ij} + poisson(\lambda_{ij}(1-p_{ij}))
 \end{eqnarray}
-this can be calculated
+this can be calculated as follows
+\begin{eqnarray}
+p(n_{ij}|p_{ij},\lambda_{ij},Y_{ij}) &\propto& p_{ij}^{Y_{ij}}(1-p_{ij})^{n_{ij} - Y_{ij}}\frac{n_{ij}!}{Y_{ij}!(n_{ij} - Y_{ij})!} \frac{\lambda_{ij}^{n_{ij}} e^{-\lambda_{ij}}}{n_{ij}!}\\
+&\propto&  \frac{(\lambda_{ij}(1-p_{ij}))^{(n_{ij}-Y_{ij})} e^{-(\lambda_{ij}(1-p_{ij}))}}{(n_{ij}-Y_{ij})!}
+\end{eqnarray}
 
 #### 3 for the $\beta$
 
