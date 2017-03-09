@@ -313,10 +313,10 @@ div.tocify {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2017-03-08</p>
+<p><strong>Last updated:</strong> 2017-03-09</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 95de6f4</p>
+<p><strong>Code version:</strong> c6703be</p>
 <!-- Add your analysis here -->
 <div id="compound-possion-model-with-logistic-flash" class="section level2">
 <h2>Compound Possion model with logistic flash</h2>
@@ -351,7 +351,11 @@ F_j &amp;\sim&amp; g_{ash}(.)
 <span class="math display">\[\begin{eqnarray}
 n_{ij} \sim Y_{ij} + poisson(\lambda_{ij}(1-p_{ij}))
 \end{eqnarray}\]</span>
-<p>this can be calculated</p>
+this can be calculated as follows
+<span class="math display">\[\begin{eqnarray}
+p(n_{ij}|p_{ij},\lambda_{ij},Y_{ij}) &amp;\propto&amp; p_{ij}^{Y_{ij}}(1-p_{ij})^{n_{ij} - Y_{ij}}\frac{n_{ij}!}{Y_{ij}!(n_{ij} - Y_{ij})!} \frac{\lambda_{ij}^{n_{ij}} e^{-\lambda_{ij}}}{n_{ij}!}\\
+&amp;\propto&amp;  \frac{(\lambda_{ij}(1-p_{ij}))^{(n_{ij}-Y_{ij})} e^{-(\lambda_{ij}(1-p_{ij}))}}{(n_{ij}-Y_{ij})!}
+\end{eqnarray}\]</span>
 </div>
 <div id="for-the-beta" class="section level4">
 <h4>3 for the <span class="math inline">\(\beta\)</span></h4>
@@ -378,9 +382,9 @@ other attached packages:
 
 loaded via a namespace (and not attached):
  [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   htmltools_0.3.5
- [5] tools_3.3.0     rstudioapi_0.6  yaml_2.1.14     Rcpp_0.12.9    
- [9] stringi_1.1.2   knitr_1.15.1    git2r_0.18.0    stringr_1.2.0  
-[13] digest_0.6.12   evaluate_0.10  </code></pre>
+ [5] tools_3.3.0     yaml_2.1.14     Rcpp_0.12.9     stringi_1.1.2  
+ [9] knitr_1.15.1    git2r_0.18.0    stringr_1.2.0   digest_0.6.12  
+[13] evaluate_0.10  </code></pre>
 </div>
 
 <hr>
