@@ -31,32 +31,40 @@ knitr::read_chunk("chunks.R")
 ### model
 
 \begin{eqnarray}
-Y_{ij}|n_{ij},p_{ij} &=& Bin(n_{ij},p_{ij}) \\
+Y_{ij}|\lambda_{ij},p_{ij} &=& poisson(\lambda_{ij} p_{ij}) \\
 logit(p_{ij}) &=& L_i F_j \\
-n_{ij} &\sim& Poisson(\lambda_{ij})\\
-log(\lambda_{ij}) &=& C_i \beta_1 + G_j \beta_2\\ 
-L_i &\sim& g_{ash}(.) \\
-F_j &\sim& g_{ash}(.) 
+\lambda_{ij} &\sim& g_{ash}(\cdot)\\ 
+L_i &\sim& g_{ash}(\cdot) \\
+F_j &\sim& g_{ash}(\cdot)
 \end{eqnarray}
 
-Where $C_i$ and $G_j$ are covariates, such as total counts of the sample and GC constant. 
-
-$\beta_1$ and $\beta_2$ can have certain pior for GLM model.
-
-### inference
-
-#### 1 for $p_{ij}$
-
-we can apply logistic flash on $p_{ij}$ given $n_ij$, since given $n_{ij}$ the problem is a logistic flash model:
+#### write the model in compound possion distribution
 
 \begin{eqnarray}
 Y_{ij}|n_{ij},p_{ij} &=& Bin(n_{ij},p_{ij}) \\
 logit(p_{ij}) &=& L_i F_j \\
-L_i &\sim& g_{ash}(.) \\
-F_j &\sim& g_{ash}(.) 
+n_{ij} &\sim& Poisson(\lambda_{ij})\\
+\lambda_{ij} &\sim& g_{ash}(\cdot)\\ 
+L_i &\sim& g_{ash}(\cdot) \\
+F_j &\sim& g_{ash}(\cdot)
 \end{eqnarray}
 
-#### 2 for $n_{ij}$
+
+
+### inference
+
+#### 1  $p_{ij}|Y_{ij},n_{ij}$
+
+we can apply logistic flash on $p_{ij}$ given $n_{ij}$, since given $n_{ij}$ the problem is a logistic flash model:
+
+\begin{eqnarray}
+Y_{ij}|n_{ij},p_{ij} &=& Bin(n_{ij},p_{ij}) \\
+logit(p_{ij}) &=& L_i F_j \\
+L_i &\sim& g_{ash}(\cdot) \\
+F_j &\sim& g_{ash}(\cdot)
+\end{eqnarray}
+
+#### 2  $n_{ij}|p_{ij},Y_{ij},\lambda_{ij}$
 
 The marginalization disctribution of $n_{ij}$ given $p_{ij}$ is 
 
@@ -69,9 +77,14 @@ p(n_{ij}|p_{ij},\lambda_{ij},Y_{ij}) &\propto& p_{ij}^{Y_{ij}}(1-p_{ij})^{n_{ij}
 &\propto&  \frac{(\lambda_{ij}(1-p_{ij}))^{(n_{ij}-Y_{ij})} e^{-(\lambda_{ij}(1-p_{ij}))}}{(n_{ij}-Y_{ij})!}
 \end{eqnarray}
 
-#### 3 for the $\beta$
+#### 3  $\lambda_{ij}|p_{ij},Y_{ij}$
 
-we can use GLM estimation.
+This is the model for ash on poisson likelihood:
+
+\begin{eqnarray}
+Y_{ij} &\sim& poisson(\lambda_{ij}p_{ij})\\
+\lambda_{ij} &\sim& g_{ash}(\cdot)
+\end{eqnarray}
 
 
 
