@@ -64,6 +64,8 @@ L_i &\sim& g_{ash}(\cdot) \\
 F_j &\sim& g_{ash}(\cdot)
 \end{eqnarray}
 
+Click on this [details](third-analysis.html) to see my result.
+
 #### 2  $n_{ij}|p_{ij},Y_{ij},\lambda_{ij}$
 
 The marginalization disctribution of $n_{ij}$ given $p_{ij}$ is 
