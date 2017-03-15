@@ -309,8 +309,8 @@ div.tocify {
 </div>
 
 
-<p><strong>Last updated:</strong> 2017-02-21</p>
-<p><strong>Code version:</strong> 1fce44b</p>
+<p><strong>Last updated:</strong> 2017-03-15</p>
+<p><strong>Code version:</strong> 1d31c3d</p>
 <div id="this-is-for-the-algorithem-for-the-binomial-data" class="section level2">
 <h2>This is for the algorithem for the binomial data</h2>
 Here our model is:
@@ -419,6 +419,119 @@ plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% 
 abline(0,1,col = &quot;red&quot;)</code></pre>
 <p><img src="figure/third-analysis.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
+<div id="for-the-n_ij-is-given" class="section level3">
+<h3>for the <span class="math inline">\(n_{ij}\)</span> is given</h3>
+Here our model is:
+<span class="math display">\[\begin{eqnarray}
+Y_{ij} = Bin(n_{ij},p_{ij}) - \frac{n_{ij}}{2} \\
+\log\frac{(p_{ij} = 1|Z_{ij})}{(p_{ij} = -1 | Z_{ij})} = Z_{ij} \\
+Z_{ij} = l_i f_j\\
+f_j \sim  \sum_{m&#39;} \pi_{m&#39;}^f N(f_j; 0, (\sigma_{m&#39;}^f)^2) \\
+l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
+\end{eqnarray}\]</span>
+<p>Here we allow that <span class="math inline">\((\sigma_{1}^f)^2 = 0\)</span> and <span class="math inline">\((\sigma_{1}^l)^2=0\)</span>, which means we include the point mass into the prior for each component for <span class="math inline">\(f\)</span> and <span class="math inline">\(l\)</span>.</p>
+<p>Inspired by David and following the technique in <a href="http://www.jmlr.org/proceedings/papers/v39/klami14.pdf">P`olya-Gamma augmentations for factor models</a>, we have that</p>
+<span class="math display">\[\begin{eqnarray}
+P(Y_{ij,\omega_{ij}}|Z_{ij}) = C^{n_{ij}}_{(Y_{ij} + \frac{n_{ij}}{2})} 2^{-2}e^{Y_{ij}Z_{ij}}e^{-\omega_{ij}Z_{ij}^2 / 2}PG(\omega_{ij}|n_{ij},0)
+\end{eqnarray}\]</span>
+<p>where <span class="math inline">\(C^{n_{ij}}_{(Y_{ij} + \frac{n_{ij}}{2})} = \frac{n_{ij}!}{(\frac{n_{ij}}{2} - Y_{ij})!(Y_{ij} +\frac{n_{ij}}{2})!}\)</span> and <span class="math inline">\(PG(\omega_{ij}|n_{ij},0)\)</span> is Polya-Gamma distribution.</p>
+</div>
+</div>
+<div id="variational-bayes-on-l-and-f-1" class="section level2">
+<h2>Variational Bayes on <span class="math inline">\(l\)</span> and <span class="math inline">\(f\)</span></h2>
+<span class="math display">\[\begin{eqnarray}
+\log P(Y)  &amp; =&amp;  \log \int \int  P(Y,\omega|l,f)P(l)P(f)dfdld\omega  \nonumber \\
+ &amp; \geq &amp; \int \int q_f(f)q_l(l)q_{\omega}(\omega) \log \frac{ P(Y,\omega|l,f) P(l)P(f)}{q_l(l)q_f(f)} dfdld\omega \nonumber \\
+ &amp; = &amp; F(q_f,q_l,\Theta)
+\end{eqnarray}\]</span>
+<div id="variantional-inference-on-omega-1" class="section level3">
+<h3>variantional inference on <span class="math inline">\(\omega\)</span></h3>
+<span class="math display">\[\begin{eqnarray}
+q_{\omega_{ij}}(\omega_{ij}) &amp; \propto &amp; E_{q_l,q_f} log( P(Y_{ij},\omega_{ij}|l,f) P(l)P(f))\\
+ &amp;=&amp; -\frac{E_ql_i^2 E_q f_j^2 \omega_{ij}}{2} + log PG(\omega_{ij}|n_{ij},0) \\
+ &amp; \propto &amp; log PG(\omega_{ij}|n_{ij},\sqrt{\xi_{ij}})
+\end{eqnarray}\]</span>
+<p>where <span class="math inline">\(\xi_{ij} = \sqrt{E_ql_i^2 E_q f_j^2}\)</span></p>
+</div>
+<div id="atm-on-l-and-f-1" class="section level3">
+<h3>ATM on <span class="math inline">\(l\)</span> and <span class="math inline">\(f\)</span></h3>
+<span class="math display">\[\begin{eqnarray}
+q_{l_{i}}(l_{i}) &amp; \propto &amp; E_{q_{\omega},q_f} log( P(Y_{ij},\omega_{ij}|l,f) P(l)P(f))\\
+ &amp;=&amp; -\frac{l_i^2 E_q f_j^2 E_q \omega_{ij} }{2} + Y_{ij}l_i E_qf_j \\
+ &amp; = &amp;  -\frac{l_i^2 E_q f_j^2 \tau(\xi_{ij}) }{2} + Y_{ij}l_i E_qf_j 
+\end{eqnarray}\]</span>
+<p>where <span class="math display">\[\tau(\xi_{ij}) = \frac{n_{ij}}{ 2 \xi_{ij}}\tanh (\frac{\xi_{ij}}{2})\]</span> This is an ATM problem and we can apply ash to solve that.</p>
+<p>Similarly the <span class="math inline">\(f_j\)</span>.</p>
+<p>following the same trick in <a href="second-analysis.html">logistic flash</a>, we can extend this algorithm to a greedy algorithm for rank K model. (will add this details later)</p>
+<pre class="r"><code>source(&quot;~/HG/LogisticFlash/Rcode/GD_NBfunctions.R&quot;)
+Data = datamaker(100,200,
+                 c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),1,
+                 c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),1,
+                 K = 1)
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+nb = rpois(100*200,5)+1
+Y_vec_count = sapply(seq(1,length(pY_vec)),function(x){rbinom(1,nb[x],pY_vec[x])})
+Y_vec = ( Y_vec_count - nb/2)
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+NB = matrix(nb,nrow = 100, ncol = 200)
+gflash = flashr::greedy(Y,K = 8)</code></pre>
+<pre><code>[1] 2</code></pre>
+<pre class="r"><code>L_K = list()
+
+F_K = list()
+L_K$EL_K = 0
+F_K$EF_K = 0
+l_int = list()
+f_int = list()
+l_int$El = gflash$l
+l_int$El2 = gflash$l2
+f_int$Ef = gflash$f
+f_int$Ef2 = gflash$f2
+Ltest = L_flash(NB,Y, L_K, F_K, l_int, f_int, maxiter = 200)
+
+sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
+<pre><code>[1] 0.1687944</code></pre>
+<pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
+<pre><code>[1] 0.3880428</code></pre>
+<pre class="r"><code># rank K version
+# try the flash on the original data
+Data = datamaker(100,200,
+                 c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),0.6,
+                 c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),0.6,
+                 K = 5)
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+nb = rpois(100*200,5)+1
+Y_vec_count = sapply(seq(1,length(pY_vec)),function(x){rbinom(1,nb[x],pY_vec[x])})
+Y_vec = ( Y_vec_count - nb/2)
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+NB = matrix(nb,nrow = 100, ncol = 200)
+gflash = flashr::greedy(Y,K = 8)</code></pre>
+<pre><code>[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] 6</code></pre>
+<pre class="r"><code>Ltest = GL_flash(NB,Y,K = 8)</code></pre>
+<pre><code>[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] &quot;stop here due to no signal&quot;</code></pre>
+<pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
+<pre><code>[1] 0.3826516</code></pre>
+<pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
+<pre><code>[1] 0.4283638</code></pre>
+<pre class="r"><code>par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+plot(svd(Y)$d,main = &quot;eigen values&quot;)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f)),main = &quot;estimated structure Lflash&quot;)
+abline(0,1,col = &quot;red&quot;)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = &quot;estimated structure flash&quot;)
+abline(0,1,col = &quot;red&quot;)
+library(boot)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% t(gflash$f))),main = &quot;estimated structure flash&quot;)
+abline(0,1,col = &quot;red&quot;)</code></pre>
+<p><img src="figure/third-analysis.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session Information</h2>
@@ -434,21 +547,19 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggplot2_2.2.1   MASS_7.3-45     workflowr_0.3.0 rmarkdown_1.3  
+[1] workflowr_0.4.0 rmarkdown_1.3   boot_1.3-18     MASS_7.3-45    
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.9       rstudioapi_0.6    knitr_1.15.1     
- [4] magrittr_1.5      munsell_0.4.3     doParallel_1.0.10
- [7] pscl_1.4.9        colorspace_1.3-2  SQUAREM_2016.8-2 
-[10] lattice_0.20-34   foreach_1.4.3     plyr_1.8.4       
-[13] ashr_2.1.4        stringr_1.1.0     flashr_0.1.1     
-[16] tools_3.3.0       parallel_3.3.0    grid_3.3.0       
-[19] gtable_0.2.0      git2r_0.18.0      htmltools_0.3.5  
-[22] iterators_1.0.8   assertthat_0.1    lazyeval_0.2.0   
-[25] yaml_2.1.14       rprojroot_1.2     digest_0.6.12    
-[28] tibble_1.2        codetools_0.2-15  evaluate_0.10    
-[31] labeling_0.3      stringi_1.1.2     scales_0.4.1     
-[34] backports_1.0.5   truncnorm_1.0-7  </code></pre>
+ [1] Rcpp_0.12.9       knitr_1.15.1      magrittr_1.5     
+ [4] REBayes_0.73      doParallel_1.0.10 pscl_1.4.9       
+ [7] SQUAREM_2016.8-2  lattice_0.20-34   foreach_1.4.3    
+[10] ashr_2.1.4        stringr_1.2.0     flashr_0.1.1     
+[13] tools_3.3.0       parallel_3.3.0    grid_3.3.0       
+[16] irlba_2.1.2       git2r_0.18.0      htmltools_0.3.5  
+[19] iterators_1.0.8   assertthat_0.1    yaml_2.1.14      
+[22] rprojroot_1.2     digest_0.6.12     Matrix_1.2-8     
+[25] codetools_0.2-15  evaluate_0.10     stringi_1.1.2    
+[28] Rmosek_7.1.2      backports_1.0.5   truncnorm_1.0-7  </code></pre>
 </div>
 
 <hr>
