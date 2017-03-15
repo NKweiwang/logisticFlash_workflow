@@ -71,6 +71,8 @@ Similarly the $f_j$.
 
 following the same trick in [logistic flash](second-analysis.html), we can extend this algorithm to a greedy algorithm for rank K model. (will add this details later)
 
+
+
 ```{r,message=FALSE,warning=FALSE,eval=TRUE,cache=TRUE}
 source("~/HG/LogisticFlash/Rcode/GD_Bifunctions.R")
 Data = datamaker(100,200,
@@ -113,6 +115,124 @@ Y = matrix(Y_vec,nrow = 100, ncol = 200)
 gflash = flashr::greedy(Y,K = 8)
 
 Ltest = GL_flash(Y,K = 8)
+sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+
+
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+plot(svd(Y)$d,main = "eigen values")
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f)),main = "estimated structure Lflash")
+abline(0,1,col = "red")
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = "estimated structure flash")
+abline(0,1,col = "red")
+library(boot)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% t(gflash$f))),main = "estimated structure flash")
+abline(0,1,col = "red")
+
+```
+
+
+### for the $n_{ij}$ is given
+
+Here our model is:
+\begin{eqnarray}
+Y_{ij} = Bin(n_{ij},p_{ij}) - \frac{n_{ij}}{2} \\
+\log\frac{(p_{ij} = 1|Z_{ij})}{(p_{ij} = -1 | Z_{ij})} = Z_{ij} \\
+Z_{ij} = l_i f_j\\
+f_j \sim  \sum_{m'} \pi_{m'}^f N(f_j; 0, (\sigma_{m'}^f)^2) \\
+l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
+\end{eqnarray}
+Here we allow that $(\sigma_{1}^f)^2 = 0$ and $(\sigma_{1}^l)^2=0$, which means we include the point mass into the prior for each component for $f$ and $l$.
+
+Inspired by David and following the technique in [P`olya-Gamma augmentations for factor models](http://www.jmlr.org/proceedings/papers/v39/klami14.pdf), we have that
+
+\begin{eqnarray}
+P(Y_{ij,\omega_{ij}}|Z_{ij}) = C^{n_{ij}}_{(Y_{ij} + \frac{n_{ij}}{2})} 2^{-2}e^{Y_{ij}Z_{ij}}e^{-\omega_{ij}Z_{ij}^2 / 2}PG(\omega_{ij}|n_{ij},0)
+\end{eqnarray}
+
+where $C^{n_{ij}}_{(Y_{ij} + \frac{n_{ij}}{2})} = \frac{n_{ij}!}{(\frac{n_{ij}}{2} - Y_{ij})!(Y_{ij} +\frac{n_{ij}}{2})!}$ and $PG(\omega_{ij}|n_{ij},0)$ is Polya-Gamma distribution.
+
+## Variational Bayes on $l$ and $f$ 
+
+\begin{eqnarray}
+\log P(Y)  & =&  \log \int \int  P(Y,\omega|l,f)P(l)P(f)dfdld\omega  \nonumber \\
+ & \geq & \int \int q_f(f)q_l(l)q_{\omega}(\omega) \log \frac{ P(Y,\omega|l,f) P(l)P(f)}{q_l(l)q_f(f)} dfdld\omega \nonumber \\
+ & = & F(q_f,q_l,\Theta)
+\end{eqnarray}
+
+### variantional inference on $\omega$
+
+\begin{eqnarray}
+q_{\omega_{ij}}(\omega_{ij}) & \propto & E_{q_l,q_f} log( P(Y_{ij},\omega_{ij}|l,f) P(l)P(f))\\
+ &=& -\frac{E_ql_i^2 E_q f_j^2 \omega_{ij}}{2} + log PG(\omega_{ij}|n_{ij},0) \\
+ & \propto & log PG(\omega_{ij}|n_{ij},\sqrt{\xi_{ij}})
+\end{eqnarray}
+
+where $\xi_{ij} = \sqrt{E_ql_i^2 E_q f_j^2}$
+
+### ATM on $l$ and $f$
+
+\begin{eqnarray}
+q_{l_{i}}(l_{i}) & \propto & E_{q_{\omega},q_f} log( P(Y_{ij},\omega_{ij}|l,f) P(l)P(f))\\
+ &=& -\frac{l_i^2 E_q f_j^2 E_q \omega_{ij} }{2} + Y_{ij}l_i E_qf_j \\
+ & = &  -\frac{l_i^2 E_q f_j^2 \tau(\xi_{ij}) }{2} + Y_{ij}l_i E_qf_j 
+\end{eqnarray}
+
+where
+$$\tau(\xi_{ij}) = \frac{n_{ij}}{ 2 \xi_{ij}}\tanh (\frac{\xi_{ij}}{2})$$
+This is an ATM problem and we can apply ash to solve that.
+
+Similarly the $f_j$. 
+
+following the same trick in [logistic flash](second-analysis.html), we can extend this algorithm to a greedy algorithm for rank K model. (will add this details later)
+
+
+```{r,message=FALSE,warning=FALSE,eval=TRUE,cache=TRUE}
+source("~/HG/LogisticFlash/Rcode/GD_NBfunctions.R")
+Data = datamaker(100,200,
+                 c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),1,
+                 c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),1,
+                 K = 1)
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+nb = rpois(100*200,5)+1
+Y_vec_count = sapply(seq(1,length(pY_vec)),function(x){rbinom(1,nb[x],pY_vec[x])})
+Y_vec = ( Y_vec_count - nb/2)
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+NB = matrix(nb,nrow = 100, ncol = 200)
+gflash = flashr::greedy(Y,K = 8)
+
+L_K = list()
+
+F_K = list()
+L_K$EL_K = 0
+F_K$EF_K = 0
+l_int = list()
+f_int = list()
+l_int$El = gflash$l
+l_int$El2 = gflash$l2
+f_int$Ef = gflash$f
+f_int$Ef2 = gflash$f2
+Ltest = L_flash(NB,Y, L_K, F_K, l_int, f_int, maxiter = 200)
+
+sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+
+
+# rank K version
+# try the flash on the original data
+Data = datamaker(100,200,
+                 c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),0.6,
+                 c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),0.6,
+                 K = 5)
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+nb = rpois(100*200,5)+1
+Y_vec_count = sapply(seq(1,length(pY_vec)),function(x){rbinom(1,nb[x],pY_vec[x])})
+Y_vec = ( Y_vec_count - nb/2)
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+NB = matrix(nb,nrow = 100, ncol = 200)
+gflash = flashr::greedy(Y,K = 8)
+
+Ltest = GL_flash(NB,Y,K = 8)
 sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
 sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
 
