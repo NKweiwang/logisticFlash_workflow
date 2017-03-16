@@ -258,7 +258,10 @@ mean(ash.pois.out$result$PosteriorMean)
 
 ```
 
-
+```{r}
+n_est = rpois(length(x),(mean(ash.pois.out$result$PosteriorMean))* p_est) + Y_vec_count
+plot(nb,n_est)
+```
 
 ## Session Information
 
