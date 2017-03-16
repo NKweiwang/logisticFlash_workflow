@@ -309,8 +309,8 @@ div.tocify {
 </div>
 
 
-<p><strong>Last updated:</strong> 2017-03-15</p>
-<p><strong>Code version:</strong> 1d31c3d</p>
+<p><strong>Last updated:</strong> 2017-03-16</p>
+<p><strong>Code version:</strong> 6ead8e3</p>
 <div id="this-is-for-the-algorithem-for-the-binomial-data" class="section level2">
 <h2>This is for the algorithem for the binomial data</h2>
 Here our model is:
@@ -380,7 +380,7 @@ f_int$Ef2 = gflash$f2
 Ltest = L_flash(Y, L_K, F_K, l_int, f_int, maxiter = 200)
 
 sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.2571967</code></pre>
+<pre><code>[1] 0.2644691</code></pre>
 <pre class="r"><code># rank K version
 # try the flash on the original data
 Data = datamaker(100,200,
@@ -405,9 +405,9 @@ gflash = flashr::greedy(Y,K = 8)</code></pre>
 [1] 5
 [1] &quot;stop here due to no signal&quot;</code></pre>
 <pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.4377342</code></pre>
+<pre><code>[1] 0.4928586</code></pre>
 <pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.7893618</code></pre>
+<pre><code>[1] 0.8064069</code></pre>
 <pre class="r"><code>par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
 plot(svd(Y)$d,main = &quot;eigen values&quot;)
 plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f)),main = &quot;estimated structure Lflash&quot;)
@@ -417,10 +417,11 @@ abline(0,1,col = &quot;red&quot;)
 library(boot)
 plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% t(gflash$f))),main = &quot;estimated structure flash&quot;)
 abline(0,1,col = &quot;red&quot;)</code></pre>
-<p><img src="figure/third-analysis.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/third-analysis.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="for-the-n_ij-is-given" class="section level3">
-<h3>for the <span class="math inline">\(n_{ij}\)</span> is given</h3>
+</div>
+<div id="for-the-n_ij-is-given" class="section level2">
+<h2>for the <span class="math inline">\(n_{ij}\)</span> is given</h2>
 Here our model is:
 <span class="math display">\[\begin{eqnarray}
 Y_{ij} = Bin(n_{ij},p_{ij}) - \frac{n_{ij}}{2} \\
@@ -435,7 +436,6 @@ l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
 P(Y_{ij,\omega_{ij}}|Z_{ij}) = C^{n_{ij}}_{(Y_{ij} + \frac{n_{ij}}{2})} 2^{-2}e^{Y_{ij}Z_{ij}}e^{-\omega_{ij}Z_{ij}^2 / 2}PG(\omega_{ij}|n_{ij},0)
 \end{eqnarray}\]</span>
 <p>where <span class="math inline">\(C^{n_{ij}}_{(Y_{ij} + \frac{n_{ij}}{2})} = \frac{n_{ij}!}{(\frac{n_{ij}}{2} - Y_{ij})!(Y_{ij} +\frac{n_{ij}}{2})!}\)</span> and <span class="math inline">\(PG(\omega_{ij}|n_{ij},0)\)</span> is Polya-Gamma distribution.</p>
-</div>
 </div>
 <div id="variational-bayes-on-l-and-f-1" class="section level2">
 <h2>Variational Bayes on <span class="math inline">\(l\)</span> and <span class="math inline">\(f\)</span></h2>
@@ -490,9 +490,9 @@ f_int$Ef2 = gflash$f2
 Ltest = L_flash(NB,Y, L_K, F_K, l_int, f_int, maxiter = 200)
 
 sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.1687944</code></pre>
+<pre><code>[1] 0.1359521</code></pre>
 <pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.3880428</code></pre>
+<pre><code>[1] 0.3373523</code></pre>
 <pre class="r"><code># rank K version
 # try the flash on the original data
 Data = datamaker(100,200,
@@ -518,9 +518,9 @@ gflash = flashr::greedy(Y,K = 8)</code></pre>
 [1] 5
 [1] &quot;stop here due to no signal&quot;</code></pre>
 <pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.3826516</code></pre>
+<pre><code>[1] 0.3475638</code></pre>
 <pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.4283638</code></pre>
+<pre><code>[1] 0.4488299</code></pre>
 <pre class="r"><code>par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
 plot(svd(Y)$d,main = &quot;eigen values&quot;)
 plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f)),main = &quot;estimated structure Lflash&quot;)
@@ -530,7 +530,13 @@ abline(0,1,col = &quot;red&quot;)
 library(boot)
 plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% t(gflash$f))),main = &quot;estimated structure flash&quot;)
 abline(0,1,col = &quot;red&quot;)</code></pre>
-<p><img src="figure/third-analysis.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/third-analysis.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ashr)
+p_est = boot::inv.logit(as.vector(as.vector(Ltest$l %*% t(Ltest$f))))
+x = Y_vec_count
+ash.pois.out = ashr::ash(rep(0,length(x)),1,lik=lik_pois(x,scale=p_est))
+mean(ash.pois.out$result$PosteriorMean)</code></pre>
+<pre><code>[1] 6.00809</code></pre>
 </div>
 </div>
 <div id="session-information" class="section level2">
@@ -548,18 +554,21 @@ attached base packages:
 
 other attached packages:
 [1] workflowr_0.4.0 rmarkdown_1.3   boot_1.3-18     MASS_7.3-45    
+[5] ashr_2.1-7      devtools_1.12.0
 
 loaded via a namespace (and not attached):
  [1] Rcpp_0.12.9       knitr_1.15.1      magrittr_1.5     
  [4] REBayes_0.73      doParallel_1.0.10 pscl_1.4.9       
- [7] SQUAREM_2016.8-2  lattice_0.20-34   foreach_1.4.3    
-[10] ashr_2.1.4        stringr_1.2.0     flashr_0.1.1     
-[13] tools_3.3.0       parallel_3.3.0    grid_3.3.0       
-[16] irlba_2.1.2       git2r_0.18.0      htmltools_0.3.5  
-[19] iterators_1.0.8   assertthat_0.1    yaml_2.1.14      
-[22] rprojroot_1.2     digest_0.6.12     Matrix_1.2-8     
-[25] codetools_0.2-15  evaluate_0.10     stringi_1.1.2    
-[28] Rmosek_7.1.2      backports_1.0.5   truncnorm_1.0-7  </code></pre>
+ [7] lattice_0.20-34   SQUAREM_2016.8-2  R6_2.2.0         
+[10] foreach_1.4.3     flashr_0.1.1      stringr_1.2.0    
+[13] httr_1.2.1        tools_3.3.0       grid_3.3.0       
+[16] parallel_3.3.0    irlba_2.1.2       git2r_0.18.0     
+[19] withr_1.0.2       htmltools_0.3.5   iterators_1.0.8  
+[22] assertthat_0.1    yaml_2.1.14       rprojroot_1.2    
+[25] digest_0.6.12     Matrix_1.2-8      codetools_0.2-15 
+[28] curl_2.3          memoise_1.0.0     evaluate_0.10    
+[31] stringi_1.1.2     Rmosek_7.1.2      backports_1.0.5  
+[34] truncnorm_1.0-7  </code></pre>
 </div>
 
 <hr>
