@@ -132,7 +132,7 @@ abline(0,1,col = "red")
 ```
 
 
-### for the $n_{ij}$ is given
+## for the $n_{ij}$ is given
 
 Here our model is:
 \begin{eqnarray}
@@ -248,6 +248,17 @@ plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% 
 abline(0,1,col = "red")
 
 ```
+
+```{r,message=FALSE,warning=FALSE,eval=TRUE,cache=TRUE}
+library(ashr)
+p_est = boot::inv.logit(as.vector(as.vector(Ltest$l %*% t(Ltest$f))))
+x = Y_vec_count
+ash.pois.out = ashr::ash(rep(0,length(x)),1,lik=lik_pois(x,scale=p_est))
+mean(ash.pois.out$result$PosteriorMean)
+
+```
+
+
 
 ## Session Information
 
