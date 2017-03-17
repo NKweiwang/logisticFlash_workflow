@@ -1,0 +1,110 @@
+---
+title: "simulation of compound poisson"
+author: "wei wang"
+date: 2017-03-17
+output: html_document
+---
+
+<!-- The file analysis/chunks.R contains chunks that define default settings
+shared across the workflowr files. -->
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+<!-- Add your analysis here -->
+
+```{r,message=FALSE,warning=FALSE,eval=TRUE,cache=TRUE}
+source("~/HG/LogisticFlash/Rcode/GD_NBfunctions.R")
+Data = datamaker(100,200,
+                 c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),1,
+                 c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),1,
+                 K = 1)
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+lambda_old = rgamma(100,50,1)
+nb = rpois(100*200,rep(lambda_old,200))
+Y_vec_count = sapply(seq(1,length(pY_vec)),function(x){rbinom(1,nb[x],pY_vec[x])})
+Y_vec = ( Y_vec_count - nb/2)
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+NB = matrix(nb,nrow = 100, ncol = 200)
+gflash = flashr::greedy(Y,K = 8)
+
+Ltest = GL_flash(NB,Y,K = 8)
+sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+
+
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+plot(svd(Y)$d,main = "eigen values")
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f)),main = "estimated structure Lflash")
+abline(0,1,col = "red")
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = "estimated structure flash")
+abline(0,1,col = "red")
+library(boot)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% t(gflash$f))),main = "estimated structure flash")
+abline(0,1,col = "red")
+
+```
+
+
+
+```{r,message=FALSE,warning=FALSE,eval=TRUE,cache=TRUE}
+source("~/HG/LogisticFlash/Rcode/GD_NBfunctions.R")
+Data = datamaker(100,200,
+                 c(0.3,0.2,0.1,0.4),c(0.1,0.5,1,2),1,
+                 c(0.3,0.2,0.2,0.3),c(0.1,0.3,0.6,2),1,
+                 K = 5)
+pY_vec = 1/(1+exp(-as.vector(Data$Z)))
+lambda_old = rgamma(100,50,1)
+nb = rpois(100*200,rep(lambda_old,200))
+Y_vec_count = sapply(seq(1,length(pY_vec)),function(x){rbinom(1,nb[x],pY_vec[x])})
+Y_vec = ( Y_vec_count - nb/2)
+Y = matrix(Y_vec,nrow = 100, ncol = 200)
+NB = matrix(nb,nrow = 100, ncol = 200)
+gflash = flashr::greedy(Y,K = 8)
+
+Ltest = GL_flash(NB,Y,K = 8)
+sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+
+
+par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
+plot(svd(Y)$d,main = "eigen values")
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f)),main = "estimated structure Lflash")
+abline(0,1,col = "red")
+plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(gflash$l %*% t(gflash$f)),main = "estimated structure flash")
+abline(0,1,col = "red")
+library(boot)
+plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% t(gflash$f))),main = "estimated structure flash")
+abline(0,1,col = "red")
+
+```
+
+```{r,message=FALSE,warning=FALSE,eval=TRUE,cache=TRUE}
+library(ashr)
+p_est = boot::inv.logit(as.vector(as.vector(Ltest$l %*% t(Ltest$f))))
+x = Y_vec_count
+ash.pois.out = ashr::ash(rep(0,length(x)),1,lik=lik_pois(x,scale=p_est))
+lambda_crt = ash.pois.out$result$PosteriorMean
+
+plot(lambda_old, rowMeans(matrix(lambda_crt,nrow = 100)))
+abline(0,1)
+```
+
+## Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
