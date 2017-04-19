@@ -309,8 +309,8 @@ div.tocify {
 </div>
 
 
-<p><strong>Last updated:</strong> 2017-03-16</p>
-<p><strong>Code version:</strong> f221793</p>
+<p><strong>Last updated:</strong> 2017-04-19</p>
+<p><strong>Code version:</strong> ce45ab3</p>
 <div id="this-is-for-the-algorithem-for-the-binomial-data" class="section level2">
 <h2>This is for the algorithem for the binomial data</h2>
 Here our model is:
@@ -324,7 +324,7 @@ l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
 <p>Here we allow that <span class="math inline">\((\sigma_{1}^f)^2 = 0\)</span> and <span class="math inline">\((\sigma_{1}^l)^2=0\)</span>, which means we include the point mass into the prior for each component for <span class="math inline">\(f\)</span> and <span class="math inline">\(l\)</span>.</p>
 <p>Inspired by David and following the technique in <a href="http://www.jmlr.org/proceedings/papers/v39/klami14.pdf">P`olya-Gamma augmentations for factor models</a>, we have that</p>
 <span class="math display">\[\begin{eqnarray}
-P(Y_{ij,\omega_{ij}}|Z_{ij}) = C^2_{(Y_{ij} +1)} 2^{-2}e^{Y_{ij}Z_{ij}}e^{-\omega_{ij}Z_{ij}^2 / 2}PG(\omega_{ij}|2,0)
+P(Y_{ij},\omega_{ij}|Z_{ij}) = C^2_{(Y_{ij} +1)} 2^{-2}e^{Y_{ij}Z_{ij}}e^{-\omega_{ij}Z_{ij}^2 / 2}PG(\omega_{ij}|2,0)
 \end{eqnarray}\]</span>
 <p>where <span class="math inline">\(C^2_{(Y_{ij} +1)} = \frac{2!}{(1 - Y_{ij})!(Y_{ij} +1)!}\)</span> and <span class="math inline">\(PG(\omega_{ij}|2,0)\)</span> is Polya-Gamma distribution.</p>
 </div>
@@ -490,9 +490,9 @@ f_int$Ef2 = gflash$f2
 Ltest = L_flash(NB,Y, L_K, F_K, l_int, f_int, maxiter = 200)
 
 sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.1687944</code></pre>
+<pre><code>[1] 0.1662039</code></pre>
 <pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.3880428</code></pre>
+<pre><code>[1] 0.3867084</code></pre>
 <pre class="r"><code># rank K version
 # try the flash on the original data
 Data = datamaker(100,200,
@@ -518,9 +518,9 @@ gflash = flashr::greedy(Y,K = 8)</code></pre>
 [1] 5
 [1] &quot;stop here due to no signal&quot;</code></pre>
 <pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.3826516</code></pre>
+<pre><code>[1] 0.3125743</code></pre>
 <pre class="r"><code>sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))</code></pre>
-<pre><code>[1] 0.4283638</code></pre>
+<pre><code>[1] 0.4493127</code></pre>
 <pre class="r"><code>par(mfrow = c(2,2),mar = c(5,4,4,2) - 1.9)
 plot(svd(Y)$d,main = &quot;eigen values&quot;)
 plot(as.vector(Data$L_true %*% t(Data$F_true)),as.vector(Ltest$l %*% t(Ltest$f)),main = &quot;estimated structure Lflash&quot;)
@@ -530,16 +530,13 @@ abline(0,1,col = &quot;red&quot;)
 library(boot)
 plot(as.vector(Data$L_true %*% t(Data$F_true)),inv.logit(as.vector(gflash$l %*% t(gflash$f))),main = &quot;estimated structure flash&quot;)
 abline(0,1,col = &quot;red&quot;)</code></pre>
-<p><img src="figure/third-analysis.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/third-analysis.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>library(ashr)
 p_est = boot::inv.logit(as.vector(as.vector(Ltest$l %*% t(Ltest$f))))
 x = Y_vec_count
 ash.pois.out = ashr::ash(rep(0,length(x)),1,lik=lik_pois(x,scale=p_est))
 mean(ash.pois.out$result$PosteriorMean)</code></pre>
-<pre><code>[1] 5.982071</code></pre>
-<pre class="r"><code>n_est = rpois(length(x),(mean(ash.pois.out$result$PosteriorMean))* p_est) + Y_vec_count
-plot(nb,n_est)</code></pre>
-<p><img src="figure/third-analysis.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>[1] 5.984582</code></pre>
 </div>
 </div>
 <div id="session-information" class="section level2">
@@ -547,7 +544,7 @@ plot(nb,n_est)</code></pre>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.3.0 (2016-05-03)
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
-Running under: OS X 10.12.3 (unknown)
+Running under: OS X 10.12.4 (unknown)
 
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -556,22 +553,13 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] workflowr_0.4.0 rmarkdown_1.3   boot_1.3-18     MASS_7.3-45    
-[5] ashr_2.1-7      devtools_1.12.0
+[1] workflowr_0.4.0 rmarkdown_1.3  
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.9       knitr_1.15.1      magrittr_1.5     
- [4] REBayes_0.73      doParallel_1.0.10 pscl_1.4.9       
- [7] lattice_0.20-34   SQUAREM_2016.8-2  R6_2.2.0         
-[10] foreach_1.4.3     flashr_0.1.1      stringr_1.2.0    
-[13] httr_1.2.1        tools_3.3.0       grid_3.3.0       
-[16] parallel_3.3.0    irlba_2.1.2       git2r_0.18.0     
-[19] withr_1.0.2       htmltools_0.3.5   iterators_1.0.8  
-[22] assertthat_0.1    yaml_2.1.14       rprojroot_1.2    
-[25] digest_0.6.12     Matrix_1.2-8      codetools_0.2-15 
-[28] curl_2.3          memoise_1.0.0     evaluate_0.10    
-[31] stringi_1.1.2     Rmosek_7.1.2      backports_1.0.5  
-[34] truncnorm_1.0-7  </code></pre>
+ [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   htmltools_0.3.5
+ [5] tools_3.3.0     yaml_2.1.14     Rcpp_0.12.9     stringi_1.1.2  
+ [9] knitr_1.15.1    git2r_0.18.0    stringr_1.2.0   digest_0.6.12  
+[13] evaluate_0.10  </code></pre>
 </div>
 
 <hr>
