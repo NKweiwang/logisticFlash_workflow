@@ -32,7 +32,7 @@ Here we allow that $(\sigma_{1}^f)^2 = 0$ and $(\sigma_{1}^l)^2=0$, which means 
 Inspired by David and following the technique in [P`olya-Gamma augmentations for factor models](http://www.jmlr.org/proceedings/papers/v39/klami14.pdf), we have that
 
 \begin{eqnarray}
-P(Y_{ij,\omega_{ij}}|Z_{ij}) = C^2_{(Y_{ij} +1)} 2^{-2}e^{Y_{ij}Z_{ij}}e^{-\omega_{ij}Z_{ij}^2 / 2}PG(\omega_{ij}|2,0)
+P(Y_{ij},\omega_{ij}|Z_{ij}) = C^2_{(Y_{ij} +1)} 2^{-2}e^{Y_{ij}Z_{ij}}e^{-\omega_{ij}Z_{ij}^2 / 2}PG(\omega_{ij}|2,0)
 \end{eqnarray}
 
 where $C^2_{(Y_{ij} +1)} = \frac{2!}{(1 - Y_{ij})!(Y_{ij} +1)!}$ and $PG(\omega_{ij}|2,0)$ is Polya-Gamma distribution.
@@ -216,8 +216,10 @@ Ltest = L_flash(NB,Y, L_K, F_K, l_int, f_int, maxiter = 200)
 
 sqrt(mean((Data$L_true %*% t(Data$F_true) - Ltest$l %*% t(Ltest$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
 sqrt(mean((Data$L_true %*% t(Data$F_true) - gflash$l %*% t(gflash$f))^2)) / sqrt(mean((Data$L_true %*% t(Data$F_true) )^2))
+```
 
 
+```{r,message=FALSE,warning=FALSE,eval=TRUE,cache=TRUE}
 # rank K version
 # try the flash on the original data
 Data = datamaker(100,200,
@@ -258,10 +260,6 @@ mean(ash.pois.out$result$PosteriorMean)
 
 ```
 
-```{r}
-n_est = rpois(length(x),(mean(ash.pois.out$result$PosteriorMean))* p_est) + Y_vec_count
-plot(nb,n_est)
-```
 
 ## Session Information
 
