@@ -142,7 +142,7 @@ pic[[14]]
 
 ```{r}
 heatmap( g$l %*% t(g$f),labCol = colnames(Y_mat))
-
+heatmap( g$l[,2:14] %*% t(g$f[,2:14]),labCol = colnames(Y_mat))
 ```
 
 ## Session information
