@@ -44,6 +44,10 @@ Click on this [H938 data](H938_test.html) to see my result.
 
 Click on this [ancient data modern part](ancient_modern.html) to see my result.
 
+### Popgen data
+
+Click on this [All chr 22 sample 8000](All_chr22_8000.html) to see my result.
+
 ## TSNE on the MNIST data
 
 Click on this [small sample MNIST data](MNISTdata_1000.html) to see my result.
