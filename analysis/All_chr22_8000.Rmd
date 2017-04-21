@@ -26,6 +26,8 @@ knitr::read_chunk("chunks.R")
 
 <!-- Add your analysis here -->
 
+## ignore this part, this is code I used.
+
 ```{r}
 Y_mat = readRDS("../data/popgen/All_chr22_8000/ALL.chr22.phase3_shapeit2_mvncall_integrated.20130502.sample8000.n.rds")
 N_mat = readRDS("../data/popgen/All_chr22_8000/ALL.chr22.phase3_shapeit2_mvncall_integrated.20130502.sample8000.n1.rds")
@@ -101,9 +103,9 @@ for(i in 1:14){
 
 ## Plot of loadings
 
-### sudo PVE 
+### psuedo PVE 
 
-I use $||l_i f_i^T||_F^2$ as sudo PVE
+I use $||l_i f_i^T||_F^2$ as psuedo PVE
 
 ```{r}
 pve = sapply(seq(1,14),function(x)(sum((g$l[,x] %*% t(g$f[,x]))^2)))
