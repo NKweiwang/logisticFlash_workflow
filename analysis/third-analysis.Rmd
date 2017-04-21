@@ -22,7 +22,7 @@ knitr::read_chunk("chunks.R")
 Here our model is:
 \begin{eqnarray}
 Y_{ij} = Bin(2,p_{ij}) -1 \\
-\log\frac{(p_{ij} = 1|Z_{ij})}{(p_{ij} = -1 | Z_{ij})} = Z_{ij} \\
+logit(p_{ij}) = Z_{ij} \\
 Z_{ij} = l_i f_j\\
 f_j \sim  \sum_{m'} \pi_{m'}^f N(f_j; 0, (\sigma_{m'}^f)^2) \\
 l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
@@ -137,7 +137,7 @@ abline(0,1,col = "red")
 Here our model is:
 \begin{eqnarray}
 Y_{ij} = Bin(n_{ij},p_{ij}) - \frac{n_{ij}}{2} \\
-\log\frac{(p_{ij} = 1|Z_{ij})}{(p_{ij} = -1 | Z_{ij})} = Z_{ij} \\
+logit(p_{ij}) = Z_{ij}  \\
 Z_{ij} = l_i f_j\\
 f_j \sim  \sum_{m'} \pi_{m'}^f N(f_j; 0, (\sigma_{m'}^f)^2) \\
 l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
