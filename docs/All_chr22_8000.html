@@ -316,8 +316,10 @@ shared across the workflowr files. -->
 <p><strong>Last updated:</strong> 2017-04-20</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 1cbb3dd</p>
+<p><strong>Code version:</strong> 0de96bc</p>
 <!-- Add your analysis here -->
+<div id="ignore-this-part-this-is-code-i-used." class="section level2">
+<h2>ignore this part, this is code I used.</h2>
 <pre class="r"><code>Y_mat = readRDS(&quot;../data/popgen/All_chr22_8000/ALL.chr22.phase3_shapeit2_mvncall_integrated.20130502.sample8000.n.rds&quot;)
 N_mat = readRDS(&quot;../data/popgen/All_chr22_8000/ALL.chr22.phase3_shapeit2_mvncall_integrated.20130502.sample8000.n1.rds&quot;)
 Y = Y_mat - (N_mat)/2
@@ -327,9 +329,8 @@ NB = as.matrix(N_mat)</code></pre>
 <pre class="r"><code>library(reshape2)
 melted_cormat_1 &lt;- melt(g$l %*% t(g$f), na.rm = TRUE)
 
-library(ggplot2)</code></pre>
-<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 3.3.2</code></pre>
-<pre class="r"><code>p1 = ggplot(data = melted_cormat_1, aes(Var2, Var1, fill = value))+
+library(ggplot2)
+p1 = ggplot(data = melted_cormat_1, aes(Var2, Var1, fill = value))+
  geom_tile(color = &quot;white&quot;)+
  scale_fill_gradient2(low = &quot;blue&quot;, high = &quot;yellow&quot;, mid = &quot;green&quot;, 
    midpoint = 0, limit = c(-2,2), space = &quot;Lab&quot;) + labs(title = &quot;truth&quot;, y = &quot;sample&quot;, x = &quot;variable&quot;) +
@@ -372,11 +373,12 @@ library(ggplot2)</code></pre>
 for(i in 1:14){
   pic[[i]] = plot_factor(g$f[,i],P = 26,k = i,f_lables = colnames(Y),y_lab = &quot;loading values&quot;)
 }</code></pre>
+</div>
 <div id="plot-of-loadings" class="section level2">
 <h2>Plot of loadings</h2>
-<div id="sudo-pve" class="section level3">
-<h3>sudo PVE</h3>
-<p>I use <span class="math inline">\(||l_i f_i^T||_F^2\)</span> as sudo PVE</p>
+<div id="psuedo-pve" class="section level3">
+<h3>psuedo PVE</h3>
+<p>I use <span class="math inline">\(||l_i f_i^T||_F^2\)</span> as psuedo PVE</p>
 <pre class="r"><code>pve = sapply(seq(1,14),function(x)(sum((g$l[,x] %*% t(g$f[,x]))^2)))
 par(mfrow = c(2,2))
 plot(pve, main = &quot;PVE&quot;)
