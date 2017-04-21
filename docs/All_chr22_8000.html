@@ -316,7 +316,7 @@ shared across the workflowr files. -->
 <p><strong>Last updated:</strong> 2017-04-21</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> fec6abe</p>
+<p><strong>Code version:</strong> 6081181</p>
 <!-- Add your analysis here -->
 <div id="ignore-this-part-this-is-code-i-used." class="section level2">
 <h2>ignore this part, this is code I used.</h2>
@@ -428,6 +428,8 @@ plot(log(pve), main = &quot;log PVE&quot;)</code></pre>
 <h2>Heatmap for <span class="math inline">\(LF^T\)</span></h2>
 <pre class="r"><code>heatmap( g$l %*% t(g$f),labCol = colnames(Y_mat))</code></pre>
 <p><img src="figure/All_chr22_8000.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>heatmap( g$l[,2:14] %*% t(g$f[,2:14]),labCol = colnames(Y_mat))</code></pre>
+<p><img src="figure/All_chr22_8000.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
