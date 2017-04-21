@@ -313,10 +313,10 @@ div.tocify {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2017-04-20</p>
+<p><strong>Last updated:</strong> 2017-04-21</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 0de96bc</p>
+<p><strong>Code version:</strong> fec6abe</p>
 <!-- Add your analysis here -->
 <div id="ignore-this-part-this-is-code-i-used." class="section level2">
 <h2>ignore this part, this is code I used.</h2>
@@ -329,8 +329,9 @@ NB = as.matrix(N_mat)</code></pre>
 <pre class="r"><code>library(reshape2)
 melted_cormat_1 &lt;- melt(g$l %*% t(g$f), na.rm = TRUE)
 
-library(ggplot2)
-p1 = ggplot(data = melted_cormat_1, aes(Var2, Var1, fill = value))+
+library(ggplot2)</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 3.3.2</code></pre>
+<pre class="r"><code>p1 = ggplot(data = melted_cormat_1, aes(Var2, Var1, fill = value))+
  geom_tile(color = &quot;white&quot;)+
  scale_fill_gradient2(low = &quot;blue&quot;, high = &quot;yellow&quot;, mid = &quot;green&quot;, 
    midpoint = 0, limit = c(-2,2), space = &quot;Lab&quot;) + labs(title = &quot;truth&quot;, y = &quot;sample&quot;, x = &quot;variable&quot;) +
@@ -425,7 +426,7 @@ plot(log(pve), main = &quot;log PVE&quot;)</code></pre>
 </div>
 <div id="heatmap-for-lft" class="section level2">
 <h2>Heatmap for <span class="math inline">\(LF^T\)</span></h2>
-<pre class="r"><code>heatmap( g$l %*% t(g$f))</code></pre>
+<pre class="r"><code>heatmap( g$l %*% t(g$f),labCol = colnames(Y_mat))</code></pre>
 <p><img src="figure/All_chr22_8000.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level2">
