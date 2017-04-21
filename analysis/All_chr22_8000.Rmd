@@ -141,7 +141,7 @@ pic[[14]]
 ## Heatmap for $LF^T$
 
 ```{r}
-heatmap( g$l %*% t(g$f))
+heatmap( g$l %*% t(g$f),labCol = colnames(Y_mat))
 
 ```
 
