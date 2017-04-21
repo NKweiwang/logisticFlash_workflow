@@ -1,0 +1,150 @@
+---
+title: "Binomial logistic flash"
+author: "Wei Wang"
+date: 2017-04-20
+output: html_document
+---
+
+<!-- The file analysis/chunks.R contains chunks that define default settings
+shared across the workflowr files. -->
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+<!-- Add your analysis here -->
+
+```{r}
+Y_mat = readRDS("../data/popgen/All_chr22_8000/ALL.chr22.phase3_shapeit2_mvncall_integrated.20130502.sample8000.n.rds")
+N_mat = readRDS("../data/popgen/All_chr22_8000/ALL.chr22.phase3_shapeit2_mvncall_integrated.20130502.sample8000.n1.rds")
+Y = Y_mat - (N_mat)/2
+Y = as.matrix(Y)
+NB = as.matrix(N_mat)
+```
+
+```{r}
+g = readRDS("../data/popgen/All_chr22_8000/output_K20.rds")
+```
+
+
+```{r}
+library(reshape2)
+melted_cormat_1 <- melt(g$l %*% t(g$f), na.rm = TRUE)
+
+library(ggplot2)
+p1 = ggplot(data = melted_cormat_1, aes(Var2, Var1, fill = value))+
+ geom_tile(color = "white")+
+ scale_fill_gradient2(low = "blue", high = "yellow", mid = "green", 
+   midpoint = 0, limit = c(-2,2), space = "Lab") + labs(title = "truth", y = "sample", x = "variable") +
+  theme_minimal() + theme(legend.position="none",plot.background = element_rect()) 
+
+```
+
+```{r}
+plot_factor = function(f,P,k,f_lables = NA,y_lab = "loading values"){
+  library(ggplot2)
+  if(any(is.na(f_lables))){
+    f_dat <- data.frame(variable = 1:P, Factor = f,
+                      sign.f = factor(sign(f)),
+                      hjust = factor(sign(f)))
+    
+    plot_f = ggplot(f_dat,aes(x = variable,y = Factor,fill = sign.f )) +
+      geom_bar(stat = "identity",width = 0.5) +
+      scale_fill_manual(values = c("blue","red")) +
+      theme_minimal() +
+      labs(title = paste("factor",k,"with PVE=",round(pve,3)), y = y_lab )
+  }else{
+    f_dat <- data.frame(variable = 1:P, Factor = f,
+                      sign.f = factor(sign(f)),
+                      variablenames = f_lables,
+                      hjust = factor(sign(f)))
+    
+    # 120% lim 
+    range_f = max(f) - min(f)
+    upper_f = max(f,0) + 0.15 * range_f
+    lower_f = min(f,0) - 0.15 * range_f
+    
+    plot_f = ggplot(f_dat,aes(x = variable,y = Factor,label = variablenames,fill = sign.f)) +
+      geom_bar(stat = "identity",width = 0.5) +
+      geom_text(size = 2.75,angle = 90,hjust = as.character(f_dat$hjust),
+                nudge_y = sign(f_dat$Factor) * 0.2 * mean(abs(f_dat$Factor)) ) +
+      scale_fill_manual(values =  c("blue","red")) +
+      ylim(lower_f,upper_f) +
+      theme_minimal() +
+      labs(title = paste("factor",k), y = y_lab)
+  }
+  return(plot_f)
+}
+```
+
+
+
+```{r}
+pic = list()
+for(i in 1:14){
+  pic[[i]] = plot_factor(g$f[,i],P = 26,k = i,f_lables = colnames(Y),y_lab = "loading values")
+}
+
+```
+
+## Plot of loadings
+
+### sudo PVE 
+
+I use $||l_i f_i^T||_F^2$ as sudo PVE
+
+```{r}
+pve = sapply(seq(1,14),function(x)(sum((g$l[,x] %*% t(g$f[,x]))^2)))
+par(mfrow = c(2,2))
+plot(pve, main = "PVE")
+plot(seq(2,14), pve[2:14],main = "PVE[2:14]")
+plot(log(pve), main = "log PVE")
+```
+
+#### Base on the psuedo PVE I would suggest K = 5 or K = 7
+
+## Factor Plot 
+
+Here I provide all the 14 factor loading I get.
+
+```{r}
+pic[[1]]
+pic[[2]]
+pic[[3]]
+pic[[4]]
+pic[[5]]
+pic[[6]]
+pic[[7]]
+pic[[8]]
+pic[[9]]
+pic[[10]]
+pic[[11]]
+pic[[12]]
+pic[[13]]
+pic[[14]]
+```
+
+## Heatmap for $LF^T$
+
+```{r}
+heatmap( g$l %*% t(g$f))
+
+```
+
+## Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
