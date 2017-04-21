@@ -309,14 +309,14 @@ div.tocify {
 </div>
 
 
-<p><strong>Last updated:</strong> 2017-04-19</p>
-<p><strong>Code version:</strong> ce45ab3</p>
+<p><strong>Last updated:</strong> 2017-04-21</p>
+<p><strong>Code version:</strong> f88fcd1</p>
 <div id="this-is-for-the-algorithem-for-the-binomial-data" class="section level2">
 <h2>This is for the algorithem for the binomial data</h2>
 Here our model is:
 <span class="math display">\[\begin{eqnarray}
 Y_{ij} = Bin(2,p_{ij}) -1 \\
-\log\frac{(p_{ij} = 1|Z_{ij})}{(p_{ij} = -1 | Z_{ij})} = Z_{ij} \\
+logit(p_{ij}) = Z_{ij} \\
 Z_{ij} = l_i f_j\\
 f_j \sim  \sum_{m&#39;} \pi_{m&#39;}^f N(f_j; 0, (\sigma_{m&#39;}^f)^2) \\
 l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
@@ -425,7 +425,7 @@ abline(0,1,col = &quot;red&quot;)</code></pre>
 Here our model is:
 <span class="math display">\[\begin{eqnarray}
 Y_{ij} = Bin(n_{ij},p_{ij}) - \frac{n_{ij}}{2} \\
-\log\frac{(p_{ij} = 1|Z_{ij})}{(p_{ij} = -1 | Z_{ij})} = Z_{ij} \\
+logit(p_{ij}) = Z_{ij}  \\
 Z_{ij} = l_i f_j\\
 f_j \sim  \sum_{m&#39;} \pi_{m&#39;}^f N(f_j; 0, (\sigma_{m&#39;}^f)^2) \\
 l_i \sim  \sum_m \pi_m^l N(l_i; 0, (\sigma_m^l)^2)
@@ -557,7 +557,7 @@ other attached packages:
 
 loaded via a namespace (and not attached):
  [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   htmltools_0.3.5
- [5] tools_3.3.0     yaml_2.1.14     Rcpp_0.12.9     stringi_1.1.2  
+ [5] tools_3.3.0     yaml_2.1.14     Rcpp_0.12.10    stringi_1.1.2  
  [9] knitr_1.15.1    git2r_0.18.0    stringr_1.2.0   digest_0.6.12  
 [13] evaluate_0.10  </code></pre>
 </div>
