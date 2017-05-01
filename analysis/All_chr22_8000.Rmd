@@ -149,12 +149,12 @@ heatmap( g$l[,2:14] %*% t(g$f[,2:14]),labCol = colnames(Y_mat))
 
 ```{r}
 library(boot)
-log_10_G = -log10(inv.logit(g$l %*% t(g$f)))
-log_10_G_2 = -log10(inv.logit(g$l[,2:14] %*% t(g$f[,2:14])))
+log_10_G = log10(inv.logit(g$l %*% t(g$f)))
+log_10_G_2 = log10(inv.logit(g$l[,2:14] %*% t(g$f[,2:14])))
 colnames(log_10_G) = colnames(Y)
 colnames(log_10_G_2) = colnames(Y)
 superheat::superheat(log_10_G_2,pretty.order.rows = T,pretty.order.cols = T,bottom.label.text.angle = 90)
-superheat::superheat(log_10_G,pretty.order.rows = T,pretty.order.cols = T)
+superheat::superheat(log_10_G,pretty.order.rows = T,pretty.order.cols = T,bottom.label.text.angle = 90)
 ```
 
 ## Session information
