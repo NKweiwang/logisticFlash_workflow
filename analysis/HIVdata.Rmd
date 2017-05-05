@@ -1,0 +1,77 @@
+---
+title: "Data from Amit"
+author: "Wei Wang"
+date: 2017-05-05
+output: html_document
+---
+
+<!-- The file analysis/chunks.R contains chunks that define default settings
+shared across the workflowr files. -->
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+<!-- Add your analysis here -->
+
+```{r}
+library(boot)
+proportion = readRDS("../data/HIVdata/proportionMatrix.RDS")[,-1]
+proportion = as.matrix(proportion)
+
+total = readRDS("../data/HIVdata/totals.RDS")[,-1]
+NB = as.matrix(total)
+
+Y = NB * proportion
+Y = Y - NB/2
+source("~/HG/LogisticFlash/Rcode/GD_NBfunctions.R")
+#Ltest = GL_flash(NB,Y,K = 30)
+#saveRDS(Ltest,file = "../data/HIVdata/Lflash_g.rds")
+#gfl = flashr::greedy(proportion,K = 20)
+#saveRDS(gfl,file = "../data/HIVdata/gflash.rds")
+Ltest = readRDS("../data/HIVdata/Lflash_g.rds")
+gfl = readRDS("../data/HIVdata/gflash.rds")
+```
+
+
+```{r}
+par(mfrow = c(2,2),mar = c(5,4,4,2)-1.8)
+for(i in 1:10){
+  barplot(Ltest$l[,i],main = paste("cell times protein, factor",i))
+  barplot(Ltest$f[,i],main = paste("sample, loading",i))
+}
+#for(i in 1:10){
+#  barplot(gfl$l[,i],main = "cell times protein")
+#  barplot(gfl$f[,i],main = "sample")
+#}
+pve = sapply(seq(1,30),function(x){sum((Ltest$l[,x] %*% t(Ltest$f[,x]))^2)})
+```
+
+### we can see the logistic flash fit the data better than flash
+
+```{r}
+sum((as.vector(proportion)-as.vector((gfl$l %*% t(gfl$f))))^2)
+sum((as.vector(proportion)-as.vector(inv.logit(Ltest$l %*% t(Ltest$f))))^2)
+```
+
+```{r}
+heatmap(inv.logit(Ltest$l %*% t(Ltest$f)))
+```
+
+## Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
